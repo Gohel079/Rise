@@ -207,28 +207,21 @@ class _visitorRegistationState extends BasePageState<VisitorRegistationScreen,Vi
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
 
-                          Row(children: [
+                          Row(
+                            children: [
 
-                            SvgPicture.asset(
-                              AppImages.icCall,
-                              color: lightBlack,
-                            ),
-                            SizedBox(width: 5.h,),
-
-                            Text('RTPL Pvt. LTD.',
-                                style: styleMedium1.copyWith(
-                                  color: lightBlack,
-                                  fontWeight: FontWeight.w500,
-                                )),
-                          ],)
-
-
-                          ,SizedBox(height: 5.h,),
-                          Text('RTPL Mobile app',
-                              style: styleMedium1.copyWith(
+                              SvgPicture.asset(
+                                AppImages.icBookmark  ,
                                 color: lightBlack,
-                                fontWeight: FontWeight.w500,
-                              )),
+                              ),
+                              SizedBox(width: 5.w,),
+                              Text('RTPL Mobile app',
+                                  style: styleMedium1.copyWith(
+                                    color: lightBlack,
+                                    fontWeight: FontWeight.w500,
+                                  )),
+                            ],
+                          ),
                           SizedBox(height: 12.h,),
 
                           Text('Mr.Harsh Patel',

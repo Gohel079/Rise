@@ -43,7 +43,7 @@ class AppImages {
   static const String icCalenderOutline= 'assets/icons/ic_calender_outline.svg';
   static const String icCamera = 'assets/icons/ic_camera.svg';
   static const String icScan = 'assets/icons/ic_scan.svg';
-  static const String icBookmark = 'assets/icons/Bookmark.svg';
+  static const String icBookmark = 'assets/icons/ic_book_mark.svg';
 
 
 }
