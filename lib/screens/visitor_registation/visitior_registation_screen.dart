@@ -139,7 +139,8 @@ class _visitorRegistationState extends BasePageState<VisitorRegistationScreen,Vi
           ],),
         ),),
       floatingActionButton: FloatingActionButton(backgroundColor: lightred,
-        child: const Icon(Icons.add,color: white,size: 40,),onPressed: () { Navigator.push(context, AddVisitorRegistrationScreen.route()); },),
+        child: const Icon(Icons.add,color: white,size: 40,),onPressed: ()
+        { Navigator.push(context, AddVisitorRegistrationScreen.route()); },),
     );
   }
 
@@ -238,16 +239,22 @@ class _visitorRegistationState extends BasePageState<VisitorRegistationScreen,Vi
 
 
                               SvgPicture.asset(
-                                AppImages.icCall,
+                                AppImages.icCalenderOutline,
                                 color: lightBlack,
                               ),
-                              SizedBox(width: 1.w,),
-                              Text('+91 756779909',
+                              SizedBox(width: 6.w,),
+                              Text('08/09/2023',
                                   style: styleSmall4.copyWith(
                                     color: lightBlack,
                                     fontWeight: FontWeight.w500,
                                   )),
 
+                              SizedBox(width: 7.w,),
+                              Text('|',
+                                  style: styleSmall4.copyWith(
+                                    color: verticalDivier,
+                                    fontWeight: FontWeight.w600,
+                                  )),
                               SizedBox(width: 7.w,),
                               SvgPicture.asset(
                                 AppImages.icClock,
@@ -255,6 +262,25 @@ class _visitorRegistationState extends BasePageState<VisitorRegistationScreen,Vi
                               ),
                               SizedBox(width: 3.w,),
                               Text('06:15',
+                                  style: styleSmall4.copyWith(
+                                    color: lightBlack,
+                                    fontWeight: FontWeight.w500,
+                                  )),
+                            ],),
+
+                          SizedBox(height: 14.h,),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+
+
+                              SvgPicture.asset(
+                                AppImages.icCall,
+                                color: lightBlack,
+                              ),
+                              SizedBox(width: 1.w,),
+                              Text('+91 756779909',
                                   style: styleSmall4.copyWith(
                                     color: lightBlack,
                                     fontWeight: FontWeight.w500,

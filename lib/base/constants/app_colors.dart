@@ -43,6 +43,12 @@ const Color lightred = Color(0xFFFF9D9B);
 const Color darkRed = Color(0xFFEB0000);
 const Color darkGreen = Color(0xFF00D315);
 const Color green2 = Color(0xFF0CB53B);
+const Color grayBlack = Color(0xFF220022);
+const Color verticalDivier = Color(0xFFD9D9D9);
+const Color green3 = Color(0xFFEAF7E9);
+const Color tabBorder = Color(0xFFE7E7E7);
+const Color redBrown = Color(0xFF751818);
+const Color gray4 = Color(0xFF85989E);
 
 
 

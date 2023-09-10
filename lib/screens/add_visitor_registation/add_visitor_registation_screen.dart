@@ -209,7 +209,7 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
 
            SizedBox(height: 20.h,),
 
-           uploadPhoto(),
+            uploadPhoto(),
 
            SizedBox(height: 20.h,),
 

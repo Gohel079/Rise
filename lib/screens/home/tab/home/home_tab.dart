@@ -7,6 +7,7 @@ import 'package:rise_and_grow/base/basePage.dart';
 import 'package:rise_and_grow/base/bloc/base_bloc.dart';
 import 'package:rise_and_grow/base/components/screen_utils/flutter_screenutil.dart';
 import 'package:rise_and_grow/base/constants/app_colors.dart';
+import 'package:rise_and_grow/screens/created_meeting/created_meeting_screen.dart';
 import 'package:rise_and_grow/screens/home/tabbarView/appointment_screen/appointment_screen.dart';
 import 'package:rise_and_grow/screens/home/tabbarView/meeting_screen/meeting.dart';
 import 'package:rise_and_grow/screens/home/tabbarView/site_visit_screen/site_visit_screen.dart';
@@ -211,30 +212,37 @@ class _homeTabState  extends BasePageState<HomeTab,HomeTabBloc>{
   }
 
   Widget createMeetingBtn(){
-    return Column(
-      children: [
-        Container(decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: const [
+    return InkWell(onTap: (){
 
-            BoxShadow(blurRadius:2,color: Colors.grey)
-          ],
-          color: secondaryColor,
-        ),child: Padding(
-          padding: const EdgeInsets.all(17.0),
-          child: SvgPicture.asset(
-            AppImages.icVideo,
-            height: 30,
-          ),
-        ),),
-        SizedBox(height: 7.h,),
-        Text(string("label_create_meeting"),
-            textAlign: TextAlign.center,
-            style:styleSmall4.copyWith(
-                color: black,
-                fontWeight: FontWeight.w500))
+      PersistentNavBarNavigator
+          .pushNewScreen(context, screen: const CreatedMeetingScreen(),
+          withNavBar: false);
+    },
+      child: Column(
+        children: [
+          Container(decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: const [
 
-      ],
+              BoxShadow(blurRadius:2,color: Colors.grey)
+            ],
+            color: secondaryColor,
+          ),child: Padding(
+            padding: const EdgeInsets.all(17.0),
+            child: SvgPicture.asset(
+              AppImages.icVideo,
+              height: 30,
+            ),
+          ),),
+          SizedBox(height: 7.h,),
+          Text(string("label_create_meeting"),
+              textAlign: TextAlign.center,
+              style:styleSmall4.copyWith(
+                  color: black,
+                  fontWeight: FontWeight.w500))
+
+        ],
+      ),
     );
   }
 

@@ -15,6 +15,7 @@
   "label_remember_password": "Remember Password? ",
   "label_forgot_pwd": "Forgot Password",
   "label_submit": "Submit",
+  "label_done": "Done",
   "label_create_meeting": "Create\nMeeting",
   "label_book_appointment": "Book an \nappointment",
   "label_visitor_reg": "Visitor\nRegistration",
@@ -24,6 +25,7 @@
   "label_viewDetails": "View Details",
   "label_reason_for_declined": "Reason for Declined",
   "label_reason_for_declined_header": "Write the reason why you declined the\nmeeting with mr.pradeep patel",
-  "label_next": "Next "
+  "label_next": "Next ",
+  "label_add": "Add"
 
 }

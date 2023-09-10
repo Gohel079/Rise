@@ -80,76 +80,68 @@ class _profileTabState  extends BasePageState<ProfileTab,ProfileTabBloc>
        color: Colors.white,
        child: Column(
          children: [
+           
+            SizedBox(height: 20.h,),
 
-           SizedBox(height: 20.h,),
+            const CircleAvatar(backgroundImage:
+            AssetImage(AppImages.imgPerson1),radius: 50,),
+
+            SizedBox(height: 10.h,),
+
+            Text('Mr. Bhautik Patel',
+                style: styleMedium3.copyWith(
+                  color: lightBlack,
+                  fontWeight: FontWeight.w600,
+                )),
+
+
+            SizedBox(height: 20.h,),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: ListTile(
-               title: Text('Edit profile',
-                   style: styleMedium2.copyWith(
-                 color: lightBlack,
-                 fontWeight: FontWeight.w500,
-               )),
-               trailing:  SvgPicture.asset(
-                 AppImages.icRight,
-               ),
-           ),
+                title: Text('Account',
+                    style: styleMedium2.copyWith(
+                      color: lightBlack,
+                      fontWeight: FontWeight.w500,
+                    )),
+                trailing:  SvgPicture.asset(
+                  AppImages.icRight,
+                ),
+              ),
             ),
-           Divider(height: 0.5,thickness: 1,color: divider,),
+            const Divider(height: 0.5,thickness: 1,color: divider,),
 
-           Padding(
-             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-             child: ListTile(
-               title: Text('Change password',
-                   style: styleMedium2.copyWith(
-                 color: lightBlack,
-                 fontWeight: FontWeight.w500,
-               )),
-               trailing:  SvgPicture.asset(
-                 AppImages.icRight,
-               ),
-             ),
-           ),
-           Divider(height: 1,color: divider,),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: ListTile(
+                title: Text('Edit Profile',
+                    style: styleMedium2.copyWith(
+                      color: lightBlack,
+                      fontWeight: FontWeight.w500,
+                    )),
+                trailing:  SvgPicture.asset(
+                  AppImages.icRight,
+                ),
+              ),
+            ),
+            const Divider(height: 1,color: divider,),
 
-           Padding(
-             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-             child: ListTile(
-               title: Text('Blocked users',
-                   style: styleMedium2.copyWith(
-                     color: lightBlack,
-                     fontWeight: FontWeight.w500,
-                   )),
-               trailing:  SvgPicture.asset(
-                 AppImages.icRight,
-               ),
-             ),
-           ),
-           Divider(height: 1,color: divider,),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: ListTile(
+                title: Text('Password',
+                    style: styleMedium2.copyWith(
+                      color: lightBlack,
+                      fontWeight: FontWeight.w500,
+                    )),
+                trailing:  SvgPicture.asset(
+                  AppImages.icRight,
+                ),
+              ),
+            ),
+            Divider(height: 1,color: divider,),
 
-           Padding(
-             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-             child: ListTile(
-               title: Text('Updates',
-                   style: styleMedium2.copyWith(
-                     color: lightBlack,
-                     fontWeight: FontWeight.w500,
-                   )),
-               trailing:  Container(
-                 decoration:
-               BoxDecoration(color: secondaryColor,
-                   borderRadius: BorderRadius.circular(6))
-                 ,child: Padding(
-                   padding: const EdgeInsets.symmetric(horizontal: 6,vertical: 6),
-                   child: Text('69',
-                     style: styleMedium1.copyWith(
-                      color: white,
-                      fontWeight: FontWeight.w400,
-               )),
-                 ),)
-             ),
-           ),
-           Divider(height: 1,color: divider,)
+
          ],
        ),),
    );

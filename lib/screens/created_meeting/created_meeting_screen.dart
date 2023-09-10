@@ -6,12 +6,14 @@ import 'package:rise_and_grow/base/bloc/base_bloc.dart';
 import 'package:rise_and_grow/base/components/screen_utils/flutter_screenutil.dart';
 import 'package:rise_and_grow/base/constants/app_colors.dart';
 import 'package:rise_and_grow/screens/add_visitor_registation/add_visitor_registation_screen.dart';
+import 'package:rise_and_grow/screens/create_meeting_form/create_meeting_form_bloc.dart';
 import 'package:rise_and_grow/screens/created_meeting/created_meeting_bloc.dart';
 import 'package:rise_and_grow/screens/visitor_registation/visitor_registation_bloc.dart';
 
 import '../../base/constants/app_images.dart';
 import '../../base/constants/app_styles.dart';
 import '../../base/widgets/custom_page_route.dart';
+import '../create_meeting_form/create_meeting_form_screen.dart';
 
 class CreatedMeetingScreen extends BasePage<CreatedMeetingBloc>{
   const CreatedMeetingScreen({super.key});
@@ -49,20 +51,20 @@ class _createdMeetingScreenState extends BasePageState<CreatedMeetingScreen,Crea
   Widget buildWidget(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leadingWidth: 19,
-        titleSpacing: 30.w,
-        leading: InkWell(onTap: (){
-          Navigator.pop(context);
-        },
-          child: Padding(
-            padding:   const EdgeInsets.only(left: 10),
-            child: SvgPicture.asset(AppImages.icPrev),
-          ),
-        ),
         title: !isSearching ? Row(children: [
 
+          InkWell(onTap: (){
+            Navigator.pop(context);
+          },
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: SvgPicture.asset(AppImages.icPrev),
+            ),
+          ),
 
-          Text('Visitor Registation',
+          SizedBox(width: 10.w,),
+
+          Text(' Created Meeting',
               style: styleMedium2.copyWith(
                 color: white,
                 fontWeight: FontWeight.w600,
@@ -81,7 +83,7 @@ class _createdMeetingScreenState extends BasePageState<CreatedMeetingScreen,Crea
                 ),
                 filled: true,
                 fillColor: Colors.white,
-                contentPadding: EdgeInsets.symmetric(horizontal: 15),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 15),
                 hintText: 'Search Anything',
                 hintStyle: styleSmall4.copyWith(
                   color: secondaryColor,
@@ -94,7 +96,7 @@ class _createdMeetingScreenState extends BasePageState<CreatedMeetingScreen,Crea
                 },child: const Icon(Icons.cancel,color: secondaryColor,))
             ),),
         ),
-        automaticallyImplyLeading: !isSearching ? true : false,
+        automaticallyImplyLeading: !isSearching ? false : true,
         backgroundColor: secondaryColor,
         actions:   [
 
@@ -123,8 +125,7 @@ class _createdMeetingScreenState extends BasePageState<CreatedMeetingScreen,Crea
               !isSearching ? SizedBox(width: 10.w,) : SizedBox(),
             ],)
         ],),
-      body:  Container(child:
-      Padding(
+      body:  Padding(
         padding: EdgeInsets.all(15.0),
         child: Column(children: [
 
@@ -135,12 +136,13 @@ class _createdMeetingScreenState extends BasePageState<CreatedMeetingScreen,Crea
           SizedBox(height: 10.h,),
 
 
-          visitorRegistation()
+          createMeeting()
 
         ],),
-      ),),
-      floatingActionButton: FloatingActionButton(backgroundColor: lightred,
-        child: const Icon(Icons.add,color: white,size: 40,),onPressed: () { Navigator.push(context, AddVisitorRegistrationScreen.route()); },),
+      ),
+        floatingActionButton: FloatingActionButton(backgroundColor: lightred,
+          child: const Icon(Icons.add,color: white,size: 40,),onPressed: () {
+          Navigator.push(context, CreateMeetingFormScreen.route()); },)
     );
   }
 
@@ -180,7 +182,7 @@ class _createdMeetingScreenState extends BasePageState<CreatedMeetingScreen,Crea
   }
 
 
-  Widget visitorRegistation(){
+  Widget createMeeting(){
     return Expanded(
       child: ListView.builder(
         itemCount: 20,
@@ -201,68 +203,105 @@ class _createdMeetingScreenState extends BasePageState<CreatedMeetingScreen,Crea
 
                   SizedBox(width: 4.w),
                   Expanded(flex:4,child:
-                  Container(
-                    // width: 10,height: 100,
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
 
-                          Row(
-                            children: [
+                        Row(
+                          children: [
 
-                              SvgPicture.asset(
-                                AppImages.icBookmark  ,
-                                color: lightBlack,
-                              ),
-                              SizedBox(width: 5.w,),
-                              Text('RTPL Mobile app',
-                                  style: styleMedium1.copyWith(
-                                    color: lightBlack,
-                                    fontWeight: FontWeight.w500,
-                                  )),
-                            ],
-                          ),
-                          SizedBox(height: 12.h,),
+                            SvgPicture.asset(
+                              AppImages.icToll  ,
+                              color: lightBlack,
+                            ),
+                            SizedBox(width: 5.w,),
+                            Text('RTPL Mobile app',
+                                style: styleMedium1.copyWith(
+                                  color: lightBlack,
+                                  fontWeight: FontWeight.w500,
+                                )),
+                          ],
+                        ),
+                        SizedBox(height: 12.h,),
 
-                          Text('Mr.Harsh Patel',
-                              style: styleMedium1.copyWith(
-                                color: black,
-                                fontWeight: FontWeight.w600,
-                              )),
+                        Text('Mr.Harsh Patel',
+                            style: styleMedium1.copyWith(
+                              color: black,
+                              fontWeight: FontWeight.w600,
+                            )),
 
-                          SizedBox(height: 14.h,),
+                        SizedBox(height: 14.h,),
 
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
 
 
-                              SvgPicture.asset(
-                                AppImages.icCall,
-                                color: lightBlack,
-                              ),
-                              SizedBox(width: 1.w,),
-                              Text('+91 756779909',
-                                  style: styleSmall4.copyWith(
-                                    color: lightBlack,
-                                    fontWeight: FontWeight.w500,
-                                  )),
+                            SvgPicture.asset(
+                              AppImages.icCalenderOutline,
+                              color: lightBlack,
+                            ),
+                            SizedBox(width: 6.w,),
+                            Text('08/09/2023',
+                                style: styleSmall4.copyWith(
+                                  color: lightBlack,
+                                  fontWeight: FontWeight.w500,
+                                )),
 
-                              SizedBox(width: 7.w,),
-                              SvgPicture.asset(
-                                AppImages.icClock,
-                                color: lightBlack,
-                              ),
-                              SizedBox(width: 3.w,),
-                              Text('06:15',
-                                  style: styleSmall4.copyWith(
-                                    color: lightBlack,
-                                    fontWeight: FontWeight.w500,
-                                  )),
-                            ],),
+                            SizedBox(width: 7.w,),
+                            Text('|',
+                                style: styleSmall4.copyWith(
+                                  color: verticalDivier,
+                                  fontWeight: FontWeight.w600,
+                                )),
+                            SizedBox(width: 7.w,),
+                            SvgPicture.asset(
+                              AppImages.icClock,
+                              color: lightBlack,
+                            ),
+                            SizedBox(width: 3.w,),
+                            Text('06:15',
+                                style: styleSmall4.copyWith(
+                                  color: lightBlack,
+                                  fontWeight: FontWeight.w500,
+                                )),
+                          ],),
 
-                        ]),)),
+                        SizedBox(height: 14.h,),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+
+
+                            SvgPicture.asset(
+                              AppImages.icPerson,
+                              height: 20,
+                              color: green2,
+                            ),
+                            SizedBox(width: 2.w,),
+                            Text('Andrew status',
+                                style: styleSmall3.copyWith(
+                                  color: green2,
+                                  fontWeight: FontWeight.w500,
+                                )),
+
+                            SizedBox(width: 10.w,),
+                            SvgPicture.asset(
+                              AppImages.icPerson,
+                              height: 20,
+                              color: grayBlack,
+                            ),
+                            SizedBox(width: 3.w,),
+                            Text('Fox Geroge',
+                                style: styleSmall3.copyWith(
+                                  color: grayBlack,
+                                  fontWeight: FontWeight.w500,
+                                )),
+                          ],),
+
+                      ])),
                   Expanded(flex:2,child:
                   Container(width: 10,
                     padding: const EdgeInsets.symmetric(horizontal: 7),
@@ -273,12 +312,15 @@ class _createdMeetingScreenState extends BasePageState<CreatedMeetingScreen,Crea
                       children: [
 
 
-                        Container(width : 55.w,height: 55.h,decoration:
-                        BoxDecoration(borderRadius: BorderRadius.circular(2))
-                            ,child: Image.asset(AppImages.imgPerson1,fit: BoxFit.fill,)),
+                        Container(width : 50.w,
+                            height: 50.h,decoration:
+                        BoxDecoration(borderRadius: BorderRadius.circular(5),
+                            color: green3)
+                            ,child: Image.asset(AppImages.imgGreenTrue,
+                              height: 30.h,width: 30.w,)),
 
 
-                        SizedBox(height: 8.h,),
+                        SizedBox(height: 10.h,),
 
                         Container(decoration:
                         BoxDecoration(borderRadius: BorderRadius.circular(20),

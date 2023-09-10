@@ -14,6 +14,14 @@ class AppImages {
   static const String imgDoc  = 'assets/images/ic_doc.png';
   static const String imgDoc2  = 'assets/images/img_doc2.png';
   static const String imgApproveLoader  = 'assets/images/img_approve_loader.png';
+  static const String imgGreenTrue  = 'assets/images/ic_green_true.png';
+  static const String imgMorningSun  = 'assets/images/img_morning_sun.png';
+  static const String imgNoonSun  = 'assets/images/img_noon_sun.png';
+  static const String imgEveningSun  = 'assets/images/img_evening_sun.png';
+  static const String imgGirl  = 'assets/images/img_girl_pic.png';
+  static const String imgBoy  = 'assets/images/img_boy_pic.png';
+  static const String imgGirl2  = 'assets/images/img_girl_2x.png';
+  static const String imgBoy2  = 'assets/images/img_boy2.png';
 
 
   ///icons
@@ -44,6 +52,10 @@ class AppImages {
   static const String icCamera = 'assets/icons/ic_camera.svg';
   static const String icScan = 'assets/icons/ic_scan.svg';
   static const String icBookmark = 'assets/icons/ic_book_mark.svg';
+  static const String icToll = 'assets/icons/ic_toll.svg';
+  static const String icPerson = 'assets/icons/ic_person.svg';
+  static const String icUploadDoc = 'assets/icons/ic_upload_doc.svg';
+  static const String icLogout = 'assets/icons/ic_logout.svg';
 
 
 }
