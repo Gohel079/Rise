@@ -11,6 +11,7 @@ import 'package:rise_and_grow/screens/created_meeting/created_meeting_screen.dar
 import 'package:rise_and_grow/screens/home/tabbarView/appointment_screen/appointment_screen.dart';
 import 'package:rise_and_grow/screens/home/tabbarView/meeting_screen/meeting.dart';
 import 'package:rise_and_grow/screens/home/tabbarView/site_visit_screen/site_visit_screen.dart';
+import 'package:rise_and_grow/screens/notification/notification_screen.dart';
 import 'package:rise_and_grow/screens/visitor_registation/visitior_registation_screen.dart';
 
 import '../../../../base/constants/app_images.dart';
@@ -42,7 +43,7 @@ class _homeTabState  extends BasePageState<HomeTab,HomeTabBloc>{
  List<String> tabList = [
    "Meeting",
    "Appointment",
-   "Site visit"
+   "Outer Meeting"
  ];
 
  var selectedIndex = 0;
@@ -99,9 +100,16 @@ class _homeTabState  extends BasePageState<HomeTab,HomeTabBloc>{
                width: 24.w,
              ),
              SizedBox(width: 16.w,),
-             SvgPicture.asset(AppImages.icNotification,
-               height: 24.h,
-               width: 24.w,),
+             InkWell(onTap: (){
+
+               PersistentNavBarNavigator
+                   .pushNewScreen(context, screen: const NotificationScreen(),
+                   withNavBar: false);
+             },
+               child: SvgPicture.asset(AppImages.icNotification,
+                 height: 24.h,
+                 width: 24.w,),
+             ),
              SizedBox(width: 10.w,),
            ],)
        ],),

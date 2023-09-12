@@ -47,81 +47,84 @@ class _visitorRegistationState extends BasePageState<VisitorRegistationScreen,Vi
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          leadingWidth: 19,
-          titleSpacing: 30.w,
-          leading: InkWell(onTap: (){
+      appBar: AppBar(
+        leadingWidth: 19,
+        titleSpacing: 30.w,
+
+        title: !isSearching ? Row(children: [
+
+          InkWell(onTap: (){
             Navigator.pop(context);
-          },
-            child: Padding(
-              padding:   const EdgeInsets.only(left: 10),
-              child: SvgPicture.asset(AppImages.icPrev),
-            ),
-          ),
-          title: !isSearching ? Row(children: [
+          }, child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SvgPicture.asset(AppImages.icPrev,height: 14.h),
+          )),
 
-
-            Text('Visitor Registation',
+          SizedBox(width: 10.w,),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Text('Visitor Registration',
                 style: styleMedium2.copyWith(
                   color: white,
                   fontWeight: FontWeight.w600,
                 )),
-
-          ],) : SizedBox(
-            height: 45.h,
-            child: TextField(
-              textAlign: TextAlign.start,
-              autofocus: isSearching ? true :false,
-              textAlignVertical: TextAlignVertical.center,
-              textInputAction: TextInputAction.search,
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(4.0),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 15),
-                  hintText: 'Search Anything',
-                  hintStyle: styleSmall4.copyWith(
-                    color: secondaryColor,
-                    fontWeight: FontWeight.w400,
-                  ),
-                  suffixIcon: InkWell(onTap : () {
-                    setState(() {
-                      isSearching = !isSearching;
-                    });
-                  },child: const Icon(Icons.cancel,color: secondaryColor,))
-              ),),
           ),
-          automaticallyImplyLeading: !isSearching ? true : false,
-          backgroundColor: secondaryColor,
-          actions:   [
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-
-                !isSearching ?
-                InkWell(onTap: (){
+        ],) : SizedBox(
+          height: 45.h,
+          child: TextField(
+            textAlign: TextAlign.start,
+            autofocus: isSearching ? true :false,
+            textAlignVertical: TextAlignVertical.center,
+            textInputAction: TextInputAction.search,
+            decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(4.0),
+                ),
+                filled: true,
+                fillColor: Colors.white,
+                contentPadding: EdgeInsets.symmetric(horizontal: 15),
+                hintText: 'Search Anything',
+                hintStyle: styleSmall4.copyWith(
+                  color: secondaryColor,
+                  fontWeight: FontWeight.w400,
+                ),
+                suffixIcon: InkWell(onTap : () {
                   setState(() {
                     isSearching = !isSearching;
                   });
-                },
-                  child: SvgPicture.asset(
-                    AppImages.icSearch,
-                    color: white,
-                    height: 24.h,
-                    width: 24.w,
-                  ),
-                ) : SizedBox(),
-                !isSearching ? SizedBox(width: 16.w,) : SizedBox(),
-                !isSearching ? SvgPicture.asset(AppImages.icNotification,
+                },child: const Icon(Icons.cancel,color: secondaryColor,))
+            ),),
+        ),
+        automaticallyImplyLeading: false,
+        backgroundColor: secondaryColor,
+        actions:   [
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+
+              !isSearching ?
+              InkWell(onTap: (){
+                setState(() {
+                  isSearching = !isSearching;
+                });
+              },
+                child: SvgPicture.asset(
+                  AppImages.icSearch,
+                  color: white,
                   height: 24.h,
-                  width: 24.w,) : SizedBox(),
-                !isSearching ? SizedBox(width: 10.w,) : SizedBox(),
-              ],)
-          ],),
+                  width: 24.w,
+                ),
+              ) : SizedBox(),
+              !isSearching ? SizedBox(width: 16.w,) : SizedBox(),
+              !isSearching ? SvgPicture.asset(AppImages.icNotification,
+                height: 24.h,
+                width: 24.w,) : SizedBox(),
+              !isSearching ? SizedBox(width: 10.w,) : SizedBox(),
+            ],)
+        ],),
         body:  Container(child:
          Padding(
           padding: EdgeInsets.all(15.0),

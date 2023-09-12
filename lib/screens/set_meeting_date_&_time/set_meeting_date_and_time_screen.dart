@@ -124,80 +124,32 @@ class SetMeetingDateAndTimeScreenState  extends BasePageState<SetMeetingDateAndT
   Widget buildWidget(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: !isSearching ? Row(children: [
+          leadingWidth: 19,
+          titleSpacing: 30.w,
+
+          title:  Row(children: [
 
             InkWell(onTap: (){
               Navigator.pop(context);
-            },
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: SvgPicture.asset(AppImages.icPrev),
-              ),
-            ),
+            }, child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SvgPicture.asset(AppImages.icPrev,height: 14.h),
+            )),
 
             SizedBox(width: 10.w,),
-
-            Text('Set Meeting Date & Time',
-                style: styleMedium2.copyWith(
-                  color: white,
-                  fontWeight: FontWeight.w600,
-                )),
-
-          ],) : SizedBox(
-            height: 45.h,
-            child: TextField(
-              textAlign: TextAlign.start,
-              autofocus: isSearching ? true :false,
-              textAlignVertical: TextAlignVertical.center,
-              textInputAction: TextInputAction.search,
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(4.0),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 15),
-                  hintText: 'Search Anything',
-                  hintStyle: styleSmall4.copyWith(
-                    color: secondaryColor,
-                    fontWeight: FontWeight.w400,
-                  ),
-                  suffixIcon: InkWell(onTap : () {
-                    setState(() {
-                      isSearching = !isSearching;
-                    });
-                  },child: const Icon(Icons.cancel,color: secondaryColor,))
-              ),),
-          ),
-          automaticallyImplyLeading: !isSearching ? false : true,
-          backgroundColor: secondaryColor,
-          actions:   [
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-
-                !isSearching ?
-                InkWell(onTap: (){
-                  setState(() {
-                    isSearching = !isSearching;
-                  });
-                },
-                  child: SvgPicture.asset(
-                    AppImages.icSearch,
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Text('Set Meeting Date & Time',
+                  style: styleMedium2.copyWith(
                     color: white,
-                    height: 24.h,
-                    width: 24.w,
-                  ),
-                ) : SizedBox(),
-                !isSearching ? SizedBox(width: 16.w,) : SizedBox(),
-                !isSearching ? SvgPicture.asset(AppImages.icNotification,
-                  height: 24.h,
-                  width: 24.w,) : SizedBox(),
-                !isSearching ? SizedBox(width: 10.w,) : SizedBox(),
-              ],)
-          ],),
+                    fontWeight: FontWeight.w600,
+                  )),
+            ),
+
+          ],) ,
+          automaticallyImplyLeading: false,
+          backgroundColor: secondaryColor,
+         ),
         body:    SingleChildScrollView(
           child: Column(children: [
 

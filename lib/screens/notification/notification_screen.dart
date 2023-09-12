@@ -39,22 +39,25 @@ class _NotificationScreenState extends BasePageState<NotificationScreen,Notifica
         appBar: AppBar(
           leadingWidth: 19,
           titleSpacing: 30.w,
-          leading: InkWell(onTap: (){
-            Navigator.pop(context);
-          },
-            child: Padding(
-              padding:   const EdgeInsets.only(left: 10),
-              child: SvgPicture.asset(AppImages.icPrev),
-            ),
-          ),
+
           title: !isSearching ? Row(children: [
 
+            InkWell(onTap: (){
+              Navigator.pop(context);
+            }, child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SvgPicture.asset(AppImages.icPrev,height: 15.h),
+            )),
 
-            Text('Notifcation',
-                style: styleMedium2.copyWith(
-                  color: white,
-                  fontWeight: FontWeight.w600,
-                )),
+            SizedBox(width: 10.w,),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Text('Notifcation',
+                  style: styleMedium2.copyWith(
+                    color: white,
+                    fontWeight: FontWeight.w600,
+                  )),
+            ),
 
           ],) : SizedBox(
             height: 45.h,
@@ -82,7 +85,7 @@ class _NotificationScreenState extends BasePageState<NotificationScreen,Notifica
                   },child: const Icon(Icons.cancel,color: secondaryColor,))
               ),),
           ),
-          automaticallyImplyLeading: !isSearching ? true : false,
+          automaticallyImplyLeading: false,
           backgroundColor: secondaryColor,
           actions:   [
 

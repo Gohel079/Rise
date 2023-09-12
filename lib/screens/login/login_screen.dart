@@ -278,7 +278,7 @@ class _LoginScreenState   extends BasePageState<LoginScreen,LoginScreenBloc>{
 
   Widget submitButton() {
     return ButtonView(string('label_Login'),true , () {
-      Navigator.push(context, HomeScreen.route());
+      Navigator.pushReplacement(context,HomeScreen.route());
     });
   }
 

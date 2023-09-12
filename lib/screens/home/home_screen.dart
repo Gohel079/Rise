@@ -65,11 +65,29 @@ class _HomeScreenState extends BasePageState<HomeScreen,HomeScreenBloc> {
       items: _navBarsItems(),
       confineInSafeArea: true,
       backgroundColor: white,
+        // onWillPop: (p0) async {
+        //   await showDialog(
+        //     context: context,
+        //     useSafeArea: true,
+        //     builder: (final p0) => Container(
+        //       height: 50,
+        //       width: 50,
+        //       color: Colors.white,
+        //       child: ElevatedButton(
+        //         child: const Text("Close"),
+        //         onPressed: () {
+        //           Navigator.pop(p0);
+        //         },
+        //       ),
+        //     ),
+        //   );
+        //   return false;
+        // },
       handleAndroidBackButtonPress: true,
       resizeToAvoidBottomInset: true,
       stateManagement: true,
       hideNavigationBarWhenKeyboardShows: true,
-      popAllScreensOnTapOfSelectedTab: false,
+      // popAllScreensOnTapOfSelectedTab: false,
       popActionScreens: PopActionScreensType.all,
       decoration: const NavBarDecoration(border:
       Border(top: BorderSide(color: darkGrayTextColor,width: 1))),
@@ -85,9 +103,7 @@ class _HomeScreenState extends BasePageState<HomeScreen,HomeScreenBloc> {
       navBarStyle: NavBarStyle.style6,
         onItemSelected: (final index) {
           setState(() {
-            _controller?.index = index; // THIS IS CRITICAL!! Don't miss it!
-
-            if (index == 1) {}
+            _controller?.index = index;
           });
         }
     ),);
@@ -277,6 +293,45 @@ class _HomeScreenState extends BasePageState<HomeScreen,HomeScreenBloc> {
   @override
   HomeScreenBloc getBloc() {
     return bloc;
+  }
+
+
+  showAlertDialog(BuildContext context) {
+
+    // set up the button
+    Widget okButton = TextButton(
+      child: Text("OK",style: TextStyle(color: Colors.black),),
+      onPressed: () {
+        // return true;
+      },
+    );
+
+    Widget cancelButton = TextButton(
+      child: const Text("Cancel",style:
+      TextStyle(color: Colors.black)),
+      onPressed: () {
+        return;
+      },
+    );
+
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("CLOSE"),
+      content: Text("Are sure want exit?"),
+      actions: [
+        okButton,
+        cancelButton
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 
 }

@@ -38,22 +38,25 @@ class UpcomingAppointmentScreenState extends BasePageState<UpcomingAppointmentSc
         appBar: AppBar(
           leadingWidth: 19,
           titleSpacing: 30.w,
-          leading: InkWell(onTap: (){
-            Navigator.pop(context);
-          },
-            child: Padding(
-              padding:   const EdgeInsets.only(left: 10),
-              child: SvgPicture.asset(AppImages.icPrev),
-            ),
-          ),
+
           title: !isSearching ? Row(children: [
 
+            InkWell(onTap: (){
+              Navigator.pop(context);
+            }, child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SvgPicture.asset(AppImages.icPrev,height: 17.h),
+            )),
 
-            Text('Upcoming Appointment',
-                style: styleMedium2.copyWith(
-                  color: white,
-                  fontWeight: FontWeight.w600,
-                )),
+            SizedBox(width: 10.w,),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Text('Upcoming\nApointement',
+                  style: styleMedium2.copyWith(
+                    color: white,
+                    fontWeight: FontWeight.w600,
+                  )),
+            ),
 
           ],) : SizedBox(
             height: 45.h,
@@ -81,7 +84,7 @@ class UpcomingAppointmentScreenState extends BasePageState<UpcomingAppointmentSc
                   },child: const Icon(Icons.cancel,color: secondaryColor,))
               ),),
           ),
-          automaticallyImplyLeading: !isSearching ? true : false,
+          automaticallyImplyLeading: false,
           backgroundColor: secondaryColor,
           actions:   [
 

@@ -64,24 +64,27 @@ class StartMeetingScreenState  extends BasePageState<StartMeetingScreen,StartMee
   Widget buildWidget(BuildContext context) {
    return Scaffold(
      appBar: AppBar(
+       leadingWidth: 19,
+       titleSpacing: 30.w,
+
        title: !isSearching ? Row(children: [
 
          InkWell(onTap: (){
            Navigator.pop(context);
-         },
-           child: Padding(
-             padding: const EdgeInsets.all(10.0),
-             child: SvgPicture.asset(AppImages.icPrev),
-           ),
-         ),
+         }, child: Padding(
+           padding: const EdgeInsets.all(8.0),
+           child: SvgPicture.asset(AppImages.icPrev,height: 14.h),
+         )),
 
          SizedBox(width: 10.w,),
-
-         Text('Start Meeting',
-             style: styleMedium2.copyWith(
-               color: white,
-               fontWeight: FontWeight.w600,
-             )),
+         Padding(
+           padding: const EdgeInsets.symmetric(vertical: 10),
+           child: Text('Start Meeting',
+               style: styleMedium2.copyWith(
+                 color: white,
+                 fontWeight: FontWeight.w600,
+               )),
+         ),
 
        ],) : SizedBox(
          height: 45.h,
@@ -96,7 +99,7 @@ class StartMeetingScreenState  extends BasePageState<StartMeetingScreen,StartMee
                ),
                filled: true,
                fillColor: Colors.white,
-               contentPadding: const EdgeInsets.symmetric(horizontal: 15),
+               contentPadding: EdgeInsets.symmetric(horizontal: 15),
                hintText: 'Search Anything',
                hintStyle: styleSmall4.copyWith(
                  color: secondaryColor,
@@ -109,7 +112,7 @@ class StartMeetingScreenState  extends BasePageState<StartMeetingScreen,StartMee
                },child: const Icon(Icons.cancel,color: secondaryColor,))
            ),),
        ),
-       automaticallyImplyLeading: !isSearching ? false : true,
+       automaticallyImplyLeading: false,
        backgroundColor: secondaryColor,
        actions:   [
 
@@ -134,7 +137,7 @@ class StartMeetingScreenState  extends BasePageState<StartMeetingScreen,StartMee
              !isSearching ? SizedBox(width: 16.w,) : SizedBox(),
              !isSearching ? SvgPicture.asset(AppImages.icNotification,
                height: 24.h,
-               width: 24.w,) : const SizedBox(),
+               width: 24.w,) : SizedBox(),
              !isSearching ? SizedBox(width: 10.w,) : SizedBox(),
            ],)
        ],),
