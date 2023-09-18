@@ -5,11 +5,13 @@ import 'package:flutter_svg/svg.dart';
 import 'package:rise_and_grow/base/basePage.dart';
 import 'package:rise_and_grow/base/bloc/base_bloc.dart';
 import 'package:rise_and_grow/base/constants/app_colors.dart';
+import 'package:rise_and_grow/base/constants/app_widgets.dart';
 import 'package:rise_and_grow/base/src_components.dart';
 import 'package:rise_and_grow/screens/forgot_password/forgor_password_screen.dart';
 import 'package:rise_and_grow/screens/home/home_screen.dart';
 import 'package:rise_and_grow/screens/register/register_screen.dart';
 
+import '../../base/constants/app_constant.dart';
 import '../../base/constants/app_images.dart';
 import '../../base/constants/app_styles.dart';
 import '../../base/widgets/button_view.dart';
@@ -47,7 +49,7 @@ class _LoginScreenState   extends BasePageState<LoginScreen,LoginScreenBloc>{
   final FocusNode _nodeMobileNumber = FocusNode();
   final FocusNode _nodePassword = FocusNode();
 
-  AutovalidateMode autoValidateMode = AutovalidateMode.disabled;
+  AutovalidateMode autoValidateMode = AutovalidateMode.onUserInteraction;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   bool _passwordVisible = false;
@@ -79,11 +81,19 @@ class _LoginScreenState   extends BasePageState<LoginScreen,LoginScreenBloc>{
 
                SizedBox(height:40.h),
 
-               emailPhoneTextField(),
+               Form(
+                  key: _formKey,
+                   child: Column(
+                 children: [
+                   emailPhoneTextField(),
 
-               SizedBox(height:30.h),
+                   SizedBox(height:30.h),
 
-               passwordTextField()
+                   passwordTextField()
+                 ],
+               ))
+
+
 
                ,SizedBox(height:20.h),
 
@@ -108,28 +118,25 @@ class _LoginScreenState   extends BasePageState<LoginScreen,LoginScreenBloc>{
              ]),
            ),
          ),
-         Container(
+         Row(mainAxisAlignment: MainAxisAlignment.center,
+           children: [
 
-           child: Row(mainAxisAlignment: MainAxisAlignment.center,
-             children: [
+           Text(string('label_don_t_have_account'),
+             style: styleMedium1.copyWith(
+                 color: lightBlack,
+                fontWeight: FontWeight.w500),),
 
-             Text(string('label_don_t_have_account'),
-               style: styleMedium1.copyWith(
-                   color: lightBlack,
-                  fontWeight: FontWeight.w500),),
+              SizedBox(width: 1.w),
 
-                SizedBox(width: 1.w),
+           InkWell(onTap: () {
 
-             InkWell(onTap: () {
-
-               Navigator.push(context, RegisterScreen.route());
-             },
-               child: Text(string("label_register_now"),
-                   style:styleMedium1.copyWith(
-                  color: secondaryColor,
-                 fontWeight: FontWeight.w700)),
-             ),],)
-         )
+             Navigator.push(context, RegisterScreen.route());
+           },
+             child: Text(string("label_register_now"),
+                 style:styleMedium1.copyWith(
+                color: secondaryColor,
+               fontWeight: FontWeight.w700)),
+           ),],)
 
 
 
@@ -150,7 +157,7 @@ class _LoginScreenState   extends BasePageState<LoginScreen,LoginScreenBloc>{
       autocorrect: true,
       textCapitalization: TextCapitalization.none,
       style: styleMedium1.copyWith(color: black,fontWeight: FontWeight.w600),
-      validator: validateMobile,
+      validator: validateMobileAndEmail,
       controller: _mobileNumberController,
       focusNode: _nodeMobileNumber,
       autovalidateMode: autoValidateMode,
@@ -209,7 +216,7 @@ class _LoginScreenState   extends BasePageState<LoginScreen,LoginScreenBloc>{
       autocorrect: true,
       textCapitalization: TextCapitalization.none,
       style: styleMedium1.copyWith(color: black,fontWeight: FontWeight.w600),
-      // validator: validateMobile,
+      validator: validatePassword,
       obscureText: !_passwordVisible,
       controller: _passwordController,
       focusNode: _nodePassword,
@@ -278,7 +285,37 @@ class _LoginScreenState   extends BasePageState<LoginScreen,LoginScreenBloc>{
 
   Widget submitButton() {
     return ButtonView(string('label_Login'),true , () {
+
       Navigator.pushReplacement(context,HomeScreen.route());
+
+      var state = _formKey.currentState!;
+      if(state.validate()){
+        hideKeyboard(context);
+
+       String email =  _mobileNumberController.text.toString();
+       String password = _passwordController.text.toString();
+
+       Map requestData = {
+         "email": email,
+         "password":password
+       };
+
+
+        getBloc().doVerifyUser(requestData, (response){
+
+         String status = response.responseType ?? success;
+
+         if(status.toLowerCase() == success){
+         }
+           else if(status.toLowerCase() == failed){
+           showMessageBar('Failed :  ${response.data ?? ""}');
+         }
+         else {
+           showMessageBar('ERROR :${response.message ?? ""}');
+         }
+
+       },);
+      }
     });
   }
 

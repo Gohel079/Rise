@@ -12,7 +12,7 @@ class ProgressView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CircularProgressIndicator(
-      color: color ?? (primaryColor),
+      color: color ?? (secondaryColor),
     );
   }
 }

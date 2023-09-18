@@ -1,11 +1,21 @@
+
+import 'dart:io';
+import 'package:dio/dio.dart';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:rise_and_grow/base/basePage.dart';
 import 'package:rise_and_grow/base/bloc/base_bloc.dart';
+import 'package:rise_and_grow/base/constants/app_constant.dart';
 import 'package:rise_and_grow/base/src_components.dart';
+import 'package:rise_and_grow/base/src_constants.dart';
+import 'package:rise_and_grow/remote/model/get_officelist_response_model.dart';
 import 'package:rise_and_grow/screens/login/login_screen.dart';
 import 'package:rise_and_grow/screens/register/register_screen_bloc.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../../base/constants/app_colors.dart';
 import '../../base/constants/app_images.dart';
@@ -36,46 +46,35 @@ class _RegisterScreenState
     extends BasePageState<RegisterScreen, RegisterScreenBloc> {
   RegisterScreenBloc bloc = RegisterScreenBloc();
 
-  String companyNamedropdown = 'Company Name';
-  String departMentdropdown = 'Department';
-  String designationdropdown = 'Designation';
-  String officeAddressdropdown = 'Office Address';
+  String companyNameDropdown = 'Select Company Name';
+  String departMentDropdown = 'Select Department';
+  String designationDropdown = 'Select Designation';
+  String officeAddressDropdown = 'Select Office Address';
 
   // List of items in our dropdown menu
-  var compantNameList = [
-    'Company Name',
-    'Item 2',
-    'Item 3',
-    'Item 4',
-    'Item 5',
-  ];
+  BehaviorSubject<List<dynamic>>? companyNameList;
+  BehaviorSubject<List<dynamic>>? departmentList;
+  BehaviorSubject<List<dynamic>>? designationList;
+  BehaviorSubject<List<dynamic>>? officeList;
 
-  var dapartmentList = [
-    'Department',
-    'Value 2',
-    'Value 3',
-    'Value 4',
-    'Value 5',
-  ];
-  var designationList = [
-    'Designation',
-    'HR 2',
-    'QA',
-    'BDE',
-    'Developer',
-  ];
-  var officeAddressList = [
+
+  /*var officeAddressList = [
     'Office Address',
     'SURAT',
     'AHD',
     'MUMBAI',
     'PUNE',
-  ];
+  ];*/
 
   bool _passwordVisible = false;
   bool _confirmPasswordVisible = false;
 
-  bool agree = false;
+  bool agree = true;
+
+   BehaviorSubject<String>? companyPDFFileText;
+   BehaviorSubject<String>? aadhaarCardPDFText;
+   BehaviorSubject<String>? photoOrCameraFile;
+   ImagePicker? imagePicker  = ImagePicker();
 
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _secondNameController = TextEditingController();
@@ -93,7 +92,7 @@ class _RegisterScreenState
   final FocusNode _nodeFirstName = FocusNode();
   final FocusNode _nodeSecondName = FocusNode();
   final FocusNode _nodeEmployeeCode = FocusNode();
-  final FocusNode _nodeAadharNumber = FocusNode();
+  final FocusNode _nodeAadhaarNumber = FocusNode();
   final FocusNode _nodeDesignation = FocusNode();
   final FocusNode _nodeEmailAddress = FocusNode();
   final FocusNode _nodeDateOfBirth = FocusNode();
@@ -102,8 +101,10 @@ class _RegisterScreenState
   final FocusNode _nodePassword = FocusNode();
   final FocusNode _nodeConfirmPassword = FocusNode();
 
-  AutovalidateMode autoValidateMode = AutovalidateMode.disabled;
+  AutovalidateMode autoValidateMode = AutovalidateMode.onUserInteraction;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+
 
   @override
   Widget buildWidget(BuildContext context) {
@@ -143,86 +144,95 @@ class _RegisterScreenState
           ],
         ),
 
-        SizedBox(height: 30.h,),
-
-        firstNameTextField(),
-
-        SizedBox(height: 20.h,),
-
-        secondNameTextField(),
-
-        SizedBox(height: 20.h,),
-
-        employeeCodeTextField(),
-
-        SizedBox(height: 20.h,),
-
-        contactNumberTextField(),
-
-        SizedBox(height: 20.h,),
-
-        emailAddressTextField(),
-
-        SizedBox(height: 20.h,),
-
-        dateOfBirthField(),
-        // designationTextField(),
-
-        SizedBox(height: 20.h,),
-
-        anniversaryDateField(),
-
-        SizedBox(height: 20.h,),
-
-        Container(width: double.infinity,decoration :
-        BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
-            border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
-            child: companyNameDropDown()),
-
-        SizedBox(height: 20.h,),
-
-        Container(width: double.infinity,decoration :
-        BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
-            border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
-            child: departMentDropDown()),
-
-        SizedBox(height: 20.h,),
-
-        Container(width: double.infinity,decoration :
-        BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
-            border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
-            child: designationDropDown()),
-
-        SizedBox(height: 20.h,),
+        Form(key: _formKey,
+          child: Column(children: [
 
 
-        Container(width: double.infinity,decoration :
-        BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
-            border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
-            child: officeAddressDropDown()),
+          SizedBox(height: 30.h,),
+
+          firstNameTextField(),
+
+          SizedBox(height: 20.h,),
+
+          secondNameTextField(),
+
+          SizedBox(height: 20.h,),
+
+          employeeCodeTextField(),
+
+          SizedBox(height: 20.h,),
+
+          contactNumberTextField(),
+
+          SizedBox(height: 20.h,),
+
+          emailAddressTextField(),
+
+          SizedBox(height: 20.h,),
+
+          dateOfBirthField(),
+          // designationTextField(),
+
+          SizedBox(height: 20.h,),
+
+          anniversaryDateField(),
+
+          SizedBox(height: 20.h,),
+
+          Container(width: double.infinity,decoration :
+          BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
+              border: Border.all(color: borderColor, ),
+              color: darkTextFieldFillColor ),
+              child: companyNameDropDown()),
+
+          SizedBox(height: 20.h,),
+
+          Container(width: double.infinity,decoration :
+          BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
+              border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
+              child: departMentDropDown()),
+
+          SizedBox(height: 20.h,),
+
+          Container(width: double.infinity,decoration :
+          BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
+              border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
+              child: designationDropDown()),
+
+          SizedBox(height: 20.h,),
 
 
-        SizedBox(height:20.h),
+          Container(width: double.infinity,decoration :
+          BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
+              border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
+              child: officeAddressDropDown()),
 
-        aadhaarNumberTextField(),
 
-        SizedBox(height:20.h),
+          SizedBox(height:20.h),
 
-        passwordTextField(),
+          aadhaarNumberTextField(),
+
+          SizedBox(height:20.h),
+
+          passwordTextField(),
+
+          SizedBox(height:30.h),
+
+          confirmPasswordTextField(),
+
+          SizedBox(height:40.h),
+
+          uploadDocument(),
+
+          SizedBox(height:20.h),
+
+          termAndcondition(),
+
+          ],),
+        ),
 
         SizedBox(height:30.h),
 
-        confirmPasswordTextField(),
-
-        SizedBox(height:40.h),
-
-        uploadDocument(),
-
-        SizedBox(height:20.h),
-
-        termAndcondition(),
-
-        SizedBox(height:30.h),
         submitButton(),
 
 
@@ -256,6 +266,27 @@ class _RegisterScreenState
     return bloc;
   }
 
+  @override
+  void initState() {
+    super.initState();
+    companyPDFFileText = BehaviorSubject<String>.seeded("");
+    aadhaarCardPDFText = BehaviorSubject<String>.seeded("");
+    photoOrCameraFile = BehaviorSubject<String>.seeded("");
+
+    companyNameList = BehaviorSubject<List<dynamic>>.seeded([]);
+    departmentList = BehaviorSubject<List<dynamic>>.seeded([]);
+    designationList = BehaviorSubject<List<dynamic>>.seeded([]);
+    officeList = BehaviorSubject<List<dynamic>>.seeded([]);
+
+
+
+
+
+    callCompanyListAPI();
+    callDepartmentAPI();
+    callDesignationAPI();
+  }
+
 
 
   Widget firstNameTextField(){
@@ -270,9 +301,10 @@ class _RegisterScreenState
       focusNode: _nodeFirstName,
       autovalidateMode: autoValidateMode,
       keyboardType: TextInputType.text,
+      validator:  validateFirstName,
       textInputAction: TextInputAction.next,
       decoration: const InputDecoration(
-          labelText: "First Name",
+          labelText: "First Name *",
           labelStyle: TextStyle(
             fontFamily: fontFamilyMontserrat,
             color: textGrayColor,
@@ -308,7 +340,7 @@ class _RegisterScreenState
           ),
           errorMaxLines: 2,
           // isDense: true,
-          hintText: "First Name",
+          hintText: "First Name *",
           floatingLabelBehavior: FloatingLabelBehavior.auto,
           errorStyle: TextStyle(
             fontFamily: fontFamilyMontserrat,
@@ -330,6 +362,7 @@ class _RegisterScreenState
       autovalidateMode: autoValidateMode,
       keyboardType: TextInputType.text,
       textInputAction: TextInputAction.next,
+      validator: validateLastName,
       decoration: const InputDecoration(
         labelText: "Last Name",
           labelStyle: TextStyle(
@@ -388,6 +421,7 @@ class _RegisterScreenState
       autovalidateMode: autoValidateMode,
       keyboardType: TextInputType.text,
       textInputAction: TextInputAction.next,
+      validator: validateEmployeeCode,
       decoration: const InputDecoration(
           labelText: "Employee Code",
           labelStyle: TextStyle(
@@ -442,12 +476,13 @@ class _RegisterScreenState
       textCapitalization: TextCapitalization.none,
       style: styleMedium1.copyWith(color: black,fontWeight: FontWeight.w600),
       controller: _aadharNumberController,
-      focusNode: _nodeAadharNumber,
+      focusNode: _nodeAadhaarNumber,
       autovalidateMode: autoValidateMode,
-      keyboardType: TextInputType.text,
+      keyboardType: TextInputType.number,
+      validator: validateAadhaarNumber,
       textInputAction: TextInputAction.next,
       decoration: const InputDecoration(
-          labelText: "Aadhar Number",
+          labelText: "Aadhaar Number",
           labelStyle: TextStyle(
             fontFamily: fontFamilyMontserrat,
             color: textGrayColor,
@@ -482,7 +517,7 @@ class _RegisterScreenState
           ),
           errorMaxLines: 2,
           isDense: true,
-          hintText: "Aadhar Number",
+          hintText: "Aadhaar Number",
           floatingLabelBehavior: FloatingLabelBehavior.auto,
           errorStyle: TextStyle(
             fontFamily: fontFamilyMontserrat,
@@ -560,8 +595,9 @@ class _RegisterScreenState
       controller: _emailAddressController,
       focusNode: _nodeEmailAddress,
       autovalidateMode: autoValidateMode,
-      keyboardType: TextInputType.text,
+      keyboardType: TextInputType.emailAddress,
       textInputAction: TextInputAction.next,
+      validator: validateEmail,
       decoration: const InputDecoration(
           labelText: "Email Address",
           labelStyle: TextStyle(
@@ -617,10 +653,14 @@ class _RegisterScreenState
       style: styleMedium1.copyWith(color: black,fontWeight: FontWeight.w600),
       controller: _contactNumberController,
       focusNode: _nodeContactNumber,
+
       autovalidateMode: autoValidateMode,
-      keyboardType: TextInputType.text,
+      keyboardType: TextInputType.number,
+      maxLength: 10,
       textInputAction: TextInputAction.next,
+      validator: validateMobile,
       decoration: const InputDecoration(
+        counterText: "",
           labelText: "Contact Number",
           labelStyle: TextStyle(
             fontFamily: fontFamilyMontserrat,
@@ -669,26 +709,40 @@ class _RegisterScreenState
   Widget companyNameDropDown(){
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 7),
-      child: DropdownButton(
-        value: companyNamedropdown,
-        isExpanded: true,
-        underline: const SizedBox(),
-        icon: const Icon(Icons.keyboard_arrow_down,color: black,),
-        items: compantNameList.map((String items) {
-          return DropdownMenuItem(
-            value: items,
-            child: Text(items,
-              style: styleMedium1.copyWith(color: black,
-                  fontWeight: FontWeight.w600),),
-          );
-        }).toList(),
-        // After selecting the desired option,it will
-        // change button value to selected value
-        onChanged: (String? newValue) {
-          setState(() {
-            companyNamedropdown = newValue!;
-          });
-        },
+      child: StreamBuilder<List<dynamic>>(
+        stream: companyNameList?.stream,
+        builder: (context, snapshot) {
+          if(snapshot.hasData && snapshot.data!.length > 1){
+            return DropdownButtonHideUnderline(
+              child: DropdownButtonFormField(
+                decoration: const InputDecoration(border: InputBorder.none),
+                value: snapshot.data?[0],
+                autovalidateMode: autoValidateMode,
+                isExpanded: true,
+                validator: validateCompanyName,
+                icon: const Icon(Icons.keyboard_arrow_down,color: black,),
+                items: snapshot.data?.map((dynamic items) {
+                  return DropdownMenuItem(
+                    value: items.toString(),
+                    child: Text(items,
+                      style: styleMedium1.copyWith(color: black,
+                          fontWeight: FontWeight.w600),),
+                  );
+                }).toList(),
+                onChanged: (dynamic newValue) {
+                  setState(() {
+                    companyNameDropdown = newValue!;
+                    officeAddressDropdown = "Select Office Address";
+                    callOfficeListAPI(int.parse(findCompanyIdByName()));
+                    print(companyNameDropdown);
+                  });
+                },
+              ),
+            );
+          }
+          return  SizedBox(height: 45.h,);
+
+        }
       ),
     );
   }
@@ -696,26 +750,52 @@ class _RegisterScreenState
   Widget officeAddressDropDown(){
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 7),
-      child: DropdownButton(
-        value: officeAddressdropdown,
-        isExpanded: true,
-        underline: const SizedBox(),
-        icon: const Icon(Icons.keyboard_arrow_down,color: black,),
-        items: officeAddressList.map((String items) {
-          return DropdownMenuItem(
-            value: items,
-            child: Text(items,
-              style: styleMedium1.copyWith(color: black,
-                  fontWeight: FontWeight.w600),),
-          );
-        }).toList(),
-        // After selecting the desired option,it will
-        // change button value to selected value
-        onChanged: (String? newValue) {
-          setState(() {
-            officeAddressdropdown = newValue!;
-          });
-        },
+      child: StreamBuilder<List<dynamic>>(
+        stream: officeList?.stream,
+        builder: (context, snapshot) {
+          if(snapshot.hasData && snapshot.data!.length > 1){
+            print("SNAP ${snapshot.data?.length}");
+            snapshot.data?.forEach((element) { print(element); });
+            return DropdownButtonHideUnderline(
+              child: DropdownButtonFormField(
+                value: officeAddressDropdown,
+                isExpanded: true,
+                // autovalidateMode: autoValidateMode,
+                decoration: const InputDecoration(border: InputBorder.none),
+                validator: validateOfficeAddress,
+                icon: const Icon(Icons.keyboard_arrow_down,color: black,),
+                items: snapshot.data?.map((dynamic items) {
+                  return DropdownMenuItem(
+                    value: items ?? "",
+                    child: Text(items ?? "",
+                      style: styleMedium1.copyWith(color: black,
+                          fontWeight: FontWeight.w600),),
+                  );
+                }).toList(),
+                onChanged: (dynamic newValue) {
+                  setState(() {
+                    officeAddressDropdown = newValue!;
+
+                  });
+                },
+              ),
+            );
+          }
+          else {
+            return InkWell(onTap: (){
+              showMessageBar("Please Select First Company Name");
+            },
+              child: Container(height: 40.h,
+                child: DropdownMenuItem(
+                    value: "Select Office Address",
+                    child: Text("Select Office Address",
+                      style: styleMedium1.copyWith(color: black,
+                          fontWeight: FontWeight.w600),),
+                  ),),
+            );
+          }
+
+        }
       ),
     );
   }
@@ -723,24 +803,38 @@ class _RegisterScreenState
   Widget departMentDropDown(){
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 7),
-      child: DropdownButton(
-        value: departMentdropdown,
-        isExpanded: true,
-        underline: const SizedBox(),
-        icon: const Icon(Icons.keyboard_arrow_down,color: black,),
-        items: dapartmentList.map((String items) {
-          return DropdownMenuItem(
-            value: items,
-            child: Text(items,
-              style: styleMedium1.copyWith(color: black,
-                  fontWeight: FontWeight.w600),),
-          );
-        }).toList(),
-        onChanged: (String? newValue) {
-          setState(() {
-            departMentdropdown = newValue!;
-          });
-        },
+      child: StreamBuilder<List<dynamic>>(
+        stream: departmentList?.stream,
+        builder: (context, snapshot) {
+          if(snapshot.hasData && snapshot.data!.length > 1) {
+            return DropdownButtonHideUnderline(
+              child: DropdownButtonFormField(
+                value: snapshot.data?[0],
+                decoration: const InputDecoration(border: InputBorder.none),
+                isExpanded: true,
+                autovalidateMode: autoValidateMode,
+                validator: validateDepartment,
+                icon: const Icon(Icons.keyboard_arrow_down,color: black,),
+                items: snapshot.data?.map((dynamic items) {
+                  return DropdownMenuItem(
+                    value: items,
+                    child: Text(items,
+                      style: styleMedium1.copyWith(color: black,
+                          fontWeight: FontWeight.w600),),
+                  );
+                }).toList(),
+                onChanged: (dynamic? newValue) {
+                  setState(() {
+                    departMentDropdown = newValue!;
+                  });
+                },
+              ),
+            );
+          }else {
+            return const SizedBox();
+          }
+
+        }
       ),
     );
   }
@@ -748,24 +842,38 @@ class _RegisterScreenState
   Widget designationDropDown(){
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 7),
-      child: DropdownButton(
-        value: designationdropdown,
-        isExpanded: true,
-        underline: const SizedBox(),
-        icon: const Icon(Icons.keyboard_arrow_down,color: black,),
-        items: designationList.map((String items) {
-          return DropdownMenuItem(
-            value: items,
-            child: Text(items,
-              style: styleMedium1.copyWith(color: black,
-                  fontWeight: FontWeight.w600),),
-          );
-        }).toList(),
-        onChanged: (String? newValue) {
-          setState(() {
-            designationdropdown = newValue!;
-          });
-        },
+      child: StreamBuilder<List<dynamic>>(
+        stream: designationList?.stream,
+        builder: (context, snapshot) {
+          if(snapshot.hasData && snapshot.data!.length > 1){
+            return DropdownButtonHideUnderline(
+              child: DropdownButtonFormField(
+                value: snapshot.data?[0],
+                isExpanded: true,
+                decoration: const InputDecoration(border: InputBorder.none),
+                validator: validateDesignation,
+                autovalidateMode: autoValidateMode,
+                icon: const Icon(Icons.keyboard_arrow_down,color: black,),
+                items: snapshot.data?.map((dynamic items) {
+                  return DropdownMenuItem(
+                    value: items,
+                    child: Text(items,
+                      style: styleMedium1.copyWith(color: black,
+                          fontWeight: FontWeight.w600),),
+                  );
+                }).toList(),
+                onChanged: (dynamic newValue) {
+                  setState(() {
+                    designationDropdown = newValue!;
+                  });
+                },
+              ),
+            );
+          }else {
+            return const SizedBox();
+          }
+
+        }
       ),
     );
   }
@@ -777,7 +885,7 @@ class _RegisterScreenState
       autocorrect: true,
       textCapitalization: TextCapitalization.none,
       style: styleMedium1.copyWith(color: black,fontWeight: FontWeight.w600),
-      // validator: validateMobile,
+      validator: validatePassword,
       obscureText: !_passwordVisible,
       controller: _passwordController,
       focusNode: _nodePassword,
@@ -852,7 +960,7 @@ class _RegisterScreenState
       autocorrect: true,
       textCapitalization: TextCapitalization.none,
       style: styleMedium1.copyWith(color: black,fontWeight: FontWeight.w600),
-      // validator: validateMobile,
+      validator: validatePassword,
       obscureText: !_confirmPasswordVisible,
       controller: _confirmPasswordController,
       focusNode: _nodeConfirmPassword,
@@ -932,7 +1040,7 @@ class _RegisterScreenState
       focusNode: _nodeDateOfBirth,
       autovalidateMode: autoValidateMode,
       keyboardType: TextInputType.text,
-
+      validator: validateDOB,
       onTap: () async {
 
         DateTime? pickedDate = await showDatePicker(
@@ -963,7 +1071,7 @@ class _RegisterScreenState
           print(
               pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
           String formattedDate =
-          DateFormat('yyyy-MM-dd').format(pickedDate);
+          DateFormat('dd-MM-yyyy').format(pickedDate);
           print(
               formattedDate); //formatted date output using intl package =>  2021-03-16
           setState(() {
@@ -1020,7 +1128,7 @@ class _RegisterScreenState
           isDense: true,
           hintText: "Date of Birth",
           floatingLabelBehavior: FloatingLabelBehavior.auto,
-          errorStyle: TextStyle(
+          errorStyle: const TextStyle(
             fontFamily: fontFamilyMontserrat,
             color: Colors.red,
             fontSize: 12,
@@ -1040,7 +1148,7 @@ class _RegisterScreenState
       focusNode: _nodeAnniversary,
       autovalidateMode: autoValidateMode,
       keyboardType: TextInputType.text,
-
+      validator: validateAnniversaryDate,
       onTap: () async {
 
         DateTime? pickedDate = await showDatePicker(
@@ -1071,7 +1179,7 @@ class _RegisterScreenState
           print(
               pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
           String formattedDate =
-          DateFormat('yyyy-MM-dd').format(pickedDate);
+          DateFormat('dd-MM-yyyy').format(pickedDate);
           print(
               formattedDate); //formatted date output using intl package =>  2021-03-16
           setState(() {
@@ -1139,74 +1247,59 @@ class _RegisterScreenState
   Widget uploadDocument(){
     return Row(children: [
 
-      Expanded(
-        child: Container(height: 90.h,decoration :
-        BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
-            border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-
-                SvgPicture.asset(AppImages.icScan),
-
-                SizedBox(height: 7.h,),
-
-                Text('Company\nEmpolye ID card\nPhoto(PDF)',
-                    textAlign: TextAlign.center,
-                    style: styleSmall3.copyWith(
-                      color: textGrayColor,
-                      fontWeight: FontWeight.w500,
-                    )),
-              ],)),
+      StreamBuilder<String?>(
+        stream: companyPDFFileText?.stream,
+        builder: (context, snapshot) {
+          return Expanded(
+            child: InkWell(onTap: (){
+              _pickCompanyPDFFile();
+            },
+              child: Container(height: 90.h,decoration :
+              BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
+                  border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
+                  child: selectCompanyPdfAfterWidget(snapshot.data)
+               ),
+            ),
+          );
+        }
       ),
 
       SizedBox(width: 10.w,),
 
-      Expanded(
-        child: Container(height: 90.h,decoration :
-        BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
-            border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-
-                SvgPicture.asset(AppImages.icCamera),
-
-                SizedBox(height: 7.h,),
-
-                Text("Aadharcard\n(Document)\n(PDF)",
-                    textAlign: TextAlign.center,
-                    style: styleSmall3.copyWith(
-                      color: textGrayColor,
-                      fontWeight: FontWeight.w500,
-                    )),
-              ],)),
+      StreamBuilder<String?>(
+        stream: aadhaarCardPDFText?.stream,
+        builder: (context, snapshot) {
+          return Expanded(
+            child: InkWell(onTap: (){
+              _pickAadhaarCardPDFFile();
+            },
+              child: Container(height: 90.h,decoration :
+              BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
+                  border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
+                  child: selectedAadhaarCardAfterWidget(snapshot.data)
+              ),
+            ),
+          );
+        }
       ),
 
       SizedBox(width: 10.w,),
 
-      Expanded(
-        child: Container(height: 90.h,decoration :
-        BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
-            border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-
-                SvgPicture.asset(AppImages.icCamera),
-
-                SizedBox(height: 7.h,),
-
-                Text("Add Photo\n(upload and Live photo)",
-                    textAlign: TextAlign.center,
-                    style: styleSmall3.copyWith(
-                      color: textGrayColor,
-                      fontWeight: FontWeight.w500,
-                    )),
-              ],)),
+      StreamBuilder<String?>(
+        stream: photoOrCameraFile?.stream,
+        builder: (context, snapshot) {
+          return Expanded(
+            child: InkWell(onTap: (){
+              showOptions();
+            },
+              child: Container(height: 90.h,decoration :
+              BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
+                  border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
+                  child: selectedPhotoWidget(snapshot.data)
+              ),
+            ),
+          );
+        }
       ),
 
 
@@ -1231,7 +1324,7 @@ class _RegisterScreenState
             value: agree,
             onChanged: (value) {
               setState(() {
-                agree = value ?? false;
+                agree = value ?? true;
               });
             },
           ),
@@ -1249,11 +1342,100 @@ class _RegisterScreenState
   }
 
   Widget submitButton() {
-    return ButtonView(string('label_register'),false, () {
-      showThankYouDialog(context);
+    return ButtonView(string('label_register'),false, () async {
+
+      // showMessageBar('COMPANY PDF FILE ${companyPDFFileText?.value}');
+
+
+      print('${companyPDFFileText?.value}');
+      var state = _formKey.currentState!;
+      if(state.validate()){
+
+        hideKeyboard(context);
+
+        String firstName =  _firstNameController.text.toString();
+        String lastName =  _secondNameController.text.toString();
+        String employeeCode =  _employeeCodeController.text.toString();
+        String contactNumber =  _contactNumberController.text.toString();
+        String emailAddress =  _emailAddressController.text.toString();
+        String dateOfBirth =  _dateOfBirthController.text.toString();
+        String anniversaryDate =  _anniversaryDateController.text.toString();
+        String companyName =  companyNameDropdown.toString();
+        String departmentName =  departMentDropdown.toString();
+        String designation =  designationDropdown.toString();
+        String officeAddress =  officeAddressDropdown.toString();
+        String aadhaarNumber =  _aadharNumberController.toString();
+        String password =  _passwordController.toString();
+        String confirmPassword =  _confirmPasswordController.toString();
+
+
+        FormData formData = FormData.fromMap({
+          "firstName" : firstName,
+          "lastName" : lastName,
+          "empCode" : employeeCode,
+          "departmentID" : findDepartIdByName(),
+          "designationID" : findDesignationIdByName(),
+          "email" : emailAddress,
+          "phone" : contactNumber,
+          "companyID" : findCompanyIdByName(),
+          "officeID" : findOfficeAddressByName(),
+          "password" : password,
+          "roleID" : -2,
+          "empAadharCard" : await MultipartFile.fromFile(aadhaarCardPDFText?.value ?? "",
+            filename: aadhaarCardPDFText?.value.split('/').last,),
+          "birthData" : dateOfBirth,
+          "empIDCard" : await MultipartFile.fromFile(companyPDFFileText?.value ?? "",
+            filename: companyPDFFileText?.value.split('/').last,),
+          "empProfileIMg" : await MultipartFile.fromFile(photoOrCameraFile?.value ?? "",
+            filename: photoOrCameraFile?.value.split('/').last,),
+          "joiningDate" : anniversaryDate,
+
+        });
+
+        print("FORM DATA  ${formData.fields.toString()}");
+
+        Map requestData = {
+          "firstName" : firstName,
+          "lastName" : lastName,
+          "empCode" : employeeCode,
+          "departmentID" : findDepartIdByName(),
+          "designationID" : findDesignationIdByName(),
+          "email" : emailAddress,
+          "phone" : contactNumber,
+          "companyID" : findCompanyIdByName(),
+          "officeID" : 10,
+          "password" : password,
+          "roleID" : -2,
+          "empAadharCard" : "",
+          "birthData" : dateOfBirth,
+          "empIDCard" : formData,
+          "empProfileIMg" : "",
+          "joiningDate" : anniversaryDate
+        };
+
+
+        getBloc().doRegister(formData, (response) {
+          String status = response.responseType ?? success;
+
+          if(status.toLowerCase() == success){
+            showThankYouDialog(context);
+          }
+          else if(status.toLowerCase() == failed) {
+            showMessageBar('Failed :  ${response.data ?? ""}');
+          }
+          else {
+            showMessageBar('ERROR :${response.message ?? ""}');
+          }
+
+        },);
+
+
+
+      }else if(!agree){
+        showMessageBar("Please Agree Terms And Condition");
+      }
     });
   }
-
 
 
   void showThankYouDialog(BuildContext context) {
@@ -1322,6 +1504,368 @@ class _RegisterScreenState
         );
       },
     );
+  }
+
+
+  _pickCompanyPDFFile() async {
+    FilePickerResult? filePickerResult = await FilePicker.platform.pickFiles();
+
+    if(filePickerResult != null &&
+        filePickerResult.files.single.path != null){
+
+
+      File file = File(filePickerResult.files.single.path!);
+      companyPDFFileText?.add(file.path);
+    }
+
+  }
+
+  _pickAadhaarCardPDFFile() async {
+    FilePickerResult? filePickerResult = await FilePicker.platform.pickFiles();
+
+    if(filePickerResult != null &&
+        filePickerResult.files.single.path != null){
+
+
+      File file = File(filePickerResult.files.single.path!);
+      aadhaarCardPDFText?.add(file.path);
+    }
+
+  }
+
+
+  selectCompanyPdfAfterWidget(String? data){
+    if(data?.length != null && data!.length > 1){
+      return  Center(child: Image.asset(AppImages.imgPDf,
+        height: 50,width: 50,));
+    }else{
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+
+          SvgPicture.asset(AppImages.icScan),
+
+          SizedBox(height: 7.h,),
+
+          Text('Company\nEmpolye ID card\nPhoto(PDF)',
+              textAlign: TextAlign.center,
+              style: styleSmall3.copyWith(
+                color: textGrayColor,
+                fontWeight: FontWeight.w500,
+              )),
+        ],);
+    }
+  }
+
+  selectedAadhaarCardAfterWidget(String? aadhaarCardData){
+    if(aadhaarCardData != null && aadhaarCardData.length  > 1)
+    {
+      return  Center(child: Image.asset(AppImages.imgPDf,
+        height: 50,width: 50,));
+    }else{
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+
+          SvgPicture.asset(AppImages.icCamera),
+
+          SizedBox(height: 7.h,),
+
+          Text("Aadhaarcard\n(Document)\n(PDF)",
+              textAlign: TextAlign.center,
+              style: styleSmall3.copyWith(
+                color: textGrayColor,
+                fontWeight: FontWeight.w500,
+              )),
+        ],);
+    }
+
+  }
+
+  _pickImage() async{
+    XFile? image = await imagePicker?.pickImage(source: ImageSource.gallery);
+
+    print(image);
+    if(image != null){
+      photoOrCameraFile?.add(image.path);
+    }
+  }
+
+  _pickCamera() async{
+    XFile? image = await imagePicker?.pickImage(source:
+    ImageSource.camera);
+
+    if(image != null){
+      photoOrCameraFile?.add(image.path);
+    }
+  }
+
+
+  selectedPhotoWidget(String? data){
+
+    if(data != null && data.length > 1)
+    {
+      return Center(child: Image.file(File(data.toString()),
+        height: 60.h,
+        width: 70.w,),);
+    }
+    else {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+
+          SvgPicture.asset(AppImages.icCamera),
+
+          SizedBox(height: 7.h,),
+
+          Text("Add Photo\n(upload and Live photo)",
+              textAlign: TextAlign.center,
+              style: styleSmall3.copyWith(
+                color: textGrayColor,
+                fontWeight: FontWeight.w500,
+              )),
+        ],);
+    }
+
+  }
+
+  Future showOptions() async {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => CupertinoActionSheet(
+        actions: [
+          CupertinoActionSheetAction(
+            child:  Text('Photo Gallery',
+                style: styleLarge1.copyWith(
+            color: secondaryColor,
+        fontWeight: FontWeight.w600,
+      )),
+            onPressed: () {
+              // close the options modal
+              Navigator.of(context).pop();
+              // get image from gallery
+              _pickImage();
+            },
+          ),
+          CupertinoActionSheetAction(
+            child:  Text('Camera', style: styleLarge1.copyWith(
+              color: secondaryColor,
+              fontWeight: FontWeight.w600,
+            )),
+            onPressed: () {
+
+              Navigator.of(context).pop();
+
+              _pickCamera();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void callCompanyListAPI() {
+
+    getBloc().getCompanyList((response) {
+      String status = response.responseType ?? success;
+
+      if(status.toLowerCase() == success){
+        getBloc().companyList.add(response.responseData);
+
+        List<dynamic> tempList = [];
+        tempList.insert(0, "Select Company Name");
+        getBloc().companyList.value.data?.forEach((element) {
+          tempList.add(element.name);
+          print('DARA ${element.name}');
+        });
+
+        companyNameList?.add(tempList);
+        // print("List LENGTH ->> ${companyNameList?.value.length}");
+
+      }
+      else if(status.toLowerCase() == failed){
+        showMessageBar('Failed :  ${response.message ?? ""}');
+      }
+      else {
+        showMessageBar('ERROR :${response.message ?? ""}');
+      }
+    },);
+
+  }
+
+  void callOfficeListAPI(int? companyCode){
+
+
+
+    Map requestDate = {
+      "companyID" : companyCode
+    };
+
+    getBloc().getOfficeList(companyCode.toString(),requestDate, (response) {
+
+      String status = response.responseType ?? success;
+
+      if(status.toLowerCase() ==  success){
+
+
+        getBloc().officeAddressList.add(response.responseData);
+
+
+        List<dynamic>? officeTempList = [];
+        officeList?.add([]);
+        if(getBloc().officeAddressList.value.data?.isNotEmpty ?? false){
+
+
+          if(!officeTempList.contains("Select Office Address")){
+            officeTempList.insert(0, "Select Office Address");
+          }
+        }
+
+
+        getBloc().officeAddressList.value.data?.forEach((element) {
+          officeTempList.add(element.address);
+          print('Office Address Address : ${element.address}');
+        });
+        officeList?.add(officeTempList ?? []);
+        print("List LENGTH ->> ${officeList?.value.length}");
+
+
+
+
+        ////
+        officeTempList.forEach((element) {
+          print("FINAL TEMP LIST ${element}");
+        });
+        print("FINAL LIST FOR DROP LENGTH- ()()()()() ${officeList?.value.length}");
+        officeList?.value.forEach((element) {
+          print("FINAL LIST FOR DROP ${element}");
+        });
+      }
+      else if(status.toLowerCase() == failed){
+        showMessageBar('Failed :  ${response.message ?? ""}');
+      }
+      else {
+        showMessageBar('ERROR :${response.message ?? ""}');
+      }
+
+    },);
+
+  }
+
+  @override
+  void dispose() {
+    companyNameList?.close();
+    designationList?.close();
+    departmentList?.close();
+    officeList?.close();
+    super.dispose();
+  }
+
+  void callDepartmentAPI() {
+
+    getBloc().getDepartmentList((response) {
+      String status = response.responseType ?? success;
+
+      if(status.toLowerCase() == success){
+        getBloc().departmentList.add(response.responseData);
+
+        List<dynamic> tempList = [];
+        tempList.insert(0, "Select Department");
+        getBloc().departmentList.value.data?.forEach((element) {
+          tempList.add(element.department);
+          print('DARA ${element.department}');
+        });
+
+        departmentList?.add(tempList);
+        // print("List LENGTH ->> ${departmentList?.value.length}");
+
+      }  else if(status.toLowerCase() == failed){
+        showMessageBar('Failed :  ${response.message ?? ""}');
+      }
+      else {
+        showMessageBar('ERROR :${response.message ?? ""}');
+      }
+    },);
+  }
+
+  void callDesignationAPI() {
+
+    getBloc().getDesignationList((response) {
+      String status = response.responseType ?? success;
+
+      if(status.toLowerCase() == success){
+        getBloc().designationList.add(response.responseData);
+
+        List<dynamic> tempList = [];
+        tempList.insert(0, "Select Designation");
+        getBloc().designationList.value.data?.forEach((element) {
+          tempList.add(element.designation);
+          print('DARA ${element.designation}');
+        });
+
+        designationList?.add(tempList);
+        // print("List LENGTH ->> ${designationList?.value.length}");
+
+      }  else if(status.toLowerCase() == failed){
+        showMessageBar('Failed :  ${response.message ?? ""}');
+      }
+      else {
+        showMessageBar('ERROR :${response.message ?? ""}');
+      }
+    },);
+  }
+
+  String findDepartIdByName() {
+    String result = "";
+    getBloc().departmentList.value.data?.forEach((element) {
+      if(element.department == departMentDropdown){
+        result = element.departmentId.toString();
+        print("Department ID $result");
+      }
+    });
+
+    return result;
+  }
+
+  String findCompanyIdByName() {
+    String result = "";
+    getBloc().companyList.value.data?.forEach((element) {
+      if(element.name == companyNameDropdown){
+        result = element.companyId.toString();
+      }
+    });
+
+    return result;
+  }
+
+
+  String findOfficeAddressByName() {
+    String result = "";
+    getBloc().officeAddressList.value.data?.forEach((element) {
+      if(element.address == officeAddressDropdown){
+        result = element.officeId.toString();
+      }
+    });
+
+    return result;
+  }
+
+
+  String findDesignationIdByName() {
+
+    String result = "";
+    getBloc().designationList.value.data?.forEach((element) {
+      if(element.designation == designationDropdown){
+
+        result = element.designationId.toString();
+        print("Designation ID $result");
+      }
+    });
+
+    return result;
   }
 }
 

@@ -2,7 +2,7 @@ import 'common_utils.dart';
 
 String? validateEmail(String? value) {
   if (value!.trim().isEmpty) {
-    return string("label_email_validation");
+    return "Email Address is Required";
   }
   if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
       .hasMatch(value)) {
@@ -21,6 +21,64 @@ String? validateMobile(String? value) {
   return null;
 }
 
+String? validateDOB(String? value) {
+  if (value!.trim().isEmpty) {
+    return "Date of Birth is required.";
+  }
+  return null;
+}
+
+String? validatePassword(String? value) {
+  if (value!.trim().isEmpty) {
+    return "Password is required.";
+  }
+  return null;
+}
+
+String? validateAnniversaryDate(String? value) {
+  if (value!.trim().isEmpty) {
+    return "Anniversary Date is required.";
+  }
+  return null;
+}
+
+String? validateAadhaarNumber(String? value) {
+  if (value!.trim().isEmpty) {
+    return "Aadhaar Number is required.";
+  }
+  return null;
+}
+
+String? validateCompanyName(dynamic? value) {
+  if (value!.trim().isEmpty || value == "Select Company Name") {
+    return "Please Select Company Name";
+  }
+  return null;
+}
+
+String? validateDepartment(dynamic? value) {
+  if (value!.trim().isEmpty || value == "Select Department") {
+    return "Please Select Department";
+  }
+  return null;
+}
+
+
+String? validateDesignation(dynamic? value) {
+  if (value!.trim().isEmpty || value == "Select Designation") {
+    return "Please Select Designation";
+  }
+  return null;
+}
+
+String? validateOfficeAddress(dynamic? value) {
+  if (value!.trim().isEmpty || value == "Select Office Address") {
+    return "Please Select Office Address";
+  }
+  return null;
+}
+
+
 String? validateNameTitle(String? value) {
   if (value=="Title") {
     return "Title is required.";
@@ -34,9 +92,24 @@ String? validateOTP(String? value) {
   }
   return null;
 }
-String? validateCustomerName(String? value) {
+
+String? validateFirstName(String? value) {
   if (value!.trim().isEmpty) {
-    return "Customer Name is required.";
+    return "Name is required.";
+  }
+  return null;
+}
+
+String? validateLastName(String? value) {
+  if (value!.trim().isEmpty) {
+    return "Last Name is required.";
+  }
+  return null;
+}
+
+String? validateEmployeeCode(String? value) {
+  if (value!.trim().isEmpty) {
+    return "Employee Code is required.";
   }
   return null;
 }
@@ -109,3 +182,12 @@ String? validateCouponCode(String? value) {
   }
   return null;
 }
+
+
+String? validateMobileAndEmail(String? value) {
+  if (value!.trim().isEmpty) {
+    return "Please Enter Your Email/Phone";
+  }
+  return null;
+}
+

@@ -22,6 +22,7 @@ class AppImages {
   static const String imgBoy  = 'assets/images/img_boy_pic.png';
   static const String imgGirl2  = 'assets/images/img_girl_2x.png';
   static const String imgBoy2  = 'assets/images/img_boy2.png';
+  static const String imgPDf  = 'assets/images/img_pdf.png';
 
 
   ///icons

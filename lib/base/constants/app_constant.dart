@@ -13,6 +13,9 @@ const String ERROR = "Error";
 const String VERSION_UPDATE = "versionUpdate";
 const String TOKEN_EXPIRY = "tokenExpiry";
 
+const String success = "success";
+const String failed = "failed";
+
 
 /// Request
 const String MOBILE_MODEL = "mobileModel";

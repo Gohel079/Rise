@@ -11,10 +11,17 @@ import 'base/components/loader_overlay/ots.dart';
 import 'base/components/screen_utils/flutter_screenutil.dart';
 import 'base/constants/app_themes.dart';
 import 'base/constants/app_widgets.dart';
+import 'env/environment.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   GestureBinding.instance.resamplingEnabled = true;
+
+
+  /// Set Environment
+   String environment = const String.fromEnvironment('ENVIRONMENT', defaultValue: Environment.DEV,);
+  Environment().initConfig(environment);
+
 
   ///Set Portrait
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
