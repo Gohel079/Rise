@@ -5,14 +5,18 @@ import 'package:rise_and_grow/base/basePage.dart';
 import 'package:rise_and_grow/base/bloc/base_bloc.dart';
 import 'package:rise_and_grow/base/components/screen_utils/flutter_screenutil.dart';
 import 'package:rise_and_grow/base/constants/app_colors.dart';
+import 'package:rise_and_grow/base/constants/app_constant.dart';
 import 'package:rise_and_grow/screens/add_visitor_registation/add_visitor_registation_screen.dart';
 import 'package:rise_and_grow/screens/created_meeting/created_meeting_bloc.dart';
 import 'package:rise_and_grow/screens/internal_team_selection/internal_team_selection_screen.dart';
 import 'package:rise_and_grow/screens/set_meeting_date_&_time/set_meeting_date_and_time_screen.dart';
 import 'package:rise_and_grow/screens/visitor_registation/visitor_registation_bloc.dart';
+import 'package:rise_and_grow/utils/app_valid.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../../base/constants/app_images.dart';
 import '../../base/constants/app_styles.dart';
+import '../../base/constants/app_widgets.dart';
 import '../../base/widgets/button_view.dart';
 import '../../base/widgets/custom_page_route.dart';
 import '../../utils/common_utils.dart';
@@ -63,11 +67,8 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
   ];
 
   var meetingModeList = [
-    'Meeting Mode',
-    'Meeting Mode 2',
-    'Meeting Mode 3',
-    'Meeting Mode 4',
-    'Meeting Mode 5',
+    'Offline',
+    'Online'
   ];
 
   var selectPlatformList = [
@@ -100,6 +101,10 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
 
   AutovalidateMode autoValidateMode = AutovalidateMode.disabled;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+
+  BehaviorSubject<List<dynamic>>? meetingTypeList;
+  BehaviorSubject<List<dynamic>>? meetingModeListForStream;
 
   @override
   Widget buildWidget(BuildContext context) {
@@ -185,57 +190,76 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
       body:   SingleChildScrollView(child:
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 17,vertical: 15),
-        child: Column(children: [
+        child:
+        Column(children: [
 
-          Container(width: double.infinity,decoration :
-          BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
-              border: Border.all(color: borderColor, ),
-              color: darkTextFieldFillColor ),
-              child: typeOfMeetingDropDown()),
-
-          SizedBox(height: 20.h,),
-
-          meetingPurposeTextField(),
-
-          SizedBox(height: 20.h,),
-
-        Container(width: double.infinity,decoration :
-        BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
-            border: Border.all(color: borderColor, ),
-            color: darkTextFieldFillColor ),
-          child: meetingVenueDropDown()),
-
-          SizedBox(height: 20.h,),
-
-          setDateAndTimeField(),
-
-          SizedBox(height: 20.h,),
-
-          Container(width: double.infinity,decoration :
-          BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
-              border: Border.all(color: borderColor, ),
-              color: darkTextFieldFillColor ),
-              child: meetingModeDropDown()),
+          Form(
+            key: _formKey,
+            child: Column(
+              children: [
 
 
-          SizedBox(height: 20.h,),
+                Container(width: double.infinity,decoration :
+                BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
+                    border: Border.all(color: borderColor, ),
+                    color: darkTextFieldFillColor ),
+                    child: typeOfMeetingDropDown()),
 
-          Container(width: double.infinity,decoration :
-          BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
-              border: Border.all(color: borderColor, ),
-              color: darkTextFieldFillColor ),
-              child: selectPlatformDropDown()),
+                SizedBox(height: 20.h,),
+
+                meetingPurposeTextField(),
+
+                SizedBox(height: 20.h,),
+
+                Container(width: double.infinity,decoration :
+                BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
+                    border: Border.all(color: borderColor, ),
+                    color: darkTextFieldFillColor ),
+                    child: meetingVenueDropDown()),
+
+                SizedBox(height: 20.h,),
+
+                setDateAndTimeField(),
+
+                SizedBox(height: 20.h,),
+
+                Container(width: double.infinity,decoration :
+                BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
+                    border: Border.all(color: borderColor, ),
+                    color: darkTextFieldFillColor ),
+                    child: meetingModeDropDown()),
 
 
-          SizedBox(height: 20.h,),
+                SizedBox(height: 20.h,),
 
-          internalTeamSelection(),
+                Visibility(
+                  visible: meetingMode == "Online" ? true : false,
+                  child: Column(
+                    children: [
+                      Container(width: double.infinity,decoration :
+                      BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
+                          border: Border.all(color: borderColor, ),
+                          color: darkTextFieldFillColor ),
+                          child: selectPlatformDropDown()),
 
-          SizedBox(height: 20.h,),
+                      SizedBox(height: 20.h,),
+                    ],
+                  ),
+                ),
 
-          externalTeamSelection(),
 
-          SizedBox(height: 40.h,),
+                internalTeamSelection(),
+
+                SizedBox(height: 20.h,),
+
+                externalTeamSelection(),
+
+                SizedBox(height: 40.h,),
+              ],
+            ),
+          ),
+
+
 
           submitButton()
 
@@ -247,24 +271,39 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
   Widget typeOfMeetingDropDown(){
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 7),
-      child: DropdownButton(
-        value: typeOfMeeting,
-        isExpanded: true,
-        underline: const SizedBox(),
-        icon: const Icon(Icons.keyboard_arrow_down,color: black,),
-        items: typeOfMeetingList.map((String items) {
-          return DropdownMenuItem(
-            value: items,
-            child: Text(items,
-              style: styleMedium1.copyWith(color: black,
+      child: StreamBuilder<List<dynamic>>(
+        stream: meetingTypeList?.stream,
+        builder: (context, snapshot) {
+          if(snapshot.hasData && snapshot.data!.length > 1){
+            return DropdownButtonFormField(
+              // value: typeOfMeeting,
+              hint: Text("Type of Meeting",
+                style: styleMedium1.copyWith(color: textGrayColor,
                   fontWeight: FontWeight.w600),),
-          );
-        }).toList(),
-        onChanged: (String? newValue) {
-          setState(() {
-            typeOfMeeting = newValue!;
-          });
-        },
+              isExpanded: true,
+              decoration: const InputDecoration(border: InputBorder.none),
+              validator: validateTypeOfMeeting,
+              autovalidateMode: autoValidateMode,
+              icon: const Icon(Icons.keyboard_arrow_down,color: black,),
+              items: snapshot.data?.map((dynamic? items) {
+                return DropdownMenuItem(
+                  value: items,
+                  child: Text(items,
+                    style: styleMedium1.copyWith(color: black,
+                        fontWeight: FontWeight.w600),),
+                );
+              }).toList(),
+              onChanged: (dynamic? newValue) {
+                setState(() {
+                  typeOfMeeting = newValue!;
+                });
+              },
+            );
+          }else {
+            return SizedBox(height: 40.h,);
+          }
+
+        }
       ),
     );
   }
@@ -431,10 +470,14 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
   Widget meetingModeDropDown(){
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 7),
-      child: DropdownButton(
-        value: meetingMode,
+      child: DropdownButtonFormField(
+        hint: Text("Meeting Mode",
+          style: styleMedium1.copyWith(color: textGrayColor,
+              fontWeight: FontWeight.w600),),
         isExpanded: true,
-        underline: const SizedBox(),
+        autovalidateMode: autoValidateMode,
+        validator: validateMeetingMode,
+        decoration: const InputDecoration(border: InputBorder.none),
         icon: const Icon(Icons.keyboard_arrow_down,color: black,),
         items: meetingModeList.map((String items) {
           return DropdownMenuItem(
@@ -447,6 +490,9 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
         onChanged: (String? newValue) {
           setState(() {
             meetingMode = newValue!;
+            if(meetingMode == "Online"){
+              callGetMeetingModeListAPI();
+            }
           });
         },
       ),
@@ -456,24 +502,38 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
   Widget selectPlatformDropDown(){
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 7),
-      child: DropdownButton(
-        value: selectPlatform,
-        isExpanded: true,
-        underline: const SizedBox(),
-        icon: const Icon(Icons.keyboard_arrow_down,color: black,),
-        items: selectPlatformList.map((String items) {
-          return DropdownMenuItem(
-            value: items,
-            child: Text(items,
-              style: styleMedium1.copyWith(color: black,
-                  fontWeight: FontWeight.w600),),
-          );
-        }).toList(),
-        onChanged: (String? newValue) {
-          setState(() {
-            selectPlatform = newValue!;
-          });
-        },
+      child: StreamBuilder<List<dynamic>>(
+        stream: meetingModeListForStream?.stream,
+        builder: (context, snapshot) {
+          if(snapshot.hasData && snapshot.data!.length  > 1  ){
+            return DropdownButtonFormField(
+              hint: Text("Select Online Platform",
+                style: styleMedium1.copyWith(color: textGrayColor,
+                    fontWeight: FontWeight.w600),),
+              isExpanded: true,
+              validator:  validateMeetingPlatform,
+              autovalidateMode: autoValidateMode,
+              decoration: const InputDecoration(border: InputBorder.none),
+              icon: const Icon(Icons.keyboard_arrow_down,color: black,),
+              items: snapshot.data?.map((dynamic items) {
+                return DropdownMenuItem(
+                  value: items,
+                  child: Text(items,
+                    style: styleMedium1.copyWith(color: black,
+                        fontWeight: FontWeight.w600),),
+                );
+              }).toList(),
+              onChanged: (dynamic? newValue) {
+                setState(() {
+                  selectPlatform = newValue!;
+                });
+              },
+            );
+          }else {
+            return SizedBox(height: 40.h,);
+          }
+
+        }
       ),
     );
   }
@@ -611,12 +671,95 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
 
 
   Widget submitButton() {
-    return ButtonView(string('label_submit'),true, () {
-
+    return ButtonView(string('label_submit'),true, ()
+    {
+      onSubmit();
     });
   }
+
+  onSubmit(){
+
+    var state = _formKey.currentState!;
+
+    if(state.validate()){
+
+
+      Map? requestData = {
+
+      };
+
+
+      showMessageBar("SUCCESS");
+    }
+  }
+
   @override
   CreateMeetingFormBloc getBloc() {
     return bloc;
+  }
+
+
+
+  @override
+  void initState() {
+    super.initState();
+    meetingTypeList = BehaviorSubject<List<dynamic>>.seeded([]);
+    meetingModeListForStream = BehaviorSubject<List<dynamic>>.seeded([]);
+  }
+
+  @override
+  onReady(){
+    callGetMeetingListAPI();
+
+  }
+
+  callGetMeetingListAPI(){
+
+    getBloc().getMeetingList((response) {
+      String status = response.responseType ?? success;
+
+      if(status.toLowerCase() == success){
+
+        getBloc().meetingList.add(response.responseData);
+
+        List<dynamic> tempList =[];
+        getBloc().meetingList.value.data?.forEach((element) {
+          tempList.add(element.meetingType);
+        });
+          meetingTypeList?.add(tempList);
+        }
+      else if(status.toLowerCase() == failed){
+        showMessageBar('Failed :  ${response.message ?? ""}');
+      }
+      else {
+        showMessageBar('ERROR :${response.message ?? ""}');
+      }
+    });
+  }
+
+  callGetMeetingModeListAPI(){
+
+    getBloc().getMeetingModeList((response) {
+      String status = response.responseType ?? success;
+
+      if(status.toLowerCase() == success){
+
+        getBloc().meetingModeList.add(response.responseData);
+
+        List<dynamic> tempList =[];
+        getBloc().meetingModeList.value.data?.forEach((element) {
+          if(element.meetingMode != "Online"){
+            tempList.add(element.meetingMode);
+          }
+        });
+        meetingModeListForStream?.add(tempList);
+      }
+      else if(status.toLowerCase() == failed){
+        showMessageBar('Failed :  ${response.message ?? ""}');
+      }
+      else {
+        showMessageBar('ERROR :${response.message ?? ""}');
+      }
+    });
   }
 }

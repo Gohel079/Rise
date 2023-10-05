@@ -216,7 +216,7 @@ class _LoginScreenState   extends BasePageState<LoginScreen,LoginScreenBloc>{
       autocorrect: true,
       textCapitalization: TextCapitalization.none,
       style: styleMedium1.copyWith(color: black,fontWeight: FontWeight.w600),
-      validator: validatePassword,
+      validator: validateLoginPassword,
       obscureText: !_passwordVisible,
       controller: _passwordController,
       focusNode: _nodePassword,
@@ -286,14 +286,14 @@ class _LoginScreenState   extends BasePageState<LoginScreen,LoginScreenBloc>{
   Widget submitButton() {
     return ButtonView(string('label_Login'),true , () {
 
-      Navigator.pushReplacement(context,HomeScreen.route());
+      // Navigator.pushReplacement(context,HomeScreen.route());
 
       var state = _formKey.currentState!;
       if(state.validate()){
         hideKeyboard(context);
 
-       String email =  _mobileNumberController.text.toString();
-       String password = _passwordController.text.toString();
+       String email =  _mobileNumberController.text.trim().toString();
+       String password = _passwordController.text.trim().toString();
 
        Map requestData = {
          "email": email,
@@ -306,9 +306,13 @@ class _LoginScreenState   extends BasePageState<LoginScreen,LoginScreenBloc>{
          String status = response.responseType ?? success;
 
          if(status.toLowerCase() == success){
+           if(response.message ==  "Login successfully.") {
+             Navigator.pushReplacement(context, HomeScreen.route());
+           }
+
          }
            else if(status.toLowerCase() == failed){
-           showMessageBar('Failed :  ${response.data ?? ""}');
+           showMessageBar('Failed :  ${response.message ?? ""}');
          }
          else {
            showMessageBar('ERROR :${response.message ?? ""}');

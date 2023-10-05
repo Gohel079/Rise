@@ -15,6 +15,7 @@ import 'package:rise_and_grow/base/src_constants.dart';
 import 'package:rise_and_grow/remote/model/get_officelist_response_model.dart';
 import 'package:rise_and_grow/screens/login/login_screen.dart';
 import 'package:rise_and_grow/screens/register/register_screen_bloc.dart';
+import 'package:rise_and_grow/remote/model/get_role_list_response_model.dart' as roleData;
 import 'package:rxdart/rxdart.dart';
 
 import '../../base/constants/app_colors.dart';
@@ -50,12 +51,14 @@ class _RegisterScreenState
   String departMentDropdown = 'Select Department';
   String designationDropdown = 'Select Designation';
   String officeAddressDropdown = 'Select Office Address';
+  String roleDropdown = 'Select Role';
 
   // List of items in our dropdown menu
   BehaviorSubject<List<dynamic>>? companyNameList;
   BehaviorSubject<List<dynamic>>? departmentList;
   BehaviorSubject<List<dynamic>>? designationList;
   BehaviorSubject<List<dynamic>>? officeList;
+  BehaviorSubject<List<dynamic>>? roleList;
 
 
   /*var officeAddressList = [
@@ -210,7 +213,15 @@ class _RegisterScreenState
 
           SizedBox(height:20.h),
 
-          aadhaarNumberTextField(),
+            Container(width: double.infinity,decoration :
+            BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
+                border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
+                child: roleDropDown()),
+
+
+            SizedBox(height:20.h),
+
+            aadhaarNumberTextField(),
 
           SizedBox(height:20.h),
 
@@ -277,14 +288,23 @@ class _RegisterScreenState
     departmentList = BehaviorSubject<List<dynamic>>.seeded([]);
     designationList = BehaviorSubject<List<dynamic>>.seeded([]);
     officeList = BehaviorSubject<List<dynamic>>.seeded([]);
+    roleList = BehaviorSubject<List<dynamic>>.seeded([]);
 
 
 
 
 
+
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
     callCompanyListAPI();
     callDepartmentAPI();
     callDesignationAPI();
+    callRoleAPI();
+
   }
 
 
@@ -480,8 +500,10 @@ class _RegisterScreenState
       autovalidateMode: autoValidateMode,
       keyboardType: TextInputType.number,
       validator: validateAadhaarNumber,
+      maxLength: 12,
       textInputAction: TextInputAction.next,
       decoration: const InputDecoration(
+          counterText: "",
           labelText: "Aadhaar Number",
           labelStyle: TextStyle(
             fontFamily: fontFamilyMontserrat,
@@ -740,7 +762,13 @@ class _RegisterScreenState
               ),
             );
           }
-          return  SizedBox(height: 45.h,);
+          return  SizedBox(height: 40.h,
+            child: DropdownMenuItem(
+              value: "Select Company Name",
+              child: Text("Select Company Name",
+                style: styleMedium1.copyWith(color: black,
+                    fontWeight: FontWeight.w600),),
+            ),);
 
         }
       ),
@@ -760,7 +788,7 @@ class _RegisterScreenState
               child: DropdownButtonFormField(
                 value: officeAddressDropdown,
                 isExpanded: true,
-                // autovalidateMode: autoValidateMode,
+                autovalidateMode: autoValidateMode,
                 decoration: const InputDecoration(border: InputBorder.none),
                 validator: validateOfficeAddress,
                 icon: const Icon(Icons.keyboard_arrow_down,color: black,),
@@ -800,6 +828,55 @@ class _RegisterScreenState
     );
   }
 
+  Widget roleDropDown(){
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 7),
+      child: StreamBuilder<List<dynamic>>(
+          stream: roleList?.stream,
+          builder: (context, snapshot) {
+            if(snapshot.hasData && snapshot.data!.length > 1){
+              print("SNAP ${snapshot.data?.length}");
+              snapshot.data?.forEach((element) { print(element); });
+              return DropdownButtonHideUnderline(
+                child: DropdownButtonFormField(
+                  value: roleDropdown,
+                  isExpanded: true,
+                  autovalidateMode: autoValidateMode,
+                  decoration: const InputDecoration(border: InputBorder.none),
+                  validator: validateRoleDropDown,
+                  icon: const Icon(Icons.keyboard_arrow_down,color: black,),
+                  items: snapshot.data?.map((dynamic items) {
+                    return DropdownMenuItem(
+                      value: items ?? "",
+                      child: Text(items ?? "",
+                        style: styleMedium1.copyWith(color: black,
+                            fontWeight: FontWeight.w600),),
+                    );
+                  }).toList(),
+                  onChanged: (dynamic newValue) {
+                    setState(() {
+                      roleDropdown = newValue!;
+
+                    });
+                  },
+                ),
+              );
+            }
+            else {
+              return Container(height: 40.h,
+                child: DropdownMenuItem(
+                  value: "Select Role",
+                  child: Text("Select Role",
+                    style: styleMedium1.copyWith(color: black,
+                        fontWeight: FontWeight.w600),),
+                ),);
+            }
+
+          }
+      ),
+    );
+  }
+
   Widget departMentDropDown(){
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 7),
@@ -831,7 +908,13 @@ class _RegisterScreenState
               ),
             );
           }else {
-            return const SizedBox();
+            return Container(height: 40.h,
+              child: DropdownMenuItem(
+                value: "Select Department",
+                child: Text("Select Department",
+                  style: styleMedium1.copyWith(color: black,
+                      fontWeight: FontWeight.w600),),
+              ),);
           }
 
         }
@@ -851,7 +934,7 @@ class _RegisterScreenState
                 value: snapshot.data?[0],
                 isExpanded: true,
                 decoration: const InputDecoration(border: InputBorder.none),
-                validator: validateDesignation,
+                validator: validateDesignationDropDown,
                 autovalidateMode: autoValidateMode,
                 icon: const Icon(Icons.keyboard_arrow_down,color: black,),
                 items: snapshot.data?.map((dynamic items) {
@@ -870,7 +953,13 @@ class _RegisterScreenState
               ),
             );
           }else {
-            return const SizedBox();
+            return SizedBox(height: 40.h,
+              child: DropdownMenuItem(
+                value: "Select Designation",
+                child: Text("Select Designation",
+                  style: styleMedium1.copyWith(color: black,
+                      fontWeight: FontWeight.w600),),
+              ),);
           }
 
         }
@@ -885,7 +974,7 @@ class _RegisterScreenState
       autocorrect: true,
       textCapitalization: TextCapitalization.none,
       style: styleMedium1.copyWith(color: black,fontWeight: FontWeight.w600),
-      validator: validatePassword,
+      validator: validateStrongPassword,
       obscureText: !_passwordVisible,
       controller: _passwordController,
       focusNode: _nodePassword,
@@ -960,7 +1049,7 @@ class _RegisterScreenState
       autocorrect: true,
       textCapitalization: TextCapitalization.none,
       style: styleMedium1.copyWith(color: black,fontWeight: FontWeight.w600),
-      validator: validatePassword,
+      validator: validateStrongPassword,
       obscureText: !_confirmPasswordVisible,
       controller: _confirmPasswordController,
       focusNode: _nodeConfirmPassword,
@@ -1148,7 +1237,7 @@ class _RegisterScreenState
       focusNode: _nodeAnniversary,
       autovalidateMode: autoValidateMode,
       keyboardType: TextInputType.text,
-      validator: validateAnniversaryDate,
+      // validator: validateAnniversaryDate,
       onTap: () async {
 
         DateTime? pickedDate = await showDatePicker(
@@ -1351,98 +1440,111 @@ class _RegisterScreenState
       var state = _formKey.currentState!;
       if(state.validate()){
 
-        hideKeyboard(context);
-
-        String firstName =  _firstNameController.text.toString();
-        String lastName =  _secondNameController.text.toString();
-        String employeeCode =  _employeeCodeController.text.toString();
-        String contactNumber =  _contactNumberController.text.toString();
-        String emailAddress =  _emailAddressController.text.toString();
-        String dateOfBirth =  _dateOfBirthController.text.toString();
-        String anniversaryDate =  _anniversaryDateController.text.toString();
-        String companyName =  companyNameDropdown.toString();
-        String departmentName =  departMentDropdown.toString();
-        String designation =  designationDropdown.toString();
-        String officeAddress =  officeAddressDropdown.toString();
-        String aadhaarNumber =  _aadharNumberController.toString();
-        String password =  _passwordController.toString();
-        String confirmPassword =  _confirmPasswordController.toString();
+        if(aadhaarCardPDFText!.value.length > 1 &&
+            companyPDFFileText!.value.length >1
+            && photoOrCameraFile!.value.length > 1){
 
 
-        FormData formData = FormData.fromMap({
-          "firstName" : firstName,
-          "lastName" : lastName,
-          "empCode" : employeeCode,
-          "departmentID" : findDepartIdByName(),
-          "designationID" : findDesignationIdByName(),
-          "email" : emailAddress,
-          "phone" : contactNumber,
-          "companyID" : findCompanyIdByName(),
-          "officeID" : findOfficeAddressByName(),
-          "password" : password,
-          "roleID" : -2,
-          "empAadharCard" : await MultipartFile.fromFile(aadhaarCardPDFText?.value ?? "",
-            filename: aadhaarCardPDFText?.value.split('/').last,),
-          "birthData" : dateOfBirth,
-          "empIDCard" : await MultipartFile.fromFile(companyPDFFileText?.value ?? "",
-            filename: companyPDFFileText?.value.split('/').last,),
-          "empProfileIMg" : await MultipartFile.fromFile(photoOrCameraFile?.value ?? "",
-            filename: photoOrCameraFile?.value.split('/').last,),
-          "joiningDate" : anniversaryDate,
+          hideKeyboard(context);
 
-        });
-
-        print("FORM DATA  ${formData.fields.toString()}");
-
-        Map requestData = {
-          "firstName" : firstName,
-          "lastName" : lastName,
-          "empCode" : employeeCode,
-          "departmentID" : findDepartIdByName(),
-          "designationID" : findDesignationIdByName(),
-          "email" : emailAddress,
-          "phone" : contactNumber,
-          "companyID" : findCompanyIdByName(),
-          "officeID" : 10,
-          "password" : password,
-          "roleID" : -2,
-          "empAadharCard" : "",
-          "birthData" : dateOfBirth,
-          "empIDCard" : formData,
-          "empProfileIMg" : "",
-          "joiningDate" : anniversaryDate
-        };
+          String firstName =  _firstNameController.text.trim().toString();
+          String lastName =  _secondNameController.text..trim().toString();
+          String employeeCode =  _employeeCodeController.text.trim().toString();
+          String contactNumber =  _contactNumberController.text..trim().toString();
+          String emailAddress =  _emailAddressController.text.trim().toString();
+          String dateOfBirth =  _dateOfBirthController.text.trim().toString();
+          String anniversaryDate =  _anniversaryDateController.text.trim().toString();
+          String companyName =  companyNameDropdown.toString();
+          String departmentName =  departMentDropdown.toString();
+          String designation =  designationDropdown.toString();
+          String officeAddress =  officeAddressDropdown.toString();
+          String aadhaarNumber =  _aadharNumberController.toString();
+          String password =  _passwordController.text.trim().toString();
+          String confirmPassword =  _confirmPasswordController.text.toString();
 
 
-        getBloc().doRegister(formData, (response) {
-          String status = response.responseType ?? success;
+          FormData formData = FormData.fromMap({
+            "firstName" : firstName,
+            "lastName" : lastName,
+            "empCode" : employeeCode,
+            "departmentID" : findDepartIdByName(),
+            "designationID" : findDesignationIdByName(),
+            "email" : emailAddress,
+            "phone" : contactNumber,
+            "companyID" : findCompanyIdByName(),
+            "officeID" : findOfficeAddressByName(),
+            "password" : password,
+            "roleID" : findRoleIdByName(),
+            "empAadharCard" :  await MultipartFile.fromFile(aadhaarCardPDFText?.value ?? "",
+              filename: aadhaarCardPDFText?.value.split('/').last,) ?? "",
+            "birthData" : dateOfBirth,
+            "empIDCard" : await MultipartFile.fromFile(companyPDFFileText?.value ?? "",
+              filename: companyPDFFileText?.value.split('/').last,),
+            "empProfileIMg" : await MultipartFile.fromFile(photoOrCameraFile?.value ?? "",
+              filename: photoOrCameraFile?.value.split('/').last,),
+            "joiningDate" : anniversaryDate,
 
-          if(status.toLowerCase() == success){
-            showThankYouDialog(context);
-          }
-          else if(status.toLowerCase() == failed) {
-            showMessageBar('Failed :  ${response.data ?? ""}');
-          }
-          else {
-            showMessageBar('ERROR :${response.message ?? ""}');
-          }
+          });
 
-        },);
+          print("FORM DATA  ${formData.fields.toString()}");
+
+          Map requestData = {
+            "firstName" : firstName,
+            "lastName" : lastName,
+            "empCode" : employeeCode,
+            "departmentID" : findDepartIdByName(),
+            "designationID" : findDesignationIdByName(),
+            "email" : emailAddress,
+            "phone" : contactNumber,
+            "companyID" : findCompanyIdByName(),
+            "officeID" : 10,
+            "password" : password,
+            "roleID" : -2,
+            "empAadharCard" : "",
+            "birthData" : dateOfBirth,
+            "empIDCard" : formData,
+            "empProfileIMg" : "",
+            "joiningDate" : anniversaryDate
+          };
 
 
+          getBloc().doRegister(formData, (response) {
+            String status = response.responseType ?? success;
 
-      }else if(!agree){
+            if(status.toLowerCase() == success){
+              showThankYouDialog(context,_firstNameController.text.toString());
+            }
+            else if(status.toLowerCase() == failed) {
+              showMessageBar('Failed :  ${response.message ?? ""}');
+            }
+            else {
+              showMessageBar('ERROR :${response.message ?? ""}');
+            }
+
+          },);
+
+        }
+       else if(!agree){
+          showMessageBar("Please Agree Terms And Condition");
+        }
+        else {
+          showMessageBar("Please Upload Document or Photo ");
+        }
+
+
+      }
+      else if(!agree){
         showMessageBar("Please Agree Terms And Condition");
       }
     });
   }
 
 
-  void showThankYouDialog(BuildContext context) {
+  void showThankYouDialog(BuildContext context, String name) {
     showGeneralDialog(
       context: context,
       barrierLabel: "Barrier",
-      barrierDismissible: true,
+      barrierDismissible: false,
       barrierColor: Colors.black.withOpacity(0.8),
       transitionDuration: const Duration(milliseconds: 200),
       pageBuilder: (_, __, ___) {
@@ -1470,7 +1572,7 @@ class _RegisterScreenState
                   const SizedBox(
                     height: 10,
                   ),
-                  Text('Mr. Gohel ',
+                  Text('Mr/Mrs. $name ',
                     textAlign: TextAlign.start,
                     style: styleMedium2.copyWith(
                         decoration: TextDecoration.none,
@@ -1495,6 +1597,7 @@ class _RegisterScreenState
                     margin: const EdgeInsets.symmetric(vertical: 18,horizontal: 18),
                     child: ButtonView("Done",false, () {
                       Navigator.pop(context);
+                      Navigator.pushAndRemoveUntil(context, LoginScreen.route(),(route) => false);
                     }),
                   ),
                 ],
@@ -1508,27 +1611,52 @@ class _RegisterScreenState
 
 
   _pickCompanyPDFFile() async {
-    FilePickerResult? filePickerResult = await FilePicker.platform.pickFiles();
+    FilePickerResult? filePickerResult = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+      allowedExtensions: ['pdf']
+    );
 
     if(filePickerResult != null &&
-        filePickerResult.files.single.path != null){
+        filePickerResult.files.single.path != null)
+    {
 
+      PlatformFile file = filePickerResult.files.first;
+      if(file.extension ==  "pdf"){
+        File file = File(filePickerResult.files.single.path!);
+        companyPDFFileText?.add(file.path);
+      }
+      else {
+        showMessageBar("You have to Select only PDF format");
+      }
 
-      File file = File(filePickerResult.files.single.path!);
-      companyPDFFileText?.add(file.path);
     }
 
   }
 
   _pickAadhaarCardPDFFile() async {
-    FilePickerResult? filePickerResult = await FilePicker.platform.pickFiles();
+    FilePickerResult? filePickerResult = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf']
+    );
 
     if(filePickerResult != null &&
         filePickerResult.files.single.path != null){
 
 
-      File file = File(filePickerResult.files.single.path!);
-      aadhaarCardPDFText?.add(file.path);
+      PlatformFile file = filePickerResult.files.first;
+
+      if(file.extension ==  "pdf")
+      {
+        File file = File(filePickerResult.files.single.path!);
+        aadhaarCardPDFText?.add(file.path);
+      }
+      else {
+        showMessageBar("You have to Select only PDF format");
+        aadhaarCardPDFText?.add("");
+      }
+
+
+
     }
 
   }
@@ -1591,6 +1719,18 @@ class _RegisterScreenState
     if(image != null){
       photoOrCameraFile?.add(image.path);
     }
+  }
+
+ Future<Object> pickedAadhaarItemString() async {
+
+    if(aadhaarCardPDFText!.value.isNotEmpty)
+    {
+
+      return await MultipartFile.fromFile(aadhaarCardPDFText?.value ?? "",
+        filename: aadhaarCardPDFText?.value.split('/').last,) ?? "";
+    }
+   return "";
+
   }
 
   _pickCamera() async{
@@ -1672,19 +1812,22 @@ class _RegisterScreenState
     getBloc().getCompanyList((response) {
       String status = response.responseType ?? success;
 
-      if(status.toLowerCase() == success){
-        getBloc().companyList.add(response.responseData);
+      if(status.toLowerCase() == success) {
+        if (!getBloc().companyList.isClosed) {
+          getBloc().companyList.add(response.responseData);
 
-        List<dynamic> tempList = [];
-        tempList.insert(0, "Select Company Name");
-        getBloc().companyList.value.data?.forEach((element) {
-          tempList.add(element.name);
-          print('DARA ${element.name}');
-        });
+          List<dynamic> tempList = [];
+          tempList.insert(0, "Select Company Name");
+          getBloc().companyList.value.data?.forEach((element) {
+            tempList.add(element.name);
+            print('DARA ${element.name}');
+          });
 
-        companyNameList?.add(tempList);
-        // print("List LENGTH ->> ${companyNameList?.value.length}");
 
+          companyNameList?.add(tempList);
+          // print("List LENGTH ->> ${companyNameList?.value.length}");
+
+        }
       }
       else if(status.toLowerCase() == failed){
         showMessageBar('Failed :  ${response.message ?? ""}');
@@ -1711,38 +1854,37 @@ class _RegisterScreenState
       if(status.toLowerCase() ==  success){
 
 
-        getBloc().officeAddressList.add(response.responseData);
+        if(!getBloc().officeAddressList.isClosed) {
+          getBloc().officeAddressList.add(response.responseData);
 
 
-        List<dynamic>? officeTempList = [];
-        officeList?.add([]);
-        if(getBloc().officeAddressList.value.data?.isNotEmpty ?? false){
-
-
-          if(!officeTempList.contains("Select Office Address")){
-            officeTempList.insert(0, "Select Office Address");
+          List<dynamic>? officeTempList = [];
+          officeList?.add([]);
+          if (getBloc().officeAddressList.value.data?.isNotEmpty ?? false) {
+            if (!officeTempList.contains("Select Office Address")) {
+              officeTempList.insert(0, "Select Office Address");
+            }
           }
+
+
+          getBloc().officeAddressList.value.data?.forEach((element) {
+            officeTempList.add(element.address);
+            print('Office Address Address : ${element.address}');
+          });
+          officeList?.add(officeTempList ?? []);
+          print("List LENGTH ->> ${officeList?.value.length}");
+
+
+          ////
+          officeTempList.forEach((element) {
+            print("FINAL TEMP LIST ${element}");
+          });
+          print("FINAL LIST FOR DROP LENGTH- ()()()()() ${officeList?.value
+              .length}");
+          officeList?.value.forEach((element) {
+            print("FINAL LIST FOR DROP ${element}");
+          });
         }
-
-
-        getBloc().officeAddressList.value.data?.forEach((element) {
-          officeTempList.add(element.address);
-          print('Office Address Address : ${element.address}');
-        });
-        officeList?.add(officeTempList ?? []);
-        print("List LENGTH ->> ${officeList?.value.length}");
-
-
-
-
-        ////
-        officeTempList.forEach((element) {
-          print("FINAL TEMP LIST ${element}");
-        });
-        print("FINAL LIST FOR DROP LENGTH- ()()()()() ${officeList?.value.length}");
-        officeList?.value.forEach((element) {
-          print("FINAL LIST FOR DROP ${element}");
-        });
       }
       else if(status.toLowerCase() == failed){
         showMessageBar('Failed :  ${response.message ?? ""}');
@@ -1761,6 +1903,7 @@ class _RegisterScreenState
     designationList?.close();
     departmentList?.close();
     officeList?.close();
+    roleList?.close();
     super.dispose();
   }
 
@@ -1770,18 +1913,17 @@ class _RegisterScreenState
       String status = response.responseType ?? success;
 
       if(status.toLowerCase() == success){
-        getBloc().departmentList.add(response.responseData);
+        if(!getBloc().departmentList.isClosed) {
+          getBloc().departmentList.add(response.responseData);
 
-        List<dynamic> tempList = [];
-        tempList.insert(0, "Select Department");
-        getBloc().departmentList.value.data?.forEach((element) {
-          tempList.add(element.department);
-          print('DARA ${element.department}');
-        });
+          List<dynamic> tempList = [];
+          tempList.insert(0, "Select Department");
+          getBloc().departmentList.value.data?.forEach((element) {
+            tempList.add(element.department);
+          });
 
-        departmentList?.add(tempList);
-        // print("List LENGTH ->> ${departmentList?.value.length}");
-
+          departmentList?.add(tempList);
+        }
       }  else if(status.toLowerCase() == failed){
         showMessageBar('Failed :  ${response.message ?? ""}');
       }
@@ -1797,18 +1939,50 @@ class _RegisterScreenState
       String status = response.responseType ?? success;
 
       if(status.toLowerCase() == success){
-        getBloc().designationList.add(response.responseData);
+        if(!getBloc().designationList.isClosed) {
+          getBloc().designationList.add(response.responseData);
 
-        List<dynamic> tempList = [];
-        tempList.insert(0, "Select Designation");
-        getBloc().designationList.value.data?.forEach((element) {
-          tempList.add(element.designation);
-          print('DARA ${element.designation}');
-        });
+          List<dynamic> tempList = [];
+          tempList.insert(0, "Select Designation");
+          getBloc().designationList.value.data?.forEach((element) {
+            tempList.add(element.designation);
+            print('DARA ${element.designation}');
+          });
 
-        designationList?.add(tempList);
-        // print("List LENGTH ->> ${designationList?.value.length}");
+          designationList?.add(tempList);
+          // print("List LENGTH ->> ${designationList?.value.length}");
 
+        }
+      }  else if(status.toLowerCase() == failed){
+        showMessageBar('Failed :  ${response.message ?? ""}');
+      }
+      else {
+        showMessageBar('ERROR :${response.message ?? ""}');
+      }
+    },);
+  }
+
+  void callRoleAPI() {
+
+    getBloc().getRoleList((response) {
+      String status = response.responseType ?? success;
+
+      if(status.toLowerCase() == success){
+        if(!getBloc().roleList.isClosed) {
+          getBloc().roleList.add(
+              response.responseData ?? roleData.ResponseData());
+
+          List<dynamic> tempList = [];
+          tempList.insert(0, "Select Role");
+          getBloc().roleList.value.data?.forEach((element) {
+            tempList.add(element.role);
+            print('DARA ${element.role}');
+          });
+
+          roleList?.add(tempList);
+          // print("List LENGTH ->> ${designationList?.value.length}");
+
+        }
       }  else if(status.toLowerCase() == failed){
         showMessageBar('Failed :  ${response.message ?? ""}');
       }
@@ -1820,23 +1994,40 @@ class _RegisterScreenState
 
   String findDepartIdByName() {
     String result = "";
-    getBloc().departmentList.value.data?.forEach((element) {
-      if(element.department == departMentDropdown){
-        result = element.departmentId.toString();
-        print("Department ID $result");
-      }
-    });
+    if(!getBloc().departmentList.isClosed) {
+      getBloc().departmentList.value.data?.forEach((element) {
+        if (element.department == departMentDropdown) {
+          result = element.departmentId.toString();
+          print("Department ID $result");
+        }
+      });
+    }
 
+    return result;
+  }
+
+  String findRoleIdByName() {
+    String result = "";
+    if(!getBloc().roleList.isClosed) {
+      getBloc().roleList.value.data?.forEach((element) {
+        if (element.role == roleDropdown) {
+          result = element.roleId.toString();
+          print("Role ID $result");
+        }
+      });
+    }
     return result;
   }
 
   String findCompanyIdByName() {
     String result = "";
-    getBloc().companyList.value.data?.forEach((element) {
-      if(element.name == companyNameDropdown){
-        result = element.companyId.toString();
-      }
-    });
+    if(!getBloc().companyList.isClosed) {
+      getBloc().companyList.value.data?.forEach((element) {
+        if (element.name == companyNameDropdown) {
+          result = element.companyId.toString();
+        }
+      });
+    }
 
     return result;
   }
@@ -1844,12 +2035,13 @@ class _RegisterScreenState
 
   String findOfficeAddressByName() {
     String result = "";
-    getBloc().officeAddressList.value.data?.forEach((element) {
-      if(element.address == officeAddressDropdown){
-        result = element.officeId.toString();
-      }
-    });
-
+    if(!getBloc().officeAddressList.isClosed) {
+      getBloc().officeAddressList.value.data?.forEach((element) {
+        if (element.address == officeAddressDropdown) {
+          result = element.officeId.toString();
+        }
+      });
+    }
     return result;
   }
 
@@ -1857,14 +2049,14 @@ class _RegisterScreenState
   String findDesignationIdByName() {
 
     String result = "";
-    getBloc().designationList.value.data?.forEach((element) {
-      if(element.designation == designationDropdown){
-
-        result = element.designationId.toString();
-        print("Designation ID $result");
-      }
-    });
-
+    if(!getBloc().designationList.isClosed) {
+      getBloc().designationList.value.data?.forEach((element) {
+        if (element.designation == designationDropdown) {
+          result = element.designationId.toString();
+          print("Designation ID $result");
+        }
+      });
+    }
     return result;
   }
 }

@@ -1,91 +1,109 @@
 // To parse this JSON data, do
 //
-//     final loginWithEmailResponse = loginWithEmailResponseFromJson(jsonString);
+//     final getEmployeeListResponseModel = getEmployeeListResponseModelFromJson(jsonString);
 
 import 'dart:convert';
 
-LoginWithEmailResponse loginWithEmailResponseFromJson(String str) => LoginWithEmailResponse.fromJson(json.decode(str));
+GetEmployeeListResponseModel getEmployeeListResponseModelFromJson(String str) => GetEmployeeListResponseModel.fromJson(json.decode(str));
 
-String loginWithEmailResponseToJson(LoginWithEmailResponse data) => json.encode(data.toJson());
+String getEmployeeListResponseModelToJson(GetEmployeeListResponseModel data) => json.encode(data.toJson());
 
-class LoginWithEmailResponse {
+class GetEmployeeListResponseModel {
+  ResponseData? responseData;
   String? responseType;
-  LoginWithEmailResponseData? data;
   bool? toast;
-  String? message;
+  dynamic message;
 
-  LoginWithEmailResponse({
+  GetEmployeeListResponseModel({
+    this.responseData,
     this.responseType,
-    this.data,
     this.toast,
     this.message,
   });
 
-  LoginWithEmailResponse copyWith({
+  GetEmployeeListResponseModel copyWith({
+    ResponseData? responseData,
     String? responseType,
-    LoginWithEmailResponseData? data,
     bool? toast,
-    String? message,
+    dynamic message,
   }) =>
-      LoginWithEmailResponse(
+      GetEmployeeListResponseModel(
+        responseData: responseData ?? this.responseData,
         responseType: responseType ?? this.responseType,
-        data: data ?? this.data,
         toast: toast ?? this.toast,
         message: message ?? this.message,
       );
 
-  factory LoginWithEmailResponse.fromJson(Map<String, dynamic> json) => LoginWithEmailResponse(
+  factory GetEmployeeListResponseModel.fromJson(Map<String, dynamic> json) => GetEmployeeListResponseModel(
+    responseData: json["responseData"] is String ? json["responseData"] : json["responseData"] == null ? null : ResponseData.fromJson(json["responseData"]),
     responseType: json["response_type"],
-    data: json["data"] is String ? json["data"] : json["data"] == null ? null : LoginWithEmailResponseData.fromJson(json["data"]),
     toast: json["toast"],
     message: json["message"],
   );
 
   Map<String, dynamic> toJson() => {
+    "responseData": responseData is String ? responseData : responseData?.toJson(),
     "response_type": responseType,
-    "data": data is String ? data : data?.toJson(),
     "toast": toast,
     "message": message,
   };
 }
 
-class LoginWithEmailResponseData {
-  DataData? data;
-  String? accessToken;
+class ResponseData {
+  List<Datum>? data;
+  int? count;
+  int? currentPage;
+  int? limit;
+  int? lastPage;
 
-  LoginWithEmailResponseData({
+  ResponseData({
     this.data,
-    this.accessToken,
+    this.count,
+    this.currentPage,
+    this.limit,
+    this.lastPage,
   });
 
-  LoginWithEmailResponseData copyWith({
-    DataData? data,
-    String? accessToken,
+  ResponseData copyWith({
+    List<Datum>? data,
+    int? count,
+    int? currentPage,
+    int? limit,
+    int? lastPage,
   }) =>
-      LoginWithEmailResponseData(
+      ResponseData(
         data: data ?? this.data,
-        accessToken: accessToken ?? this.accessToken,
+        count: count ?? this.count,
+        currentPage: currentPage ?? this.currentPage,
+        limit: limit ?? this.limit,
+        lastPage: lastPage ?? this.lastPage,
       );
 
-  factory LoginWithEmailResponseData.fromJson(Map<String, dynamic> json) => LoginWithEmailResponseData(
-    data: json["data"] == null ? null : DataData.fromJson(json["data"]),
-    accessToken: json["access_token"],
+  factory ResponseData.fromJson(Map<String, dynamic> json) => ResponseData(
+    data: json["data"] == null ? [] : List<Datum>.from(json["data"]!.map((x) => Datum.fromJson(x))),
+    count: json["count"],
+    currentPage: json["currentPage"],
+    limit: json["limit"],
+    lastPage: json["lastPage"],
   );
 
   Map<String, dynamic> toJson() => {
-    "data": data?.toJson(),
-    "access_token": accessToken,
+    "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
+    "count": count,
+    "currentPage": currentPage,
+    "limit": limit,
+    "lastPage": lastPage,
   };
 }
 
-class DataData {
+class Datum {
   int? empId;
   String? firstName;
   String? lastName;
   String? empCode;
-  dynamic birthDate;
+  DateTime? birthDate;
   String? joiningDate;
-  dynamic empProfileIMg;
+  String? empProfileIMg;
   String? empIdCard;
   String? empAadharCard;
   int? departmentId;
@@ -99,7 +117,7 @@ class DataData {
   bool? isActive;
   bool? isDeleted;
   dynamic createdBy;
-  String? updatedBy;
+  dynamic updatedBy;
   dynamic deletedBy;
   DateTime? createdAt;
   DateTime? updatedAt;
@@ -107,8 +125,10 @@ class DataData {
   Company? company;
   Office? office;
   Role? role;
+  DepartmentClass? department;
+  DesignationClass? designation;
 
-  DataData({
+  Datum({
     this.empId,
     this.firstName,
     this.lastName,
@@ -137,16 +157,18 @@ class DataData {
     this.company,
     this.office,
     this.role,
+    this.department,
+    this.designation,
   });
 
-  DataData copyWith({
+  Datum copyWith({
     int? empId,
     String? firstName,
     String? lastName,
     String? empCode,
-    dynamic birthDate,
+    DateTime? birthDate,
     String? joiningDate,
-    dynamic empProfileIMg,
+    String? empProfileIMg,
     String? empIdCard,
     String? empAadharCard,
     int? departmentId,
@@ -160,7 +182,7 @@ class DataData {
     bool? isActive,
     bool? isDeleted,
     dynamic createdBy,
-    String? updatedBy,
+    dynamic updatedBy,
     dynamic deletedBy,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -168,8 +190,10 @@ class DataData {
     Company? company,
     Office? office,
     Role? role,
+    DepartmentClass? department,
+    DesignationClass? designation,
   }) =>
-      DataData(
+      Datum(
         empId: empId ?? this.empId,
         firstName: firstName ?? this.firstName,
         lastName: lastName ?? this.lastName,
@@ -198,14 +222,16 @@ class DataData {
         company: company ?? this.company,
         office: office ?? this.office,
         role: role ?? this.role,
+        department: department ?? this.department,
+        designation: designation ?? this.designation,
       );
 
-  factory DataData.fromJson(Map<String, dynamic> json) => DataData(
+  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
     empId: json["empID"],
     firstName: json["firstName"],
     lastName: json["lastName"],
     empCode: json["empCode"],
-    birthDate: json["birthDate"],
+    birthDate: json["birthDate"] == null ? null : DateTime.parse(json["birthDate"]),
     joiningDate: json["joiningDate"],
     empProfileIMg: json["empProfileIMg"],
     empIdCard: json["empIDCard"],
@@ -229,6 +255,8 @@ class DataData {
     company: json["company"] == null ? null : Company.fromJson(json["company"]),
     office: json["office"] == null ? null : Office.fromJson(json["office"]),
     role: json["role"] == null ? null : Role.fromJson(json["role"]),
+    department: json["department"] == null ? null : DepartmentClass.fromJson(json["department"]),
+    designation: json["designation"] == null ? null : DesignationClass.fromJson(json["designation"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -236,7 +264,7 @@ class DataData {
     "firstName": firstName,
     "lastName": lastName,
     "empCode": empCode,
-    "birthDate": birthDate,
+    "birthDate": "${birthDate?.year.toString().padLeft(4, '0')}-${birthDate?.month.toString().padLeft(2, '0')}-${birthDate?.day.toString().padLeft(2, '0')}",
     "joiningDate": joiningDate,
     "empProfileIMg": empProfileIMg,
     "empIDCard": empIdCard,
@@ -260,6 +288,8 @@ class DataData {
     "company": company?.toJson(),
     "office": office?.toJson(),
     "role": role?.toJson(),
+    "department": department?.toJson(),
+    "designation": designation?.toJson(),
   };
 }
 
@@ -309,6 +339,102 @@ class Company {
     "isDeleted": isDeleted,
   };
 }
+
+class DepartmentClass {
+  int? departmentId;
+  String? department;
+  bool? isDeleted;
+
+  DepartmentClass({
+    this.departmentId,
+    this.department,
+    this.isDeleted,
+  });
+
+  DepartmentClass copyWith({
+    int? departmentId,
+    String? department,
+    bool? isDeleted,
+  }) =>
+      DepartmentClass(
+        departmentId: departmentId ?? this.departmentId,
+        department: department ?? this.department,
+        isDeleted: isDeleted ?? this.isDeleted,
+      );
+
+  factory DepartmentClass.fromJson(Map<String, dynamic> json) => DepartmentClass(
+    departmentId: json["departmentID"],
+    department: json["department"],
+    isDeleted: json["isDeleted"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "departmentID": departmentId,
+    "department": department,
+    "isDeleted": isDeleted,
+  };
+}
+
+/*enum DepartmentEnum {
+  HERO_DEPARTMENT,
+  LET_DO_MANAGEMENT,
+  MARKETING_DEPARTMENT
+}*/
+
+/*final departmentEnumValues = EnumValues({
+  "hero Department": DepartmentEnum.HERO_DEPARTMENT,
+  "Let Do Management": DepartmentEnum.LET_DO_MANAGEMENT,
+  "Marketing Department": DepartmentEnum.MARKETING_DEPARTMENT
+});*/
+
+class DesignationClass {
+  int? designationId;
+  String? designation;
+  bool? isDeleted;
+
+  DesignationClass({
+    this.designationId,
+    this.designation,
+    this.isDeleted,
+  });
+
+  DesignationClass copyWith({
+    int? designationId,
+    String? designation,
+    bool? isDeleted,
+  }) =>
+      DesignationClass(
+        designationId: designationId ?? this.designationId,
+        designation: designation ?? this.designation,
+        isDeleted: isDeleted ?? this.isDeleted,
+      );
+
+  factory DesignationClass.fromJson(Map<String, dynamic> json) => DesignationClass(
+    designationId: json["designationID"],
+    designation: json["designation"],
+    isDeleted: json["isDeleted"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "designationID": designationId,
+    "designation": designation,
+    "isDeleted": isDeleted,
+  };
+}
+/*
+enum DesignationEnum {
+  CEO,
+  MARKETING_MANAGER,
+  PRODUCT_MANAGER
+}*/
+
+/*
+final designationEnumValues = EnumValues({
+  "CEO": DesignationEnum.CEO,
+  "Marketing Manager": DesignationEnum.MARKETING_MANAGER,
+  "Product Manager": DesignationEnum.PRODUCT_MANAGER
+});
+*/
 
 class Office {
   int? officeId;
@@ -384,4 +510,16 @@ class Role {
     "role": role,
     "isDeleted": isDeleted,
   };
+}
+
+class EnumValues<T> {
+  Map<String, T> map;
+  late Map<T, String> reverseMap;
+
+  EnumValues(this.map);
+
+  Map<T, String> get reverse {
+    reverseMap = map.map((k, v) => MapEntry(v, k));
+    return reverseMap;
+  }
 }

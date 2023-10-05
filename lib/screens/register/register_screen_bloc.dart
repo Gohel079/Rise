@@ -6,9 +6,11 @@ import 'package:rise_and_grow/remote/model/getDepartmentList_response_model.dart
 import 'package:rise_and_grow/remote/model/get_compantlist_response_model.dart' as companyData;
 import 'package:rise_and_grow/remote/model/get_designationList_response_model.dart' as designationData;
 import 'package:rise_and_grow/remote/model/get_officelist_response_model.dart' as officeData;
+import 'package:rise_and_grow/remote/model/get_role_list_response_model.dart' as roleData;
 import 'package:rise_and_grow/remote/model/register_response_model.dart';
 import 'package:rise_and_grow/remote/repository/auth_repository.dart';
 import 'package:rxdart/rxdart.dart';
+
 
 import '../../base/constants/app_widgets.dart';
 
@@ -20,12 +22,15 @@ class RegisterScreenBloc extends BasePageBloc {
   late BehaviorSubject<departMentData.ResponseData> departmentList;
   late BehaviorSubject<designationData.ResponseData> designationList;
   late BehaviorSubject<officeData.ResponseData> officeAddressList;
+  late BehaviorSubject<roleData.ResponseData> roleList;
+
 
   RegisterScreenBloc(){
     companyList = BehaviorSubject<companyData.ResponseData>.seeded(companyData.ResponseData());
     departmentList = BehaviorSubject<departMentData.ResponseData>.seeded(departMentData.ResponseData());
     designationList = BehaviorSubject<designationData.ResponseData>.seeded(designationData.ResponseData());
     officeAddressList = BehaviorSubject<officeData.ResponseData>.seeded(officeData.ResponseData());
+    roleList = BehaviorSubject<roleData.ResponseData>.seeded(roleData.ResponseData());
   }
 
 
@@ -36,7 +41,7 @@ class RegisterScreenBloc extends BasePageBloc {
       onSuccess.call(response);
     }, (error) {
       hideLoadingDialog();
-      showMessageBar(error.message ?? "");
+      showMessageBar('Server Error :${error.message ?? ""}');
     });
   }
 
@@ -47,7 +52,7 @@ class RegisterScreenBloc extends BasePageBloc {
       onSuccess.call(response);
     }, (error) {
       hideLoadingDialog();
-      showMessageBar(error.message ?? "");
+      showMessageBar('Server Error :${error.message ?? ""}');
     });
   }
 
@@ -58,7 +63,7 @@ class RegisterScreenBloc extends BasePageBloc {
       onSuccess.call(response);
     }, (error) {
       hideLoadingDialog();
-      showMessageBar(error.message ?? "");
+      showMessageBar('Server Error :${error.message ?? ""}');
     });
   }
 
@@ -69,7 +74,7 @@ class RegisterScreenBloc extends BasePageBloc {
       onSuccess.call(response);
     }, (error) {
       hideLoadingDialog();
-      showMessageBar(error.message ?? "");
+      showMessageBar('Server Error :${error.message ?? ""}');
     });
   }
 
@@ -81,8 +86,29 @@ class RegisterScreenBloc extends BasePageBloc {
       onSuccess.call(response);
     }, (error) {
       hideLoadingDialog();
-      showMessageBar(error.message ?? "");
+      showMessageBar('Server Error :${error.message ?? ""}');
     });
   }
 
+  void getRoleList(Function(roleData.GetRoleListResponseModel) onSuccess) {
+    showLoadingDialog();
+    apiGetRoleList((response) {
+      hideLoadingDialog();
+      onSuccess.call(response);
+    }, (error) {
+      hideLoadingDialog();
+      showMessageBar('Server Error :${error.message ?? ""}');
+    });
+  }
+
+
+  @override
+  void dispose() {
+    companyList.close();
+    departmentList.close();
+    designationList.close();
+    officeAddressList.close();
+    roleList.close();
+    super.dispose();
+  }
 }

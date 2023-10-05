@@ -5,14 +5,18 @@ import 'package:rise_and_grow/base/basePage.dart';
 import 'package:rise_and_grow/base/bloc/base_bloc.dart';
 import 'package:rise_and_grow/base/components/screen_utils/flutter_screenutil.dart';
 import 'package:rise_and_grow/base/constants/app_colors.dart';
+import 'package:rise_and_grow/base/constants/app_constant.dart';
+import 'package:rise_and_grow/remote/model/get_visitor_list_response_model.dart' as GetVisitor;
 import 'package:rise_and_grow/screens/add_visitor_registation/add_visitor_registation_screen.dart';
 import 'package:rise_and_grow/screens/visitor_registation/visitor_registation_bloc.dart';
+import 'package:rise_and_grow/screens/visitor_registation/visitor_registration_item.dart';
 
 import '../../base/constants/app_images.dart';
 import '../../base/constants/app_styles.dart';
+import '../../base/constants/app_widgets.dart';
 import '../../base/widgets/custom_page_route.dart';
 
-class VisitorRegistationScreen extends BasePage<VisitorRegistationBloc>{
+class VisitorRegistationScreen extends BasePage<VisitorRegistrationBloc>{
   const VisitorRegistationScreen({super.key});
 
 
@@ -28,9 +32,9 @@ class VisitorRegistationScreen extends BasePage<VisitorRegistationBloc>{
 
 }
 
-class _visitorRegistationState extends BasePageState<VisitorRegistationScreen,VisitorRegistationBloc>{
+class _visitorRegistationState extends BasePageState<VisitorRegistationScreen,VisitorRegistrationBloc>{
 
-  VisitorRegistationBloc bloc = VisitorRegistationBloc();
+  VisitorRegistrationBloc bloc = VisitorRegistrationBloc();
   bool isSearching =false;
 
   List<String> tabList = [
@@ -137,7 +141,7 @@ class _visitorRegistationState extends BasePageState<VisitorRegistationScreen,Vi
             SizedBox(height: 10.h,),
 
 
-            visitorRegistation()
+            visitorRegistration()
 
           ],),
         ),),
@@ -183,154 +187,60 @@ class _visitorRegistationState extends BasePageState<VisitorRegistationScreen,Vi
   }
 
 
-  Widget visitorRegistation(){
+  Widget visitorRegistration(){
     return Expanded(
-      child: ListView.builder(
-        itemCount: 20,
-        shrinkWrap: true,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: Card(
-              elevation: 0.5,
-              shape: RoundedRectangleBorder(borderRadius:
-              BorderRadius.circular(10)),
-              color: listCardBG ,
-              child:
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12,
-                    vertical: 17),
-                child: Row(children: [
-
-                  SizedBox(width: 4.w),
-                  Expanded(flex:4,child:
-                  Container(
-                    // width: 10,height: 100,
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-
-                          Row(
-                            children: [
-
-                              SvgPicture.asset(
-                                AppImages.icBookmark  ,
-                                color: lightBlack,
-                              ),
-                              SizedBox(width: 5.w,),
-                              Text('RTPL Mobile app',
-                                  style: styleMedium1.copyWith(
-                                    color: lightBlack,
-                                    fontWeight: FontWeight.w500,
-                                  )),
-                            ],
-                          ),
-                          SizedBox(height: 12.h,),
-
-                          Text('Mr.Harsh Patel',
-                              style: styleMedium1.copyWith(
-                                color: black,
-                                fontWeight: FontWeight.w600,
-                              )),
-
-                          SizedBox(height: 14.h,),
-
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-
-
-                              SvgPicture.asset(
-                                AppImages.icCalenderOutline,
-                                color: lightBlack,
-                              ),
-                              SizedBox(width: 6.w,),
-                              Text('08/09/2023',
-                                  style: styleSmall4.copyWith(
-                                    color: lightBlack,
-                                    fontWeight: FontWeight.w500,
-                                  )),
-
-                              SizedBox(width: 7.w,),
-                              Text('|',
-                                  style: styleSmall4.copyWith(
-                                    color: verticalDivier,
-                                    fontWeight: FontWeight.w600,
-                                  )),
-                              SizedBox(width: 7.w,),
-                              SvgPicture.asset(
-                                AppImages.icClock,
-                                color: lightBlack,
-                              ),
-                              SizedBox(width: 3.w,),
-                              Text('06:15',
-                                  style: styleSmall4.copyWith(
-                                    color: lightBlack,
-                                    fontWeight: FontWeight.w500,
-                                  )),
-                            ],),
-
-                          SizedBox(height: 14.h,),
-
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-
-
-                              SvgPicture.asset(
-                                AppImages.icCall,
-                                color: lightBlack,
-                              ),
-                              SizedBox(width: 1.w,),
-                              Text('+91 756779909',
-                                  style: styleSmall4.copyWith(
-                                    color: lightBlack,
-                                    fontWeight: FontWeight.w500,
-                                  )),
-                            ],),
-
-                        ]),)),
-                  Expanded(flex:2,child:
-                  Container(width: 10,
-                    padding: const EdgeInsets.symmetric(horizontal: 7),
-                    // ,height: 0,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-
-
-                        Container(width : 55.w,height: 55.h,decoration:
-                        BoxDecoration(borderRadius: BorderRadius.circular(2))
-                            ,child: Image.asset(AppImages.imgPerson1,fit: BoxFit.fill,)),
-
-
-                        SizedBox(height: 8.h,),
-
-                        Container(decoration:
-                        BoxDecoration(borderRadius: BorderRadius.circular(20),
-                            color: white,border: Border.all(color: green2,width: 1)),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 6),
-                            child: Text('Accepted',
-                                style: styleSmall3.copyWith(
-                                  color: green2,
-                                  fontWeight: FontWeight.w600,
-                                )),
-                          ),
-                        ),
-                      ],),))
-
-                ],),
-              ),),
-          );
-        },),
+      child: StreamBuilder<List<GetVisitor.Datum>>(
+        stream: bloc.getVisitorList.stream,
+        builder: (context, snapshot) {
+          if(snapshot.hasData && snapshot.data?.isNotEmpty == true ) {
+            return ListView.builder(
+              itemCount: snapshot.data?.length,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return  VisitorRegistrationItem(snapshot.data?.elementAt(index));
+              },);
+          }else {
+            return const SizedBox();
+          }
+        }
+      ),
     );
   }
 
   @override
-  VisitorRegistationBloc getBloc() {
+  VisitorRegistrationBloc getBloc() {
    return bloc;
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    callGetVisitorAPI();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+  }
+
+  void callGetVisitorAPI() {
+
+    bloc.getVisitorRegList((response) {
+
+      String status = response.responseType ?? success;
+
+      if(status.toLowerCase() == success) {
+        if(!getBloc().getVisitorList.isClosed){
+          getBloc().getVisitorList.add(response.responseData?.data ?? []);
+        }
+      }
+      else if(status.toLowerCase() == failed){
+        showMessageBar('Failed :  ${response.message ?? ""}');
+      }
+      else {
+        showMessageBar('ERROR :${response.message ?? ""}');
+      }
+    },);
   }
 }
