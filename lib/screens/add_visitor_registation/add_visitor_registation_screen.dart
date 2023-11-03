@@ -1091,10 +1091,10 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
               );
             },
               context: context,
-              initialDate: DateTime.now(),
-              firstDate: DateTime(1950),
+              initialDate: DateTime(2000),
+              firstDate:DateTime(1950),
               //DateTime.now() - not to allow to choose before today.
-              lastDate: DateTime(2100));
+              lastDate:  DateTime.now().subtract(const Duration(days: 365 * 18)));
 
           if (pickedDate != null) {
             print(pickedDate);
