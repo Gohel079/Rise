@@ -176,7 +176,7 @@ class VisitorApproveScreenState extends BasePageState<VisitorApproveScreen,Visit
                     SizedBox(height: 25.h,),
                     visitDataRow("Company\nAddress :",widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vCompanyAddress ?? ""),
                     SizedBox(height: 25.h,),
-                    visitDataRow("Company\nMail Address :",widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vCompanyAddress ?? ""),
+                    visitDataRow("Company\nMail Address :",widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vCompanyEmail ?? ""),
                     SizedBox(height: 25.h,),
                     visitDataRow("DOB :","${day.toString()}/${month.toString()}/${year.toString()}"),
                     SizedBox(height: 25.h,),
