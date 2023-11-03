@@ -14,14 +14,14 @@ class VisitorRegistrationBloc extends BasePageBloc{
   }
 
 
-  void getVisitorRegList(Function(GetVisitor.GetVisitorResponseModel) onSuccess) {
+  void getVisitorRegList(Map? data,Function(GetVisitor.GetVisitorResponseModel) onSuccess) {
     showLoadingDialog();
-    apiGetVisitorList((response) {
+    apiGetVisitorList(data,(response) {
       hideLoadingDialog();
       onSuccess.call(response);
     }, (error) {
       hideLoadingDialog();
-      showMessageBar('ERROR ${error.message ?? ""}');
+      // showMessageBar('ERROR ${error.message ?? ""}');
     });
   }
 

@@ -28,6 +28,20 @@ String? validateDOB(String? value) {
   return null;
 }
 
+String? validateDateAndTime(String? value) {
+  if (value!.trim().isEmpty) {
+    return "Date and Time is required.";
+  }
+  return null;
+}
+
+String? validateTokenNumber(String? value) {
+  if (value!.trim().isEmpty) {
+    return "Token Number is required.";
+  }
+  return null;
+}
+
 String? validateStrongPassword(String? value) {
   final capitalLetterRegex = RegExp(r'(?=.*[A-Z])');
   final specialCharacterRegex = RegExp(r'(?=.*[!@#$%^&()])');
@@ -217,6 +231,12 @@ String? validateDealer(String? value){
   return null;
 }
 
+String? validateContactPersonName(String? value) {
+  if (value!.trim().isEmpty) {
+    return "Contact Person  Name is required.";
+  }
+  return null;
+}
 String? validateCategory(String? value){
   if(value!.trim().isEmpty || value == "Select"){
     return "Please Select Product Category !";
@@ -266,7 +286,7 @@ String? validateTypeOfMeeting(dynamic? value) {
   return null;
 }
 
-String? validateContactPersonName(dynamic? value) {
+String? validateContactPersonNameDropDown(dynamic? value) {
   if (value == null) {
     return "Please Contact Person";
   }
@@ -291,3 +311,16 @@ String? validateMeetingPlatform(dynamic? value) {
   return null;
 }
 
+String? validateMeetingPurpose(String? value) {
+  if (value!.trim().isEmpty) {
+    return "Meeting Purpose is required.";
+  }
+  return null;
+}
+
+String? validateMeetingDateAndTime(String? value) {
+  if (value!.trim().isEmpty) {
+    return "Meeting Date & Time is required.";
+  }
+  return null;
+}

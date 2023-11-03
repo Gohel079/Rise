@@ -5,6 +5,7 @@ import 'package:rise_and_grow/base/basePage.dart';
 import 'package:rise_and_grow/base/bloc/base_bloc.dart';
 import 'package:rise_and_grow/base/components/screen_utils/flutter_screenutil.dart';
 import 'package:rise_and_grow/base/constants/app_widgets.dart';
+import 'package:rise_and_grow/remote/model/get_visitor_list_response_model.dart';
 import 'package:rise_and_grow/screens/upcoming_appointment/upcoming_appointment_bloc.dart';
 import 'package:rise_and_grow/screens/visitor_approve/visitor_approve_bloc.dart';
 
@@ -15,18 +16,20 @@ import '../../base/widgets/button_view.dart';
 import '../../base/widgets/custom_page_route.dart';
 import '../../base/widgets/image_view.dart';
 import '../../utils/common_utils.dart';
+import '../reception_approve/reception_approve_screen.dart';
 
 class VisitorApproveScreen extends BasePage<VisitorApproveBloc> {
-  const VisitorApproveScreen({super.key});
+  Datum? data;
+   VisitorApproveScreen({this.data,super.key});
 
   @override
   BasePageState<BasePage<BasePageBloc?>, BasePageBloc> getState() {
     return VisitorApproveScreenState();
   }
 
-  static Route<dynamic> route() {
+  static Route<dynamic> route(Datum? data) {
     return CustomPageRoute(
-        builder: (context) => const VisitorApproveScreen());
+        builder: (context) =>  VisitorApproveScreen(data: data,));
   }
 
 }
@@ -39,8 +42,12 @@ class VisitorApproveScreenState extends BasePageState<VisitorApproveScreen,Visit
   AutovalidateMode autoValidateMode = AutovalidateMode.disabled;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool isSearching =false;
+
   @override
   Widget buildWidget(BuildContext context) {
+    var day = widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vDateOfBirth?.day ?? "";
+    var month = widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vDateOfBirth?.month ?? "";
+    var year = widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vDateOfBirth?.year ?? "";
     return Scaffold(
         appBar: AppBar(
           leadingWidth: 19,
@@ -134,14 +141,14 @@ class VisitorApproveScreenState extends BasePageState<VisitorApproveScreen,Visit
                 children: [
                   ClipRRect(
                       borderRadius: const BorderRadius.all(Radius.circular(65)),
-                      child: Image.asset(AppImages.imgPerson1,
+                      child: Image.network(widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vImage ?? "",
                         height: 100,width: 100,fit: BoxFit.fill,)
                   ),
                 ],
               ),
                 SizedBox(height: 15.h,),
 
-                Text(' Mr. Pradeep Patel',
+                Text(widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vFirstName ?? "",
                     style: styleMedium2.copyWith(
                       color: black,
                       fontWeight: FontWeight.w600,
@@ -150,7 +157,7 @@ class VisitorApproveScreenState extends BasePageState<VisitorApproveScreen,Visit
                 SizedBox(height: 35.h,),
 
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16,vertical: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 16),
                   decoration: BoxDecoration(
                   color: darkTextFieldFillColor,
                   borderRadius: BorderRadius.circular(10),
@@ -158,21 +165,22 @@ class VisitorApproveScreenState extends BasePageState<VisitorApproveScreen,Visit
                 ),
                 child: Column(
                   children: [
-                    visitDataRow("Purpose of\nVisit :","Need to discuss about to start new about new project"),
+
+                    visitDataRow("Purpose of\nVisit :",widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vPurposeOfVisit ?? ""),
                     SizedBox(height: 25.h,),
-                    visitDataRow("Company\nName :","Need to discuss about to start new about new project"),
+                    visitDataRow("Company\nName :",widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vCompanyName ?? ""),
                     SizedBox(height: 25.h,),
-                    visitDataRow("Designation :","Sr. Manager"),
+                    visitDataRow("Designation :",widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vDesignation ?? ""),
                     SizedBox(height: 25.h,),
-                    visitDataRow("Contact\nNumber :"," +91 878668022"),
+                    visitDataRow("Contact\nNumber :",widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vCompanyContact ?? ""),
                     SizedBox(height: 25.h,),
-                    visitDataRow("Company\nAddress :","Ananad nagar setelite,ahemdabad"),
+                    visitDataRow("Company\nAddress :",widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vCompanyAddress ?? ""),
                     SizedBox(height: 25.h,),
-                    visitDataRow("Company\nMail Address :","Rise@123.com"),
+                    visitDataRow("Company\nMail Address :",widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vCompanyAddress ?? ""),
                     SizedBox(height: 25.h,),
-                    visitDataRow("DOB :","17 July 1999"),
+                    visitDataRow("DOB :","${day.toString()}/${month.toString()}/${year.toString()}"),
                     SizedBox(height: 25.h,),
-                    visitDataRow("Anniversary\nDate :","17 July 1999"),
+                    visitDataRow("Anniversary\nDate :","${day.toString()}/${month.toString()}/${year.toString()}"),
                     SizedBox(height: 35.h,),
                     documentImage(),
                     SizedBox(height: 20.h,),
@@ -252,19 +260,23 @@ class VisitorApproveScreenState extends BasePageState<VisitorApproveScreen,Visit
     Row(mainAxisAlignment: MainAxisAlignment.center,
     children: [
 
-    Row(
-    children: [
-    Text('Confirm',
-    style: styleMedium2.copyWith(
-    color: white,
-    fontWeight: FontWeight.w700,
-    )),
+    InkWell(onTap: (){
+      Navigator.push(context,ReceptionApproveScreen.route(widget.data));
+    },
+      child: Row(
+      children: [
+      Text('Confirm',
+      style: styleMedium2.copyWith(
+      color: white,
+      fontWeight: FontWeight.w700,
+      )),
 
-    SizedBox(width: 7.w,),
-    SvgPicture.asset(AppImages.icTrue,
-    height: 14.h,width: 19.w
-    ,color: white,)
-    ],
+      SizedBox(width: 7.w,),
+      SvgPicture.asset(AppImages.icTrue,
+      height: 14.h,width: 19.w
+      ,color: white,)
+      ],
+      ),
     ),
 
 
@@ -279,23 +291,21 @@ class VisitorApproveScreenState extends BasePageState<VisitorApproveScreen,Visit
 
           Container(decoration:
           BoxDecoration(color: Colors.red,borderRadius: BorderRadius.circular(8),)
-              ,child:ImageView(
+              ,child:Image.network(
+              widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vImage ?? "",
               height: 90.h,
               width: 140.w,
-              boxFit:  BoxFit.fill,
-              image: AppImages.imgDoc,
-              imageType: ImageType.asset,
+              fit:  BoxFit.fill,
             ),),
           SizedBox(width: 10.w,),
           Container(decoration:
           BoxDecoration(color: Colors.red,borderRadius: BorderRadius.circular(8),)
-            ,child:ImageView(
-              height: 90.h,
-              width: 140.w,
-              boxFit:  BoxFit.fill,
-              image: AppImages.imgDoc,
-              imageType: ImageType.asset,
-            ),),
+            ,child:Image.network(
+                widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vImage ?? "",
+                height: 90.h,
+                width: 140.w,
+                fit:  BoxFit.fill,
+              )),
         ],
       ),
     );

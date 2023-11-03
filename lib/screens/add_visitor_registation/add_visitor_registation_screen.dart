@@ -1,5 +1,7 @@
-  import 'dart:io';
 
+import 'dart:io' as IO;
+
+import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -101,6 +103,7 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
 
   BehaviorSubject<String>? photoOrCameraFile;
   BehaviorSubject<String>? aadhaarCardPDFText;
+  BehaviorSubject<String>? visitingCardPhoto;
   ImagePicker? imagePicker  = ImagePicker();
 
   @override
@@ -109,6 +112,7 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
     employeeList = BehaviorSubject<List<dynamic>>.seeded([]);
     personDataList = BehaviorSubject<List<Map<dynamic,dynamic>>>.seeded([]);
     photoOrCameraFile = BehaviorSubject<String>.seeded("");
+    visitingCardPhoto = BehaviorSubject<String>.seeded("");
     aadhaarCardPDFText = BehaviorSubject<String>.seeded("");
     // tempList.insert(0, "Select Contact Person Name");
   }
@@ -191,7 +195,7 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
                !isSearching ? SizedBox(width: 16.w,) : SizedBox(),
                !isSearching ? InkWell(onTap: (){
 
-                 Navigator.push(context,ReceptionApproveScreen.route());
+                 // Navigator.push(context,ReceptionApproveScreen.route());
                },
                  child: SvgPicture.asset(AppImages.icNotification,
                    height: 24.h,
@@ -329,7 +333,7 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
 
 
   Widget submitButton() {
-    return ButtonView(string('label_next'),true, () {
+    return ButtonView(string('label_submit'),false, () async {
 
       var state = _formKey.currentState!;
 
@@ -337,85 +341,151 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
       {
         hideKeyboard(context);
 
-        DateTime currentTime = DateTime.now();
-        String formattedTime =  '${currentTime.hour}:${currentTime.minute}:${currentTime.second}';
-
-        Map? dataMap = {
-          "vFirstName" : _firstNameController.text.toString(),
-          "vLastName" : _secondNameController.text.toString(),
-          "vDateOfBirth" : '${_dateOfBirthController.text.toString()} ${formattedTime}',
-          "vImage" : "url//fdfdslf.com",
-          "vIDDoc": "sds./sdsd/dasd/",
-          "vCompanyName": _companyNameController.text.toString(),
-          "vDesignation": _designationController.text.toString(),
-          "vCompanyAddress": _companyAddressController.text.toString(),
-          "vCompanyContact": _companyContactNumberController.text.toString(),
-          "vCompanyEmail": _companyMailAddressController.text.toString(),
-          "vAnniversaryDate": '${_anniversaryDateController.text.toString()} ${formattedTime}'
-        };
-
-        List<Map?> personTempList = [];
-        personDataList?.value.forEach((element) {
-          Map? personMap = {
-            "vFirstName" : element["fName"].toString(),
-            "vLastName" : element["lName"].toString(),
-            "vDateOfBirth" : '${element["DOB"].toString()} ${formattedTime}',
-            "vImage" : "url//fdfdslf.com",
-            "vIDDoc": "sds./sdsd/dasd/",
-            "vCompanyName": _companyNameController.text.toString(),
-            "vDesignation": element["designation"].toString(),
-            "vCompanyAddress": _companyAddressController.text.toString(),
-            "vCompanyContact": _companyContactNumberController.text.toString(),
-            "vCompanyEmail": _companyMailAddressController.text.toString(),
-            "vAnniversaryDate": '${element["aDate"].toString()} ${formattedTime}'
-          };
-          personTempList.add(personMap);
-        });
-
-        List<Map> dataList = [];
-        Map<dynamic, dynamic> combinedMap =
-        personTempList.fold({}, (result, currentMap) {
-          result.addAll(currentMap ?? Map());
-          return result;
-        });
-
-        if(personTempList.isNotEmpty)
+        if(aadhaarCardPDFText!.value.length > 1 &&
+            photoOrCameraFile!.value.length >1
+            && visitingCardPhoto!.value.length > 1)
         {
-           dataList =
-           [
-             dataMap,
-            combinedMap
-           ];
-        }
-        else
-        {
-          dataList = [dataMap];
-        }
-
-        Map requestData = {
-          "purpose" : _purposeOfVisitController.text.toString(),
-          "visitors" : dataList
-        };
+          DateTime currentTime = DateTime.now();
+          String formattedTime = '${currentTime.hour}:${currentTime
+              .minute}:${currentTime.second}';
 
 
 
-        getBloc().doVisitorRegistration(requestData, (response) {
-          String status = response.responseType ?? success;
+          List fNameList  = [];
+          List lNameList = [];
+          List designationList = [];
+          List dateOfBirthList  = [];
+          List anniversaryDateList  = [];
+          List documentList  = [];
+          List imageList  = [];
 
-          if(status.toLowerCase() == success){
 
-            Navigator.push(context, HomeScreen.route());
-            showApprovedDialog(_firstNameController.text.toString(),_secondNameController.text.toString());
-            // showMessageBar("Your Registration Done");
-          }
-          else if(status.toLowerCase() == failed){
-            showMessageBar('Failed :  ${response.message ?? ""}');
+
+          FormData typeOfFormData = FormData();
+          if(personDataList?.value.isNotEmpty ?? true){
+
+            fNameList.add(_firstNameController.text.toString());
+            personDataList?.value.forEach((element) {
+              fNameList.add(element["fName"].toString());
+            });
+
+            lNameList.add(_secondNameController.text.toString());
+            personDataList?.value.forEach((element) {
+              lNameList.add(element["lName"].toString());
+            });
+
+            designationList.add(_designationController.text.toString());
+            personDataList?.value.forEach((element) {
+              designationList.add(element["designation"].toString());
+            });
+
+            dateOfBirthList.add(_dateOfBirthController.text.trim().toString());
+            personDataList?.value.forEach((element) {
+              dateOfBirthList.add(element["DOB"].toString());
+            });
+
+            anniversaryDateList.add(_anniversaryDateController.text.toString());
+            personDataList?.value.forEach((element) {
+              anniversaryDateList.add(element["aDate"].toString());
+            });
+
+            documentList.add(aadhaarCardPDFText?.value.toString() ?? "");
+            personDataList?.value.forEach((element) async {
+              documentList.add(await MultipartFile.fromFile( element["document"].toString() ?? "",
+                filename:  element["document"].toString().split('/').last,) ?? "");
+            });
+
+
+            imageList.add(await MultipartFile.fromFile(photoOrCameraFile?.value ?? "",
+              filename: photoOrCameraFile?.value.split('/').last,) ?? "");
+
+            personDataList?.value.forEach((element) async {
+              imageList.add(await MultipartFile.fromFile(element["image"].toString() ?? "",
+                filename: element["image"].toString().split('/').last,) ?? "");
+            });
+
+            typeOfFormData = FormData.fromMap({
+              "vFirstName": fNameList,
+              "vLastName": lNameList,
+              "vDesignation":designationList,
+              "empID": int.parse(findEmployeeIdByName()),
+              // "visitors":["000","000"],
+              "vDateOfBirth": dateOfBirthList,
+              "vImage": imageList,
+              "vIDDoc": documentList,
+              "vAnniversaryDate" : anniversaryDateList,
+              "vCompanyAddress":_companyAddressController.text.trim().toString(),
+              "vCompanyName": _companyNameController.text.trim().toString(),
+              "vCompanyEmail": _companyMailAddressController.text.trim().toString(),
+              "vCompanyContact": _companyContactNumberController.text.trim().toString(),
+              "purpose": _purposeOfVisitController.text.trim().toString()
+
+             /* "vDesignation": _designationController.text.trim().toString(),
+              "empID":-2,
+              "vDateOfBirth":"15-05-1998",
+              "vFirstName": dateOfBirthList,
+              // "visitors":["ooo"],
+              "vImage": await MultipartFile.fromFile(photoOrCameraFile?.value ?? "",
+                filename: photoOrCameraFile?.value.split('/').last,) ?? "",
+              "vIDDoc": await MultipartFile.fromFile(aadhaarCardPDFText?.value ?? "",
+                filename: aadhaarCardPDFText?.value.split('/').last,) ?? "",
+              "vAnniversaryDate":"10-02-2020",
+              "vCompanyAddress": _companyAddressController.text.trim().toString(),
+              "vCompanyName": _companyNameController.text.trim().toString(),
+              "vCompanyEmail": _companyMailAddressController.text.trim().toString(),
+              "vLastName": _secondNameController.text.trim().toString(),
+              "vCompanyContact": int.parse(_companyContactNumberController.text.trim()),
+              "purpose": _purposeOfVisitController.text.trim().toString()*/
+            });
+
+
           }
           else {
-            showMessageBar('ERROR :${response.message ?? ""}');
+
+            typeOfFormData = FormData.fromMap({
+              "vDesignation": _designationController.text.trim().toString(),
+              "empID":int.parse(findEmployeeIdByName()),
+              "vDateOfBirth":_dateOfBirthController.text.trim().toString(),
+              "vFirstName": _firstNameController.text.trim().toString(),
+              // "visitors":["ooo"],
+              "vImage": await MultipartFile.fromFile(photoOrCameraFile?.value ?? "",
+                filename: photoOrCameraFile?.value.split('/').last,) ?? "",
+              "vIDDoc": await MultipartFile.fromFile(aadhaarCardPDFText?.value ?? "",
+                filename: aadhaarCardPDFText?.value.split('/').last,) ?? "",
+              "vAnniversaryDate":_anniversaryDateController.text.trim().toString(),
+              "vCompanyAddress": _companyAddressController.text.trim().toString(),
+              "vCompanyName": _companyNameController.text.trim().toString(),
+              "vCompanyEmail": _companyMailAddressController.text.trim().toString(),
+              "vLastName": _secondNameController.text.trim().toString(),
+              "vCompanyContact": int.parse(_companyContactNumberController.text.trim()),
+              "purpose": _purposeOfVisitController.text.trim().toString()
+
+
+            });
+
           }
 
-        });
+
+
+          getBloc().doVisitorRegistration(typeOfFormData, (response) {
+            String status = response.responseType ?? success;
+
+            if (status.toLowerCase() == success) {
+              Navigator.push(context, HomeScreen.route());
+              showApprovedDialog(_firstNameController.text.toString(),
+                  _secondNameController.text.toString());
+              // showMessageBar("Your Registration Done");
+            }
+            else if (status.toLowerCase() == failed) {
+              showMessageBar('Failed :  ${response.message ?? ""}');
+            }
+            else {
+              showMessageBar('ERROR :${response.message ?? ""}');
+            }
+          });
+        } else {
+          showMessageBar("Please Upload Document or Photo ");
+        }
 
       }
       // Navigator.push(context, OtherDetailsAddRegistrationScreen.route());
@@ -673,24 +743,34 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
               child: DropdownButtonFormField(
                 // value: contactPersonValue,
                 isExpanded: true,
-                validator: validateContactPersonName,
+                // isDense: false,
+                validator: validateContactPersonNameDropDown,
                 autovalidateMode: autoValidateMode,
                 decoration: const InputDecoration(border: InputBorder.none),
                 hint: Text("Select Contact Person Name",
                   style: styleMedium1.copyWith(color: textGrayColor,
                       fontWeight: FontWeight.w600),),
                 icon: const Icon(Icons.keyboard_arrow_down,color: black,),
-                items: snapshot.data?.map((dynamic items) {
-                  return DropdownMenuItem(
-                    value: items ?? "",
-                    child: Text(items ?? "",
-                      style: styleMedium1.copyWith(color: black,
-                          fontWeight: FontWeight.w600),),
-                  );
-                }).toList(),
-                onChanged: (dynamic newValue) {
+                items: [
+
+                  DropdownMenuItem(value: "", child: Text("Select Contact Person Name",
+                    style: styleMedium1.copyWith(color: black,
+                        fontWeight: FontWeight.w600),)),
+
+                  ...?snapshot.data?.map<DropdownMenuItem<String>>((e) {
+                    return DropdownMenuItem(
+                      value: e,
+                      child: Text(e,
+                        style: styleMedium1.copyWith(color: black,
+                            fontWeight: FontWeight.w600),),
+                    );
+                  },).toList()
+
+                ]
+                ,onChanged: (dynamic newValue) {
                   setState(() {
                     contactPersonValue = newValue!;
+                    print("Employee IDDD---- ${findEmployeeIdByName()}");
                   });
                 },
               ),
@@ -1018,7 +1098,7 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
 
           if (pickedDate != null) {
             print(pickedDate);
-            String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
+            String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
             print(formattedDate); //formatted date output using intl package =>  2021-03-16
             setState(() {
               _dateOfBirthController.text = formattedDate; //set output date to TextField value.
@@ -1127,7 +1207,7 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
           print(
               pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
           String formattedDate =
-          DateFormat('yyyy-MM-dd').format(pickedDate);
+          DateFormat('dd-MM-yyyy').format(pickedDate);
           print(
               formattedDate); //formatted date output using intl package =>  2021-03-16
           setState(() {
@@ -1257,7 +1337,7 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
           stream:  photoOrCameraFile?.stream,
           builder: (context, snapshot) {
             return InkWell(onTap: (){
-              showOptions();
+              showOptions(isFromPhoto: true);
             },
               child: Container(height: 90.h,decoration :
               BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
@@ -1332,25 +1412,35 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
       SizedBox(width: 10.w,),
 
       Expanded(
-        child: Container(height: 90.h,decoration :
-        BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
-            border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+        child: StreamBuilder<String?>(
+          stream: visitingCardPhoto?.stream,
+          builder: (context, snapshot) {
+            return InkWell(onTap: (){
+              showOptions(isFromPhoto: false);
+            },
+              child: Container(height: 90.h,decoration :
+              BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
+                  border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
 
-                SvgPicture.asset(AppImages.icCamera),
+                      selectedVisitingCardPhoto(snapshot.data),
+                    /*  SvgPicture.asset(AppImages.icCamera),
 
-                SizedBox(height: 6.h,),
+                      SizedBox(height: 6.h,),
 
-                Text("Visiting Card Photo",
-                    textAlign: TextAlign.center,
-                    style: styleSmall3.copyWith(
-                      color: textGrayColor,
-                      fontWeight: FontWeight.w500,
-                    )),
-              ],)),
+                      Text("Visiting Card Photo",
+                          textAlign: TextAlign.center,
+                          style: styleSmall3.copyWith(
+                            color: textGrayColor,
+                            fontWeight: FontWeight.w500,
+                          )),*/
+                    ],)),
+            );
+          }
+        ),
       ),
 
 
@@ -1370,7 +1460,7 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
 
       Map<String,dynamic> param  = {
         "limit" : limit,
-        "page" :totalPages,
+        "page" :indexOfData,
         "sort" : "DESC",
         "sortBy" : "createdAt",
         "search" : "client-k"
@@ -1622,7 +1712,7 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
 
                       Container(width : 55.w,height: 55.h,decoration:
                       BoxDecoration(borderRadius: BorderRadius.circular(2))
-                          ,child:  Center(child: Image.file(File(pImage.toString()),
+                          ,child:  Center(child: Image.file(IO.File(pImage.toString()),
                   height: 60.h,
                   width: 70.w,),)),
 
@@ -1639,7 +1729,29 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
   Widget  selectPhoto(String? data){
     if(data != null && data.length > 1)
     {
-      return Center(child: Image.file(File(data.toString()),
+      return Center(child: Image.file(IO.File(data.toString()),
+        height: 60.h,
+        width: 70.w,),);
+    }
+    else {
+      return Column(children: [
+        SvgPicture.asset(AppImages.icCamera),
+
+        SizedBox(height: 6.h,),
+
+        Text('Photo',
+            style: styleSmall3.copyWith(
+              color: textGrayColor,
+              fontWeight: FontWeight.w500,
+            )),
+      ],);
+    }
+  }
+
+  Widget  selectedVisitingCardPhoto(String? data){
+    if(data != null && data.length > 1)
+    {
+      return Center(child: Image.file(IO.File(data.toString()),
         height: 60.h,
         width: 70.w,),);
     }
@@ -1659,7 +1771,7 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
   }
 
 
-  Future showOptions() async {
+  Future showOptions({bool? isFromPhoto}) async {
     showCupertinoModalPopup(
       context: context,
       builder: (context) => CupertinoActionSheet(
@@ -1674,7 +1786,11 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
               // close the options modal
               Navigator.of(context).pop();
               // get image from gallery
-              _pickImage();
+             if(isFromPhoto ?? true){
+               _pickImage();
+             }else{
+               _pickVisitingCardImage();
+             }
             },
           ),
           CupertinoActionSheetAction(
@@ -1686,7 +1802,11 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
 
               Navigator.of(context).pop();
 
-              _pickCamera();
+              if(isFromPhoto ?? true){
+                _pickCamera();
+              }else{
+                _pickVisitingCardCamera();
+              }
             },
           ),
         ],
@@ -1705,6 +1825,17 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
     }
   }
 
+  _pickVisitingCardImage() async{
+    XFile? image = await imagePicker?.pickImage(source: ImageSource.gallery);
+
+    print(image);
+    if(image != null){
+      if(!visitingCardPhoto!.isClosed){
+        visitingCardPhoto?.add(image.path);
+      }
+    }
+  }
+
   _pickCamera() async{
     XFile? image = await imagePicker?.pickImage(source:
     ImageSource.camera);
@@ -1712,6 +1843,18 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
     if(image != null){
       if(!photoOrCameraFile!.isClosed){
         photoOrCameraFile?.add(image.path);
+
+      }
+    }
+  }
+
+  _pickVisitingCardCamera() async{
+    XFile? image = await imagePicker?.pickImage(source:
+    ImageSource.camera);
+
+    if(image != null){
+      if(!visitingCardPhoto!.isClosed){
+        visitingCardPhoto?.add(image.path);
 
       }
     }
@@ -1757,7 +1900,7 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
 
       if(file.extension ==  "pdf")
       {
-        File file = File(filePickerResult.files.single.path!);
+        IO.File file = IO.File(filePickerResult.files.single.path!);
         aadhaarCardPDFText?.add(file.path);
       }
       else {
@@ -1766,10 +1909,24 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
       }
       }
 
-
-
     }
 
+  }
+
+
+  String findEmployeeIdByName() {
+
+    String result = "";
+    if(!getBloc().employeeList.isClosed) {
+      String matchString;
+      getBloc().employeeList.value.forEach((element) {
+        matchString =  "${element.firstName} ${element.lastName} - ${element.designation?.designation ?? ""}";
+        if (matchString == contactPersonValue) {
+           result = element.empId.toString();
+        }
+      });
+    }
+    return result;
   }
 
   @override
@@ -1777,6 +1934,7 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
     personDataList?.close();
     aadhaarCardPDFText?.close();
     photoOrCameraFile?.close();
+    visitingCardPhoto?.close();
     employeeList?.close();
     super.dispose();
   }

@@ -8,6 +8,7 @@ import 'package:rise_and_grow/base/constants/app_colors.dart';
 import 'package:rise_and_grow/base/constants/app_constant.dart';
 import 'package:rise_and_grow/remote/model/get_visitor_list_response_model.dart' as GetVisitor;
 import 'package:rise_and_grow/screens/add_visitor_registation/add_visitor_registation_screen.dart';
+import 'package:rise_and_grow/screens/visitor_approve/visitor_approve_screen.dart';
 import 'package:rise_and_grow/screens/visitor_registation/visitor_registation_bloc.dart';
 import 'package:rise_and_grow/screens/visitor_registation/visitor_registration_item.dart';
 
@@ -15,6 +16,7 @@ import '../../base/constants/app_images.dart';
 import '../../base/constants/app_styles.dart';
 import '../../base/constants/app_widgets.dart';
 import '../../base/widgets/custom_page_route.dart';
+import '../reception_approve/reception_approve_screen.dart';
 
 class VisitorRegistationScreen extends BasePage<VisitorRegistrationBloc>{
   const VisitorRegistationScreen({super.key});
@@ -36,6 +38,10 @@ class _visitorRegistationState extends BasePageState<VisitorRegistationScreen,Vi
 
   VisitorRegistrationBloc bloc = VisitorRegistrationBloc();
   bool isSearching =false;
+
+  int limit = 10;
+  int indexOfData = 1;
+  int totalPages = 1;
 
   List<String> tabList = [
     "ALL",
@@ -190,14 +196,20 @@ class _visitorRegistationState extends BasePageState<VisitorRegistationScreen,Vi
   Widget visitorRegistration(){
     return Expanded(
       child: StreamBuilder<List<GetVisitor.Datum>>(
-        stream: bloc.getVisitorList.stream,
+        stream: getBloc().getVisitorList.stream,
         builder: (context, snapshot) {
           if(snapshot.hasData && snapshot.data?.isNotEmpty == true ) {
             return ListView.builder(
               itemCount: snapshot.data?.length,
               shrinkWrap: true,
               itemBuilder: (context, index) {
-                return  VisitorRegistrationItem(snapshot.data?.elementAt(index));
+                print("DARA ${snapshot.data?.elementAt(index).tokenNumber}");
+                
+                return  InkWell(onTap: () {
+
+                  Navigator.push(context, VisitorApproveScreen.route(snapshot.data?.elementAt(index)));
+                  // Navigator.push(context,ReceptionApproveScreen.route(snapshot.data?.elementAt(index)));
+                },child: VisitorRegistrationItem(snapshot.data?.elementAt(index)));
               },);
           }else {
             return const SizedBox();
@@ -226,21 +238,46 @@ class _visitorRegistationState extends BasePageState<VisitorRegistationScreen,Vi
 
   void callGetVisitorAPI() {
 
-    bloc.getVisitorRegList((response) {
+    if(indexOfData <= totalPages) {
+      Map<String, dynamic> param = {
+        "limit": limit,
+        "page": indexOfData,
+        "sort": "DESC",
+        "sortBy": "createdAt",
+        "search": "client-k"
+      };
 
-      String status = response.responseType ?? success;
+      bloc.getVisitorRegList(param,(response) {
+        String status = response.responseType ?? success;
 
-      if(status.toLowerCase() == success) {
-        if(!getBloc().getVisitorList.isClosed){
-          getBloc().getVisitorList.add(response.responseData?.data ?? []);
+        if (status.toLowerCase() == success) {
+
+          totalPages  = response.responseData?.lastPage ?? 0;
+          print("Total Page ${totalPages}");
+          print("IndexOFData Page ${indexOfData}");
+          // print("Total Page ${indexOfData}");
+
+          if (!getBloc().getVisitorList.isClosed) {
+            // getBloc().getVisitorList.add(response.responseData?.data ?? []);
+            print("GetVisitorList ->> ${getBloc().getVisitorList.value.length}");
+
+            List<GetVisitor.Datum> tempList = bloc.getVisitorList.value ?? [];
+            tempList.addAll(response.responseData?.data ?? []);
+
+
+            bloc.getVisitorList.add(tempList);
+          }
+          indexOfData++;
+          callGetVisitorAPI();
+
         }
-      }
-      else if(status.toLowerCase() == failed){
-        showMessageBar('Failed :  ${response.message ?? ""}');
-      }
-      else {
-        showMessageBar('ERROR :${response.message ?? ""}');
-      }
-    },);
+        else if (status.toLowerCase() == failed) {
+          showMessageBar('Failed :  ${response.message ?? ""}');
+        }
+        else {
+          showMessageBar('ERROR :${response.message ?? ""}');
+        }
+      },);
+    }
   }
 }

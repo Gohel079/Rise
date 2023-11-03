@@ -73,7 +73,13 @@ class NetManager extends DioManager {
 
   @override
   bool isSuccess(Response? response) {
-    return response?.statusCode == 200;
+    if(response?.statusCode == 200){
+      return true;
+    }else if(response?.statusCode == 404){
+      return true;
+    }
+    return false;
+    // return  if(response?.statusCode == 200 || response;
     Map<String, dynamic> data = jsonDecode(response!.data.toString());
     if (data.containsKey("success")) {
       return data["success"] == true && response.statusCode == 200;

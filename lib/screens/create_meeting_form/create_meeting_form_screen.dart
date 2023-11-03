@@ -318,6 +318,7 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
       controller: _meetingPurposeController,
       focusNode: _nodeMeetingPurpose,
       maxLines: 3,
+      validator: validateMeetingPurpose,
       autovalidateMode: autoValidateMode,
       keyboardType: TextInputType.text,
       textInputAction: TextInputAction.next,
@@ -403,12 +404,11 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
       style: styleMedium1.copyWith(color: black,fontWeight: FontWeight.w600),
       controller: _setDateAndTimeController,
       focusNode: _nodeDateAndTime,
+      validator: validateMeetingDateAndTime,
       autovalidateMode: autoValidateMode,
       keyboardType: TextInputType.text,
-
       onTap: ()  {
         Navigator.push(context, SetMeetingDateAndTimeScreen.route());
-
       },
       textInputAction: TextInputAction.next,
       decoration:  InputDecoration(

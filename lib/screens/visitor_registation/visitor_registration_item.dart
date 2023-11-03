@@ -33,6 +33,7 @@ class _VisitorRegistrationItemState extends State<VisitorRegistrationItem> {
           child: Row(children: [
 
             SizedBox(width: 4.w),
+
             Expanded(flex:4,child:
             Container(
               // width: 10,height: 100,
@@ -50,7 +51,7 @@ class _VisitorRegistrationItemState extends State<VisitorRegistrationItem> {
                         ),
                         SizedBox(width: 5.w,),
                         Flexible(
-                          child: Text(widget.data?.reqRequestMap?.first.reqVisitorMap?.vCompanyName ?? "",
+                          child: Text(widget.data?.reqRequestMap?.isEmpty  ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vCompanyName ?? "",
                               style: styleMedium1.copyWith(
                                 color: lightBlack,
                                 fontWeight: FontWeight.w500,
@@ -60,7 +61,7 @@ class _VisitorRegistrationItemState extends State<VisitorRegistrationItem> {
                     ),
                     SizedBox(height: 12.h,),
 
-                    Text(widget.data?.reqRequestMap?.first.reqVisitorMap?.vFirstName ?? "",
+                    Text(widget.data?.reqRequestMap?.isEmpty  ?? false ? "" :widget.data?.reqRequestMap?.first.reqVisitorMap?.vFirstName ?? "",
                         style: styleMedium1.copyWith(
                           color: black,
                           fontWeight: FontWeight.w600,
@@ -115,7 +116,7 @@ class _VisitorRegistrationItemState extends State<VisitorRegistrationItem> {
                           color: lightBlack,
                         ),
                         SizedBox(width: 1.w,),
-                        Text('+91 ${widget.data?.reqRequestMap?.first.reqVisitorMap?.vCompanyContact ?? ""}',
+                        Text('+91 ${widget.data?.reqRequestMap?.isEmpty  ?? false ? "" :widget.data?.reqRequestMap?.first.reqVisitorMap?.vCompanyContact ?? ""}',
                             style: styleSmall4.copyWith(
                               color: lightBlack,
                               fontWeight: FontWeight.w500,
@@ -135,7 +136,14 @@ class _VisitorRegistrationItemState extends State<VisitorRegistrationItem> {
 
                   Container(width : 55.w,height: 55.h,decoration:
                   BoxDecoration(borderRadius: BorderRadius.circular(2))
-                      ,child: Image.asset(AppImages.imgPerson1,fit: BoxFit.fill,)),
+                      ,child: Image.network(
+                          "${widget.data?.reqRequestMap?.isEmpty  ?? false ? "" :
+                      widget.data?.reqRequestMap?.first.reqVisitorMap?.vImage ?? ""}",
+
+
+                      )
+                      // Image.asset(AppImages.imgPerson1,fit: BoxFit.fill,)
+                  ),
 
 
                   SizedBox(height: 8.h,),

@@ -3,6 +3,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rise_and_grow/base/constants/app_colors.dart';
+import 'package:rise_and_grow/screens/home/home_screen.dart';
+import 'package:rise_and_grow/screens/login/login_screen.dart';
 import 'package:rise_and_grow/screens/splash/splash_screen.dart';
 
 import 'app_bloc.dart';
@@ -64,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
              debugShowCheckedModeBanner: false,
              title: 'HITACHI',
              theme: normalTheme(context),
-             home: const SplashScreen(),
+             home: const HomeScreen(),
              navigatorKey: navigatorKey,
              localizationsDelegates:
              ezLocalizationDelegate.localizationDelegates,

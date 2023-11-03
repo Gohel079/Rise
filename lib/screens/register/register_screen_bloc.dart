@@ -67,9 +67,9 @@ class RegisterScreenBloc extends BasePageBloc {
     });
   }
 
-  void getDesignationList(Function(designationData.GetDesignationListResponseModel) onSuccess) {
+  void getDesignationList(Map? data,Function(designationData.GetDesignationListResponseModel) onSuccess) {
     showLoadingDialog();
-    apiGetDesignation((response) {
+    apiGetDesignationList(data,(response) {
       hideLoadingDialog();
       onSuccess.call(response);
     }, (error) {
@@ -79,9 +79,9 @@ class RegisterScreenBloc extends BasePageBloc {
   }
 
 
-  void getOfficeList(String? companyId,Map? data,Function(officeData.GetOfficeListResponseModel) onSuccess) {
+  void getOfficeList(int? companyId,Function(officeData.GetOfficeListResponseModel) onSuccess) {
     showLoadingDialog();
-    apiOfficeList(companyId,data, (response) {
+      apiOfficeList(companyId, (response) {
       hideLoadingDialog();
       onSuccess.call(response);
     }, (error) {

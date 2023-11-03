@@ -124,7 +124,7 @@ class _ResponseDialogState extends State<ResponseDialog> {
   Widget submitButton() {
     return ButtonView(string('label_viewDetails'),false, () {
       Navigator.pop(context);
-      Navigator.push(context, VisitorApproveScreen.route());
+      // Navigator.push(context, VisitorApproveScreen.route());
     });
   }
 

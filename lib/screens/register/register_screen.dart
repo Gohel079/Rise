@@ -60,6 +60,8 @@ class _RegisterScreenState
   BehaviorSubject<List<dynamic>>? officeList;
   BehaviorSubject<List<dynamic>>? roleList;
 
+  FilePickerResult? companyFilePicker;
+  FilePickerResult? aadharcardFilePickerResult;
 
   /*var officeAddressList = [
     'Office Address',
@@ -302,7 +304,8 @@ class _RegisterScreenState
     super.onReady();
     callCompanyListAPI();
     callDepartmentAPI();
-    callDesignationAPI();
+    // callDesignationAPI(22);
+    // callDesignationAPI(2);
     callRoleAPI();
 
   }
@@ -738,7 +741,7 @@ class _RegisterScreenState
             return DropdownButtonHideUnderline(
               child: DropdownButtonFormField(
                 decoration: const InputDecoration(border: InputBorder.none),
-                value: snapshot.data?[0],
+                value: companyNameDropdown,
                 autovalidateMode: autoValidateMode,
                 isExpanded: true,
                 validator: validateCompanyName,
@@ -788,6 +791,7 @@ class _RegisterScreenState
               child: DropdownButtonFormField(
                 value: officeAddressDropdown,
                 isExpanded: true,
+                isDense: false,
                 autovalidateMode: autoValidateMode,
                 decoration: const InputDecoration(border: InputBorder.none),
                 validator: validateOfficeAddress,
@@ -811,7 +815,7 @@ class _RegisterScreenState
           }
           else {
             return InkWell(onTap: (){
-              showMessageBar("Please Select First Company Name");
+              // showMessageBar("Please Select First Company Name");
             },
               child: Container(height: 40.h,
                 child: DropdownMenuItem(
@@ -886,13 +890,16 @@ class _RegisterScreenState
           if(snapshot.hasData && snapshot.data!.length > 1) {
             return DropdownButtonHideUnderline(
               child: DropdownButtonFormField(
-                value: snapshot.data?[0],
+                value: departMentDropdown,
                 decoration: const InputDecoration(border: InputBorder.none),
                 isExpanded: true,
                 autovalidateMode: autoValidateMode,
+                // hint: Text("Select Department",
+                //   style: styleMedium1.copyWith(color: textGrayColor,
+                //       fontWeight: FontWeight.w600),),
                 validator: validateDepartment,
                 icon: const Icon(Icons.keyboard_arrow_down,color: black,),
-                items: snapshot.data?.map((dynamic items) {
+                items:snapshot.data?.map((dynamic items) {
                   return DropdownMenuItem(
                     value: items,
                     child: Text(items,
@@ -903,6 +910,8 @@ class _RegisterScreenState
                 onChanged: (dynamic? newValue) {
                   setState(() {
                     departMentDropdown = newValue!;
+                    designationDropdown = "Select Designation";
+                    callDesignationAPI(int.parse(findDepartIdByName()));
                   });
                 },
               ),
@@ -931,8 +940,11 @@ class _RegisterScreenState
           if(snapshot.hasData && snapshot.data!.length > 1){
             return DropdownButtonHideUnderline(
               child: DropdownButtonFormField(
-                value: snapshot.data?[0],
+                value: designationDropdown,
                 isExpanded: true,
+                // hint: Text("Select Designation",
+                //   style: styleMedium1.copyWith(color: textGrayColor,
+                //       fontWeight: FontWeight.w600),),
                 decoration: const InputDecoration(border: InputBorder.none),
                 validator: validateDesignationDropDown,
                 autovalidateMode: autoValidateMode,
@@ -1151,10 +1163,10 @@ class _RegisterScreenState
               );
             },
             context: context,
-            initialDate: DateTime.now(),
-            firstDate: DateTime(1950),
+            initialDate: DateTime(2000),
+            firstDate: DateTime(1900),
             //DateTime.now() - not to allow to choose before today.
-            lastDate: DateTime(2100));
+            lastDate: DateTime.now().subtract(const Duration(days: 365 * 18)));
 
         if (pickedDate != null) {
           print(
@@ -1442,7 +1454,7 @@ class _RegisterScreenState
 
         if(aadhaarCardPDFText!.value.length > 1 &&
             companyPDFFileText!.value.length >1
-            && photoOrCameraFile!.value.length > 1){
+            && photoOrCameraFile!.value.length > 1 && agree == true){
 
 
           hideKeyboard(context);
@@ -1458,7 +1470,7 @@ class _RegisterScreenState
           String departmentName =  departMentDropdown.toString();
           String designation =  designationDropdown.toString();
           String officeAddress =  officeAddressDropdown.toString();
-          String aadhaarNumber =  _aadharNumberController.toString();
+          String aadhaarNumber =  _aadharNumberController.text.trim().toString();
           String password =  _passwordController.text.trim().toString();
           String confirmPassword =  _confirmPasswordController.text.toString();
 
@@ -1473,6 +1485,7 @@ class _RegisterScreenState
             "phone" : contactNumber,
             "companyID" : findCompanyIdByName(),
             "officeID" : findOfficeAddressByName(),
+            "aadharNumber" : aadhaarNumber,
             "password" : password,
             "roleID" : findRoleIdByName(),
             "empAadharCard" :  await MultipartFile.fromFile(aadhaarCardPDFText?.value ?? "",
@@ -1488,7 +1501,7 @@ class _RegisterScreenState
 
           print("FORM DATA  ${formData.fields.toString()}");
 
-          Map requestData = {
+          /*Map requestData = {
             "firstName" : firstName,
             "lastName" : lastName,
             "empCode" : employeeCode,
@@ -1505,7 +1518,7 @@ class _RegisterScreenState
             "empIDCard" : formData,
             "empProfileIMg" : "",
             "joiningDate" : anniversaryDate
-          };
+          };*/
 
 
           getBloc().doRegister(formData, (response) {
@@ -1611,18 +1624,18 @@ class _RegisterScreenState
 
 
   _pickCompanyPDFFile() async {
-    FilePickerResult? filePickerResult = await FilePicker.platform.pickFiles(
+    companyFilePicker = await FilePicker.platform.pickFiles(
         type: FileType.custom,
       allowedExtensions: ['pdf']
     );
 
-    if(filePickerResult != null &&
-        filePickerResult.files.single.path != null)
+    if(companyFilePicker != null &&
+        companyFilePicker?.files.single.path != null)
     {
 
-      PlatformFile file = filePickerResult.files.first;
+      PlatformFile file = companyFilePicker!.files.first;
       if(file.extension ==  "pdf"){
-        File file = File(filePickerResult.files.single.path!);
+        File file = File(companyFilePicker!.files.single.path!);
         companyPDFFileText?.add(file.path);
       }
       else {
@@ -1634,20 +1647,20 @@ class _RegisterScreenState
   }
 
   _pickAadhaarCardPDFFile() async {
-    FilePickerResult? filePickerResult = await FilePicker.platform.pickFiles(
+    aadharcardFilePickerResult = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['pdf']
     );
 
-    if(filePickerResult != null &&
-        filePickerResult.files.single.path != null){
+    if(aadharcardFilePickerResult != null &&
+        aadharcardFilePickerResult!.files.single.path != null){
 
 
-      PlatformFile file = filePickerResult.files.first;
+      PlatformFile file = aadharcardFilePickerResult!.files.first;
 
       if(file.extension ==  "pdf")
       {
-        File file = File(filePickerResult.files.single.path!);
+        File file = File(aadharcardFilePickerResult!.files.single.path!);
         aadhaarCardPDFText?.add(file.path);
       }
       else {
@@ -1664,8 +1677,28 @@ class _RegisterScreenState
 
   selectCompanyPdfAfterWidget(String? data){
     if(data?.length != null && data!.length > 1){
-      return  Center(child: Image.asset(AppImages.imgPDf,
-        height: 50,width: 50,));
+      return  Stack(
+        // alignment: Alignment.topRight,
+        children: [
+          Center(
+            child: Image.asset(AppImages.imgPDf,
+              height: 50,width: 50,),
+          ),
+
+          Positioned(
+            top: 10,
+            right: 25.0,
+            child: InkWell(onTap: (){
+
+              companyFilePicker == null;
+              companyPDFFileText?.value = "";
+            },
+              child: Image.asset(AppImages.imgClosePDf,
+                height: 15,width: 15,),
+            )
+          ),
+        ],
+      );
     }else{
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -1689,8 +1722,27 @@ class _RegisterScreenState
   selectedAadhaarCardAfterWidget(String? aadhaarCardData){
     if(aadhaarCardData != null && aadhaarCardData.length  > 1)
     {
-      return  Center(child: Image.asset(AppImages.imgPDf,
-        height: 50,width: 50,));
+      return Stack(
+        children: [
+          Center(
+            child: Image.asset(AppImages.imgPDf,
+              height: 50,width: 50,),
+          ),
+
+          Positioned(
+              top: 10,
+              right: 25.0,
+              child: InkWell(onTap: (){
+
+                aadharcardFilePickerResult == null;
+                aadhaarCardPDFText?.value = "";
+              },
+                child: Image.asset(AppImages.imgClosePDf,
+                  height: 15,width: 15,),
+              )
+          ),
+        ],
+      );
     }else{
       return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -1841,13 +1893,16 @@ class _RegisterScreenState
 
   void callOfficeListAPI(int? companyCode){
 
-
-
-    Map requestDate = {
-      "companyID" : companyCode
+    print("companyCode -- $companyCode");
+    Map? requestDate = {
+      "limit" : 10,
+      "page" : 1,
+      "isActive" : 1,
+      "sort" : "asc",
+      "sortBy" : "officeID"
     };
 
-    getBloc().getOfficeList(companyCode.toString(),requestDate, (response) {
+    getBloc().getOfficeList(companyCode, (response) {
 
       String status = response.responseType ?? success;
 
@@ -1879,8 +1934,7 @@ class _RegisterScreenState
           officeTempList.forEach((element) {
             print("FINAL TEMP LIST ${element}");
           });
-          print("FINAL LIST FOR DROP LENGTH- ()()()()() ${officeList?.value
-              .length}");
+
           officeList?.value.forEach((element) {
             print("FINAL LIST FOR DROP ${element}");
           });
@@ -1933,9 +1987,17 @@ class _RegisterScreenState
     },);
   }
 
-  void callDesignationAPI() {
+  void callDesignationAPI(int? departmentId) {
 
-    getBloc().getDesignationList((response) {
+    Map<String,dynamic>  data = {
+      "departmentID" : departmentId,
+      "isActive" : 1,
+      // "page" : 1,
+      // "limit" : 50
+    };
+
+
+    getBloc().getDesignationList(data,(response) {
       String status = response.responseType ?? success;
 
       if(status.toLowerCase() == success){
@@ -1950,7 +2012,6 @@ class _RegisterScreenState
           });
 
           designationList?.add(tempList);
-          // print("List LENGTH ->> ${designationList?.value.length}");
 
         }
       }  else if(status.toLowerCase() == failed){

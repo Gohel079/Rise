@@ -102,7 +102,7 @@ class Datum {
   int? companyId;
   bool? isActive;
   bool? isDeleted;
-  DateTime? createdBy;
+  String? createdBy;
   dynamic updatedBy;
   dynamic deletedBy;
   DateTime? createdAt;
@@ -129,7 +129,7 @@ class Datum {
     int? companyId,
     bool? isActive,
     bool? isDeleted,
-    DateTime? createdBy,
+    String? createdBy,
     dynamic updatedBy,
     dynamic deletedBy,
     DateTime? createdAt,
@@ -156,7 +156,7 @@ class Datum {
     companyId: json["companyID"],
     isActive: json["isActive"],
     isDeleted: json["isDeleted"],
-    createdBy: json["createdBy"] == null ? null : DateTime.parse(json["createdBy"]),
+    createdBy: json["createdBy"],
     updatedBy: json["updatedBy"],
     deletedBy: json["deletedBy"],
     createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
@@ -170,7 +170,7 @@ class Datum {
     "companyID": companyId,
     "isActive": isActive,
     "isDeleted": isDeleted,
-    "createdBy": createdBy?.toIso8601String(),
+    "createdBy": createdBy,
     "updatedBy": updatedBy,
     "deletedBy": deletedBy,
     "createdAt": createdAt?.toIso8601String(),
