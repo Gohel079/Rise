@@ -3,6 +3,7 @@ import 'package:rise_and_grow/remote/model/add_visitor_register_response_model.d
 import 'package:rise_and_grow/remote/model/create_meeting_response_model.dart';
 import 'package:rise_and_grow/remote/model/getDepartmentList_response_model.dart';
 import 'package:rise_and_grow/remote/model/get_compantlist_response_model.dart';
+import 'package:rise_and_grow/remote/model/get_created_meeting_list_respinse_model.dart';
 import 'package:rise_and_grow/remote/model/get_designationList_response_model.dart';
 import 'package:rise_and_grow/remote/model/get_employee_list_response_model.dart';
 import 'package:rise_and_grow/remote/model/get_meeting_mode_response_model.dart';
@@ -184,6 +185,23 @@ void apiCreateMeeting(FormData? data, Function(CreateMeetingResponseModel) onSuc
   });
 }
 
+void apiGetVisitorLis( Function(GetVisitorResponseModel) onSuccess, Function(NetWorkException) onError) {
+  get<String>(AppEndpoint.getVisitorRegister, isAuth: false ).then((value) {
+
+
+    final response =  getVisitorResponseModelFromJson(value!);
+    onSuccess(response);
+  }).catchError((error) {
+    if (error is NetWorkException) {
+      print("ERROR ${error.message}");
+      onError(error);
+    }else{
+      onError(NetWorkException(101010,error.toString()));
+    }
+  });
+
+}
+
 /// Get Role List API
 void apiGetRoleList(Function(GetRoleListResponseModel) onSuccess, Function(NetWorkException) onError) {
   get<String>(AppEndpoint.getRoleList, isAuth: false).then((value) {
@@ -258,4 +276,19 @@ void apiGetVisitorList( Function(GetVisitorResponseModel) onSuccess, Function(Ne
     }
   });
 
+}
+
+//Get CreatedMeetingList API
+void apiGetCreatedMeetingList(Function(GetCreatedMeetingResponseModel) onSuccess, Function(NetWorkException) onError) {
+  get<String>(AppEndpoint.getCreatedMeeting, isAuth: false).then((value) {
+    final response = getCreatedMeetingResponseModelFromJson(value!);
+    onSuccess(response);
+  }).catchError((error) {
+    if (error is NetWorkException) {
+      print("ERROR ${error.message}");
+      onError(error);
+    }else{
+      onError(NetWorkException(101010,error.toString()));
+    }
+  });
 }
