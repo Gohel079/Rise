@@ -20,8 +20,9 @@ import '../../utils/app_valid.dart';
 import '../../utils/common_utils.dart';
 
 class ReceptionApproveScreen extends BasePage{
-  Datum? data;
-   ReceptionApproveScreen({this.data,super.key});
+  ReqEmployeeMap? employeeMap;
+  String? requestId;
+   ReceptionApproveScreen({this.employeeMap,this.requestId,super.key});
 
 
   @override
@@ -29,9 +30,9 @@ class ReceptionApproveScreen extends BasePage{
    return _receptionApproveScreenState();
   }
 
-  static Route<dynamic> route(Datum? selectedData) {
+  static Route<dynamic> route(ReqEmployeeMap? employeeMap, String? requestId) {
     return CustomPageRoute(
-        builder: (context) =>  ReceptionApproveScreen(data: selectedData,));
+        builder: (context) =>  ReceptionApproveScreen(employeeMap: employeeMap,requestId: requestId,));
   }
 
 }
@@ -79,7 +80,9 @@ class _receptionApproveScreenState  extends BasePageState<ReceptionApproveScreen
     _autoTimeController.text =formattedTime;
 
 
-   _employeeCodeController.text = (widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.empId?.toString()) ?? "";
+   _employeeCodeController.text =  widget.employeeMap?.empId?.toString().isNotEmpty ?? true ? widget.employeeMap?.empId?.toString()  ?? "": "";
+   String? fullName =  widget.employeeMap?.firstName?.toString().isNotEmpty ?? true ? widget.employeeMap?.firstName?.toString()  ?? ""  : "" "${widget.employeeMap?.lastName}" ?? "";
+   _contactPersonNameController.text = fullName;
   }
 
   @override
@@ -713,7 +716,7 @@ class _receptionApproveScreenState  extends BasePageState<ReceptionApproveScreen
 
         Map requestData = {
           "tokenNumber":_tokenNumberController.text.trim().toString(),
-          "requestID":widget.data?.requestId,
+          "requestID":widget.requestId,
           "officeID":int.parse(findOfficeIdByName()),
           "departmentID":int.parse(findDepartIdByName()),
           "companyID": int.parse(findCompanyIdByName())

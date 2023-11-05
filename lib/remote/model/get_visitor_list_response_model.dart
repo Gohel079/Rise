@@ -35,14 +35,14 @@ class GetVisitorResponseModel {
       );
 
   factory GetVisitorResponseModel.fromJson(Map<String, dynamic> json) => GetVisitorResponseModel(
-    responseData: json["responseData"] is String ? json["responseData"] :json["responseData"] == null ? null : ResponseData.fromJson(json["responseData"]),
+    responseData: json["responseData"] == null ? null : ResponseData.fromJson(json["responseData"]),
     responseType: json["response_type"],
     toast: json["toast"],
-    message: json["message"] == null ? "" : json["message"] ,
+    message: json["message"],
   );
 
   Map<String, dynamic> toJson() => {
-    "responseData": responseData is String ? responseData : responseData?.toJson(),
+    "responseData": responseData?.toJson(),
     "response_type": responseType,
     "toast": toast,
     "message": message,
@@ -100,7 +100,7 @@ class Datum {
   int? requestId;
   String? purposeOfMeeting;
   String? tokenNumber;
-  Status? reqStatus;
+  String? reqStatus;
   dynamic recRemark;
   String? updatedBy;
   DateTime? createdAt;
@@ -123,7 +123,7 @@ class Datum {
     int? requestId,
     String? purposeOfMeeting,
     String? tokenNumber,
-    Status? reqStatus,
+    String? reqStatus,
     dynamic recRemark,
     String? updatedBy,
     DateTime? createdAt,
@@ -146,11 +146,11 @@ class Datum {
     requestId: json["requestID"],
     purposeOfMeeting: json["purposeOfMeeting"],
     tokenNumber: json["TokenNumber"],
-    reqStatus: statusValues.map[json["ReqStatus"]]!,
+    reqStatus: json["ReqStatus"],
     recRemark: json["RecRemark"],
     updatedBy: json["updatedBy"],
     createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
-    reqRequestMap: json["reqRequestMap"] == [] ? [] : json["reqRequestMap"] == null ? [] : List<ReqRequestMap>.from(json["reqRequestMap"]!.map((x) => ReqRequestMap.fromJson(x))),
+    reqRequestMap: json["reqRequestMap"] == null ? [] : List<ReqRequestMap>.from(json["reqRequestMap"]!.map((x) => ReqRequestMap.fromJson(x))),
     reqRequestmeetDet: json["reqRequestmeetDet"] == null ? [] : List<ReqRequestmeetDet>.from(json["reqRequestmeetDet"]!.map((x) => ReqRequestmeetDet.fromJson(x))),
   );
 
@@ -158,7 +158,7 @@ class Datum {
     "requestID": requestId,
     "purposeOfMeeting": purposeOfMeeting,
     "TokenNumber": tokenNumber,
-    "ReqStatus": statusValues.reverse[reqStatus],
+    "ReqStatus": reqStatus,
     "RecRemark": recRemark,
     "updatedBy": updatedBy,
     "createdAt": createdAt?.toIso8601String(),
@@ -173,13 +173,13 @@ class ReqRequestMap {
   bool? isVisitorSelected;
   dynamic evRemark;
   bool? attendance;
-  dynamic empId;
+  int? empId;
   int? visitorId;
-  Status? evStatus;
+  String? evStatus;
   bool? isDeleted;
   DateTime? createdAt;
   ReqVisitorMap? reqVisitorMap;
-  dynamic reqEmployeeMap;
+  ReqEmployeeMap? reqEmployeeMap;
 
   ReqRequestMap({
     this.reqMapMeetId,
@@ -202,13 +202,13 @@ class ReqRequestMap {
     bool? isVisitorSelected,
     dynamic evRemark,
     bool? attendance,
-    dynamic empId,
+    int? empId,
     int? visitorId,
-    Status? evStatus,
+    String? evStatus,
     bool? isDeleted,
     DateTime? createdAt,
     ReqVisitorMap? reqVisitorMap,
-    dynamic reqEmployeeMap,
+    ReqEmployeeMap? reqEmployeeMap,
   }) =>
       ReqRequestMap(
         reqMapMeetId: reqMapMeetId ?? this.reqMapMeetId,
@@ -233,11 +233,11 @@ class ReqRequestMap {
     attendance: json["Attendance"],
     empId: json["empID"],
     visitorId: json["visitorID"],
-    evStatus: statusValues.map[json["evStatus"]]!,
+    evStatus: json["evStatus"],
     isDeleted: json["isDeleted"],
     createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
     reqVisitorMap: json["reqVisitorMap"] == null ? null : ReqVisitorMap.fromJson(json["reqVisitorMap"]),
-    reqEmployeeMap: json["reqEmployeeMap"],
+    reqEmployeeMap: json["reqEmployeeMap"] == null ? null : ReqEmployeeMap.fromJson(json["reqEmployeeMap"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -248,21 +248,421 @@ class ReqRequestMap {
     "Attendance": attendance,
     "empID": empId,
     "visitorID": visitorId,
-    "evStatus": statusValues.reverse[evStatus],
+    "evStatus": evStatus,
     "isDeleted": isDeleted,
     "createdAt": createdAt?.toIso8601String(),
     "reqVisitorMap": reqVisitorMap?.toJson(),
-    "reqEmployeeMap": reqEmployeeMap,
+    "reqEmployeeMap": reqEmployeeMap?.toJson(),
   };
 }
 
-enum Status {
-  PENDING
+class ReqEmployeeMap {
+  int? empId;
+  String? firstName;
+  String? lastName;
+  String? empCode;
+  DateTime? birthDate;
+  String? joiningDate;
+  String? empProfileIMg;
+  String? empIdCard;
+  String? empAadharCard;
+  int? departmentId;
+  int? designationId;
+  String? email;
+  String? phone;
+  String? aadharNumber;
+  String? password;
+  int? companyId;
+  int? officeId;
+  int? roleId;
+  bool? isActive;
+  dynamic isAdmin;
+  dynamic featureString;
+  bool? isDeleted;
+  dynamic createdBy;
+  String? updatedBy;
+  dynamic deletedBy;
+  DateTime? createdAt;
+  DateTime? updatedAt;
+  dynamic deletedAt;
+  Com? company;
+  Office? office;
+  Role? role;
+  Dep? department;
+  Designation? designation;
+
+  ReqEmployeeMap({
+    this.empId,
+    this.firstName,
+    this.lastName,
+    this.empCode,
+    this.birthDate,
+    this.joiningDate,
+    this.empProfileIMg,
+    this.empIdCard,
+    this.empAadharCard,
+    this.departmentId,
+    this.designationId,
+    this.email,
+    this.phone,
+    this.aadharNumber,
+    this.password,
+    this.companyId,
+    this.officeId,
+    this.roleId,
+    this.isActive,
+    this.isAdmin,
+    this.featureString,
+    this.isDeleted,
+    this.createdBy,
+    this.updatedBy,
+    this.deletedBy,
+    this.createdAt,
+    this.updatedAt,
+    this.deletedAt,
+    this.company,
+    this.office,
+    this.role,
+    this.department,
+    this.designation,
+  });
+
+  ReqEmployeeMap copyWith({
+    int? empId,
+    String? firstName,
+    String? lastName,
+    String? empCode,
+    DateTime? birthDate,
+    String? joiningDate,
+    String? empProfileIMg,
+    String? empIdCard,
+    String? empAadharCard,
+    int? departmentId,
+    int? designationId,
+    String? email,
+    String? phone,
+    String? aadharNumber,
+    String? password,
+    int? companyId,
+    int? officeId,
+    int? roleId,
+    bool? isActive,
+    dynamic isAdmin,
+    dynamic featureString,
+    bool? isDeleted,
+    dynamic createdBy,
+    String? updatedBy,
+    dynamic deletedBy,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    dynamic deletedAt,
+    Com? company,
+    Office? office,
+    Role? role,
+    Dep? department,
+    Designation? designation,
+  }) =>
+      ReqEmployeeMap(
+        empId: empId ?? this.empId,
+        firstName: firstName ?? this.firstName,
+        lastName: lastName ?? this.lastName,
+        empCode: empCode ?? this.empCode,
+        birthDate: birthDate ?? this.birthDate,
+        joiningDate: joiningDate ?? this.joiningDate,
+        empProfileIMg: empProfileIMg ?? this.empProfileIMg,
+        empIdCard: empIdCard ?? this.empIdCard,
+        empAadharCard: empAadharCard ?? this.empAadharCard,
+        departmentId: departmentId ?? this.departmentId,
+        designationId: designationId ?? this.designationId,
+        email: email ?? this.email,
+        phone: phone ?? this.phone,
+        aadharNumber: aadharNumber ?? this.aadharNumber,
+        password: password ?? this.password,
+        companyId: companyId ?? this.companyId,
+        officeId: officeId ?? this.officeId,
+        roleId: roleId ?? this.roleId,
+        isActive: isActive ?? this.isActive,
+        isAdmin: isAdmin ?? this.isAdmin,
+        featureString: featureString ?? this.featureString,
+        isDeleted: isDeleted ?? this.isDeleted,
+        createdBy: createdBy ?? this.createdBy,
+        updatedBy: updatedBy ?? this.updatedBy,
+        deletedBy: deletedBy ?? this.deletedBy,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+        deletedAt: deletedAt ?? this.deletedAt,
+        company: company ?? this.company,
+        office: office ?? this.office,
+        role: role ?? this.role,
+        department: department ?? this.department,
+        designation: designation ?? this.designation,
+      );
+
+  factory ReqEmployeeMap.fromJson(Map<String, dynamic> json) => ReqEmployeeMap(
+    empId: json["empID"],
+    firstName: json["firstName"],
+    lastName: json["lastName"],
+    empCode: json["empCode"],
+    birthDate: json["birthDate"] == null ? null : DateTime.parse(json["birthDate"]),
+    joiningDate: json["joiningDate"],
+    empProfileIMg: json["empProfileIMg"],
+    empIdCard: json["empIDCard"],
+    empAadharCard: json["empAadharCard"],
+    departmentId: json["departmentID"],
+    designationId: json["designationID"],
+    email: json["email"],
+    phone: json["phone"],
+    aadharNumber: json["aadharNumber"],
+    password: json["password"],
+    companyId: json["companyID"],
+    officeId: json["officeID"],
+    roleId: json["roleID"],
+    isActive: json["isActive"],
+    isAdmin: json["isAdmin"],
+    featureString: json["featureString"],
+    isDeleted: json["isDeleted"],
+    createdBy: json["createdBy"],
+    updatedBy: json["updatedBy"],
+    deletedBy: json["deletedBy"],
+    createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
+    updatedAt: json["updatedAt"] == null ? null : DateTime.parse(json["updatedAt"]),
+    deletedAt: json["deletedAt"],
+    company: json["company"] == null ? null : Com.fromJson(json["company"]),
+    office: json["office"] == null ? null : Office.fromJson(json["office"]),
+    role: json["role"] == null ? null : Role.fromJson(json["role"]),
+    department: json["department"] == null ? null : Dep.fromJson(json["department"]),
+    designation: json["designation"] == null ? null : Designation.fromJson(json["designation"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "empID": empId,
+    "firstName": firstName,
+    "lastName": lastName,
+    "empCode": empCode,
+    "birthDate": "${birthDate!.year.toString().padLeft(4, '0')}-${birthDate!.month.toString().padLeft(2, '0')}-${birthDate!.day.toString().padLeft(2, '0')}",
+    "joiningDate": joiningDate,
+    "empProfileIMg": empProfileIMg,
+    "empIDCard": empIdCard,
+    "empAadharCard": empAadharCard,
+    "departmentID": departmentId,
+    "designationID": designationId,
+    "email": email,
+    "phone": phone,
+    "aadharNumber": aadharNumber,
+    "password": password,
+    "companyID": companyId,
+    "officeID": officeId,
+    "roleID": roleId,
+    "isActive": isActive,
+    "isAdmin": isAdmin,
+    "featureString": featureString,
+    "isDeleted": isDeleted,
+    "createdBy": createdBy,
+    "updatedBy": updatedBy,
+    "deletedBy": deletedBy,
+    "createdAt": createdAt?.toIso8601String(),
+    "updatedAt": updatedAt?.toIso8601String(),
+    "deletedAt": deletedAt,
+    "company": company?.toJson(),
+    "office": office?.toJson(),
+    "role": role?.toJson(),
+    "department": department?.toJson(),
+    "designation": designation?.toJson(),
+  };
 }
 
-final statusValues = EnumValues({
-  "Pending": Status.PENDING
-});
+class Com {
+  int? companyId;
+  String? name;
+  String? contact;
+  String? email;
+  bool? isDeleted;
+
+  Com({
+    this.companyId,
+    this.name,
+    this.contact,
+    this.email,
+    this.isDeleted,
+  });
+
+  Com copyWith({
+    int? companyId,
+    String? name,
+    String? contact,
+    String? email,
+    bool? isDeleted,
+  }) =>
+      Com(
+        companyId: companyId ?? this.companyId,
+        name: name ?? this.name,
+        contact: contact ?? this.contact,
+        email: email ?? this.email,
+        isDeleted: isDeleted ?? this.isDeleted,
+      );
+
+  factory Com.fromJson(Map<String, dynamic> json) => Com(
+    companyId: json["companyID"],
+    name: json["Name"],
+    contact: json["contact"],
+    email: json["email"],
+    isDeleted: json["isDeleted"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "companyID": companyId,
+    "Name": name,
+    "contact": contact,
+    "email": email,
+    "isDeleted": isDeleted,
+  };
+}
+
+class Dep {
+  int? departmentId;
+  String? department;
+  bool? isDeleted;
+
+  Dep({
+    this.departmentId,
+    this.department,
+    this.isDeleted,
+  });
+
+  Dep copyWith({
+    int? departmentId,
+    String? department,
+    bool? isDeleted,
+  }) =>
+      Dep(
+        departmentId: departmentId ?? this.departmentId,
+        department: department ?? this.department,
+        isDeleted: isDeleted ?? this.isDeleted,
+      );
+
+  factory Dep.fromJson(Map<String, dynamic> json) => Dep(
+    departmentId: json["departmentID"],
+    department: json["department"],
+    isDeleted: json["isDeleted"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "departmentID": departmentId,
+    "department": department,
+    "isDeleted": isDeleted,
+  };
+}
+
+class Designation {
+  int? designationId;
+  String? designation;
+  bool? isDeleted;
+
+  Designation({
+    this.designationId,
+    this.designation,
+    this.isDeleted,
+  });
+
+  Designation copyWith({
+    int? designationId,
+    String? designation,
+    bool? isDeleted,
+  }) =>
+      Designation(
+        designationId: designationId ?? this.designationId,
+        designation: designation ?? this.designation,
+        isDeleted: isDeleted ?? this.isDeleted,
+      );
+
+  factory Designation.fromJson(Map<String, dynamic> json) => Designation(
+    designationId: json["designationID"],
+    designation: json["designation"],
+    isDeleted: json["isDeleted"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "designationID": designationId,
+    "designation": designation,
+    "isDeleted": isDeleted,
+  };
+}
+
+class Office {
+  int? officeId;
+  String? address;
+  int? companyId;
+  bool? isDeleted;
+
+  Office({
+    this.officeId,
+    this.address,
+    this.companyId,
+    this.isDeleted,
+  });
+
+  Office copyWith({
+    int? officeId,
+    String? address,
+    int? companyId,
+    bool? isDeleted,
+  }) =>
+      Office(
+        officeId: officeId ?? this.officeId,
+        address: address ?? this.address,
+        companyId: companyId ?? this.companyId,
+        isDeleted: isDeleted ?? this.isDeleted,
+      );
+
+  factory Office.fromJson(Map<String, dynamic> json) => Office(
+    officeId: json["officeID"],
+    address: json["Address"],
+    companyId: json["companyID"],
+    isDeleted: json["isDeleted"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "officeID": officeId,
+    "Address": address,
+    "companyID": companyId,
+    "isDeleted": isDeleted,
+  };
+}
+
+class Role {
+  int? roleId;
+  String? role;
+  bool? isDeleted;
+
+  Role({
+    this.roleId,
+    this.role,
+    this.isDeleted,
+  });
+
+  Role copyWith({
+    int? roleId,
+    String? role,
+    bool? isDeleted,
+  }) =>
+      Role(
+        roleId: roleId ?? this.roleId,
+        role: role ?? this.role,
+        isDeleted: isDeleted ?? this.isDeleted,
+      );
+
+  factory Role.fromJson(Map<String, dynamic> json) => Role(
+    roleId: json["roleID"],
+    role: json["role"],
+    isDeleted: json["isDeleted"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "roleID": roleId,
+    "role": role,
+    "isDeleted": isDeleted,
+  };
+}
 
 class ReqVisitorMap {
   int? visitorId;
@@ -277,7 +677,7 @@ class ReqVisitorMap {
   String? vCompanyAddress;
   String? vCompanyContact;
   String? vCompanyEmail;
-  String? vAnniversaryDate;
+  DateTime? vAnniversaryDate;
   dynamic vContactPersonName;
   DateTime? createdAt;
   dynamic deletedAt;
@@ -316,7 +716,7 @@ class ReqVisitorMap {
     String? vCompanyAddress,
     String? vCompanyContact,
     String? vCompanyEmail,
-    String? vAnniversaryDate,
+    DateTime? vAnniversaryDate,
     dynamic vContactPersonName,
     DateTime? createdAt,
     dynamic deletedAt,
@@ -355,7 +755,7 @@ class ReqVisitorMap {
     vCompanyAddress: json["vCompanyAddress"],
     vCompanyContact: json["vCompanyContact"],
     vCompanyEmail: json["vCompanyEmail"],
-    vAnniversaryDate: json["vAnniversaryDate"],
+    vAnniversaryDate: json["vAnniversaryDate"] == null ? null : DateTime.parse(json["vAnniversaryDate"]),
     vContactPersonName: json["vContactPersonName"],
     createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
     deletedAt: json["deletedAt"],
@@ -368,36 +768,20 @@ class ReqVisitorMap {
     "vLastName": vLastName,
     "vPurposeOfVisit": vPurposeOfVisit,
     "vDateOfBirth": vDateOfBirth?.toIso8601String(),
-    "vImage": vImageValues.reverse[vImage],
-    "vIDDoc": vIdDocValues.reverse[vIdDoc],
+    "vImage": vImage,
+    "vIDDoc": vIdDoc,
     "vCompanyName": vCompanyName,
     "vDesignation": vDesignation,
     "vCompanyAddress": vCompanyAddress,
     "vCompanyContact": vCompanyContact,
     "vCompanyEmail": vCompanyEmail,
-    "vAnniversaryDate": vAnniversaryDate,
+    "vAnniversaryDate": "${vAnniversaryDate!.year.toString().padLeft(4, '0')}-${vAnniversaryDate!.month.toString().padLeft(2, '0')}-${vAnniversaryDate!.day.toString().padLeft(2, '0')}",
     "vContactPersonName": vContactPersonName,
     "createdAt": createdAt?.toIso8601String(),
     "deletedAt": deletedAt,
     "updatedAt": updatedAt?.toIso8601String(),
   };
 }
-
-enum VIdDoc {
-  SDS_SDSD_DASD
-}
-
-final vIdDocValues = EnumValues({
-  "sds./sdsd/dasd/": VIdDoc.SDS_SDSD_DASD
-});
-
-enum VImage {
-  URL_FDFDSLF_COM
-}
-
-final vImageValues = EnumValues({
-  "url//fdfdslf.com": VImage.URL_FDFDSLF_COM
-});
 
 class ReqRequestmeetDet {
   int? reqMetDetId;
@@ -407,9 +791,9 @@ class ReqRequestmeetDet {
   int? officeId;
   int? createdBy;
   dynamic createdAt;
-  ComReqMeet? comReqMeet;
+  Com? comReqMeet;
   dynamic offReqMeet;
-  DeprtReqMeet? deprtReqMeet;
+  Dep? deprtReqMeet;
 
   ReqRequestmeetDet({
     this.reqMetDetId,
@@ -432,9 +816,9 @@ class ReqRequestmeetDet {
     int? officeId,
     int? createdBy,
     dynamic createdAt,
-    ComReqMeet? comReqMeet,
+    Com? comReqMeet,
     dynamic offReqMeet,
-    DeprtReqMeet? deprtReqMeet,
+    Dep? deprtReqMeet,
   }) =>
       ReqRequestmeetDet(
         reqMetDetId: reqMetDetId ?? this.reqMetDetId,
@@ -457,9 +841,9 @@ class ReqRequestmeetDet {
     officeId: json["officeID"],
     createdBy: json["createdBy"],
     createdAt: json["createdAt"],
-    comReqMeet: json["comReqMeet"] == null ? null : ComReqMeet.fromJson(json["comReqMeet"]),
+    comReqMeet: json["comReqMeet"] == null ? null : Com.fromJson(json["comReqMeet"]),
     offReqMeet: json["offReqMeet"],
-    deprtReqMeet: json["DeprtReqMeet"] == null ? null : DeprtReqMeet.fromJson(json["DeprtReqMeet"]),
+    deprtReqMeet: json["DeprtReqMeet"] == null ? null : Dep.fromJson(json["DeprtReqMeet"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -474,98 +858,4 @@ class ReqRequestmeetDet {
     "offReqMeet": offReqMeet,
     "DeprtReqMeet": deprtReqMeet?.toJson(),
   };
-}
-
-class ComReqMeet {
-  int? companyId;
-  String? name;
-  String? contact;
-  String? email;
-  bool? isDeleted;
-
-  ComReqMeet({
-    this.companyId,
-    this.name,
-    this.contact,
-    this.email,
-    this.isDeleted,
-  });
-
-  ComReqMeet copyWith({
-    int? companyId,
-    String? name,
-    String? contact,
-    String? email,
-    bool? isDeleted,
-  }) =>
-      ComReqMeet(
-        companyId: companyId ?? this.companyId,
-        name: name ?? this.name,
-        contact: contact ?? this.contact,
-        email: email ?? this.email,
-        isDeleted: isDeleted ?? this.isDeleted,
-      );
-
-  factory ComReqMeet.fromJson(Map<String, dynamic> json) => ComReqMeet(
-    companyId: json["companyID"],
-    name: json["Name"],
-    contact: json["contact"],
-    email: json["email"],
-    isDeleted: json["isDeleted"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "companyID": companyId,
-    "Name": name,
-    "contact": contact,
-    "email": email,
-    "isDeleted": isDeleted,
-  };
-}
-
-class DeprtReqMeet {
-  int? departmentId;
-  String? department;
-  bool? isDeleted;
-
-  DeprtReqMeet({
-    this.departmentId,
-    this.department,
-    this.isDeleted,
-  });
-
-  DeprtReqMeet copyWith({
-    int? departmentId,
-    String? department,
-    bool? isDeleted,
-  }) =>
-      DeprtReqMeet(
-        departmentId: departmentId ?? this.departmentId,
-        department: department ?? this.department,
-        isDeleted: isDeleted ?? this.isDeleted,
-      );
-
-  factory DeprtReqMeet.fromJson(Map<String, dynamic> json) => DeprtReqMeet(
-    departmentId: json["departmentID"],
-    department: json["department"],
-    isDeleted: json["isDeleted"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "departmentID": departmentId,
-    "department": department,
-    "isDeleted": isDeleted,
-  };
-}
-
-class EnumValues<T> {
-  Map<String, T> map;
-  late Map<T, String> reverseMap;
-
-  EnumValues(this.map);
-
-  Map<T, String> get reverse {
-    reverseMap = map.map((k, v) => MapEntry(v, k));
-    return reverseMap;
-  }
 }

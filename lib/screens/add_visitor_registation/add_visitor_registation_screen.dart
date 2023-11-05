@@ -291,7 +291,7 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
              SizedBox(height: 10.h,),
 
 
-             submitButton()
+              submitButton()
 
            ],),
          ),
@@ -1098,7 +1098,7 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
 
           if (pickedDate != null) {
             print(pickedDate);
-            String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
+            String formattedDate = DateFormat('MM-dd-yyyy').format(pickedDate);
             print(formattedDate); //formatted date output using intl package =>  2021-03-16
             setState(() {
               _dateOfBirthController.text = formattedDate; //set output date to TextField value.
@@ -1207,7 +1207,7 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
           print(
               pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
           String formattedDate =
-          DateFormat('dd-MM-yyyy').format(pickedDate);
+          DateFormat('MM-dd-yyyy').format(pickedDate);
           print(
               formattedDate); //formatted date output using intl package =>  2021-03-16
           setState(() {
@@ -1633,11 +1633,13 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
 
                             Icon(Icons.person_outline,size: 18,),
                             SizedBox(width: 5.w,),
-                            Text('${pName ?? ""}  ${pLName ?? ""} ',
-                                style: styleMedium1.copyWith(
-                                  color: black,
-                                  fontWeight: FontWeight.w600,
-                                )),
+                            Flexible(
+                              child: Text('${pName ?? ""}  ${pLName ?? ""} ',
+                                  style: styleMedium1.copyWith(
+                                    color: black,
+                                    fontWeight: FontWeight.w600,
+                                  )),
+                            ),
                           ],
                         ),
 

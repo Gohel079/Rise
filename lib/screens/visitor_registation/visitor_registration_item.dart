@@ -9,8 +9,9 @@ import '../../base/constants/app_images.dart';
 import '../../base/constants/app_styles.dart';
 
 class VisitorRegistrationItem extends StatefulWidget {
-  Datum? data;
-   VisitorRegistrationItem(this.data, {super.key});
+
+  ReqRequestMap? data;
+  VisitorRegistrationItem({this.data,super.key});
 
   @override
   State<VisitorRegistrationItem> createState() => _VisitorRegistrationItemState();
@@ -51,7 +52,7 @@ class _VisitorRegistrationItemState extends State<VisitorRegistrationItem> {
                         ),
                         SizedBox(width: 5.w,),
                         Flexible(
-                          child: Text(widget.data?.reqRequestMap?.isEmpty  ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vCompanyName ?? "",
+                          child: Text(widget.data?.reqVisitorMap?.vCompanyName ?? "",
                               style: styleMedium1.copyWith(
                                 color: lightBlack,
                                 fontWeight: FontWeight.w500,
@@ -61,7 +62,7 @@ class _VisitorRegistrationItemState extends State<VisitorRegistrationItem> {
                     ),
                     SizedBox(height: 12.h,),
 
-                    Text(widget.data?.reqRequestMap?.isEmpty  ?? false ? "" :widget.data?.reqRequestMap?.first.reqVisitorMap?.vFirstName ?? "",
+                    Text(widget.data?.reqVisitorMap?.vFirstName ?? "",
                         style: styleMedium1.copyWith(
                           color: black,
                           fontWeight: FontWeight.w600,
@@ -79,7 +80,7 @@ class _VisitorRegistrationItemState extends State<VisitorRegistrationItem> {
                           color: lightBlack,
                         ),
                         SizedBox(width: 6.w,),
-                        Text('08/09/2023',
+                        Text("${widget.data?.reqVisitorMap?.vDateOfBirth?.day.toString() ?? ""}/${widget.data?.reqVisitorMap?.vDateOfBirth?.month.toString() ?? ""}/${widget.data?.reqVisitorMap?.vDateOfBirth?.year.toString() ?? ""}",
                             style: styleSmall4.copyWith(
                               color: lightBlack,
                               fontWeight: FontWeight.w500,
@@ -97,7 +98,7 @@ class _VisitorRegistrationItemState extends State<VisitorRegistrationItem> {
                           color: lightBlack,
                         ),
                         SizedBox(width: 3.w,),
-                        Text('06:15',
+                        Text("${widget.data?.createdAt?.hour ?? ""} : ${widget.data?.createdAt?.minute ?? ""} ",
                             style: styleSmall4.copyWith(
                               color: lightBlack,
                               fontWeight: FontWeight.w500,
@@ -116,7 +117,7 @@ class _VisitorRegistrationItemState extends State<VisitorRegistrationItem> {
                           color: lightBlack,
                         ),
                         SizedBox(width: 1.w,),
-                        Text('+91 ${widget.data?.reqRequestMap?.isEmpty  ?? false ? "" :widget.data?.reqRequestMap?.first.reqVisitorMap?.vCompanyContact ?? ""}',
+                        Text('+91 ${widget.data?.reqVisitorMap?.vCompanyContact ?? ""}',
                             style: styleSmall4.copyWith(
                               color: lightBlack,
                               fontWeight: FontWeight.w500,
@@ -134,14 +135,10 @@ class _VisitorRegistrationItemState extends State<VisitorRegistrationItem> {
                 children: [
 
 
-                  Container(width : 55.w,height: 55.h,decoration:
+                  Container(width : 75.w,height: 85.h,decoration:
                   BoxDecoration(borderRadius: BorderRadius.circular(2))
-                      ,child: Image.network(
-                          "${widget.data?.reqRequestMap?.isEmpty  ?? false ? "" :
-                      widget.data?.reqRequestMap?.first.reqVisitorMap?.vImage ?? ""}",
-
-
-                      )
+                      ,child: Image.network(widget.data?.reqVisitorMap?.vImage ?? "",
+                     fit: BoxFit.fill,)
                       // Image.asset(AppImages.imgPerson1,fit: BoxFit.fill,)
                   ),
 
@@ -150,12 +147,12 @@ class _VisitorRegistrationItemState extends State<VisitorRegistrationItem> {
 
                   Container(decoration:
                   BoxDecoration(borderRadius: BorderRadius.circular(20),
-                      color: white,border: Border.all(color: green2,width: 1)),
+                      color: white,border: Border.all(color: widget.data?.evStatus.toString() == "Pending" ? darkRed :green2,width: 1)),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 6),
-                      child: Text('Accepted',
+                      child: Text(widget.data?.evStatus ?? "",
                           style: styleSmall3.copyWith(
-                            color: green2,
+                            color: widget.data?.evStatus.toString() == "Pending" ? darkRed :green2,
                             fontWeight: FontWeight.w600,
                           )),
                     ),

@@ -6,6 +6,7 @@ import 'package:rise_and_grow/base/bloc/base_bloc.dart';
 import 'package:rise_and_grow/base/components/screen_utils/flutter_screenutil.dart';
 import 'package:rise_and_grow/base/constants/app_widgets.dart';
 import 'package:rise_and_grow/remote/model/get_visitor_list_response_model.dart';
+import 'package:rise_and_grow/screens/pdf_view/pdf_view_screen.dart';
 import 'package:rise_and_grow/screens/upcoming_appointment/upcoming_appointment_bloc.dart';
 import 'package:rise_and_grow/screens/visitor_approve/visitor_approve_bloc.dart';
 
@@ -19,17 +20,20 @@ import '../../utils/common_utils.dart';
 import '../reception_approve/reception_approve_screen.dart';
 
 class VisitorApproveScreen extends BasePage<VisitorApproveBloc> {
-  Datum? data;
-   VisitorApproveScreen({this.data,super.key});
+  ReqRequestMap? visitorData;
+  String? purposeOfMeeting;
+  ReqEmployeeMap? reqEmployeeMap;
+  String? requestId;
+   VisitorApproveScreen({this.visitorData,this.purposeOfMeeting,this.reqEmployeeMap,this.requestId,super.key});
 
   @override
   BasePageState<BasePage<BasePageBloc?>, BasePageBloc> getState() {
     return VisitorApproveScreenState();
   }
 
-  static Route<dynamic> route(Datum? data) {
+  static Route<dynamic> route(ReqRequestMap? data,String purposeOfMeeting, ReqEmployeeMap? employeeMap, String? requestId) {
     return CustomPageRoute(
-        builder: (context) =>  VisitorApproveScreen(data: data,));
+        builder: (context) =>  VisitorApproveScreen(visitorData: data,purposeOfMeeting: purposeOfMeeting,reqEmployeeMap: employeeMap,requestId: requestId,));
   }
 
 }
@@ -45,9 +49,9 @@ class VisitorApproveScreenState extends BasePageState<VisitorApproveScreen,Visit
 
   @override
   Widget buildWidget(BuildContext context) {
-    var day = widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vDateOfBirth?.day ?? "";
-    var month = widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vDateOfBirth?.month ?? "";
-    var year = widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vDateOfBirth?.year ?? "";
+    var day =  widget.visitorData?.reqVisitorMap?.vDateOfBirth?.day ?? "";
+    var month =widget.visitorData?.reqVisitorMap?.vDateOfBirth?.month ?? "";
+    var year = widget.visitorData?.reqVisitorMap?.vDateOfBirth?.year ?? "";
     return Scaffold(
         appBar: AppBar(
           leadingWidth: 19,
@@ -141,14 +145,14 @@ class VisitorApproveScreenState extends BasePageState<VisitorApproveScreen,Visit
                 children: [
                   ClipRRect(
                       borderRadius: const BorderRadius.all(Radius.circular(65)),
-                      child: Image.network(widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vImage ?? "",
+                      child: Image.network(widget.visitorData?.reqVisitorMap?.vImage ?? "",
                         height: 100,width: 100,fit: BoxFit.fill,)
                   ),
                 ],
               ),
                 SizedBox(height: 15.h,),
 
-                Text(widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vFirstName ?? "",
+                Text(widget.visitorData?.reqVisitorMap?.vFirstName ?? "",
                     style: styleMedium2.copyWith(
                       color: black,
                       fontWeight: FontWeight.w600,
@@ -166,17 +170,17 @@ class VisitorApproveScreenState extends BasePageState<VisitorApproveScreen,Visit
                 child: Column(
                   children: [
 
-                    visitDataRow("Purpose of\nVisit :",widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vPurposeOfVisit ?? ""),
+                    visitDataRow("Purpose of\nVisit :",widget.purposeOfMeeting ?? ""),
                     SizedBox(height: 25.h,),
-                    visitDataRow("Company\nName :",widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vCompanyName ?? ""),
+                    visitDataRow("Company\nName :",widget.visitorData?.reqVisitorMap?.vCompanyName ?? ""),
                     SizedBox(height: 25.h,),
-                    visitDataRow("Designation :",widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vDesignation ?? ""),
+                    visitDataRow("Designation :",widget.visitorData?.reqVisitorMap?.vDesignation ?? ""),
                     SizedBox(height: 25.h,),
-                    visitDataRow("Contact\nNumber :",widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vCompanyContact ?? ""),
+                    visitDataRow("Contact\nNumber :",widget.visitorData?.reqVisitorMap?.vCompanyContact ?? ""),
                     SizedBox(height: 25.h,),
-                    visitDataRow("Company\nAddress :",widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vCompanyAddress ?? ""),
+                    visitDataRow("Company\nAddress :",widget.visitorData?.reqVisitorMap?.vCompanyAddress ?? ""),
                     SizedBox(height: 25.h,),
-                    visitDataRow("Company\nMail Address :",widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vCompanyEmail ?? ""),
+                    visitDataRow("Company\nMail Address :",widget.visitorData?.reqVisitorMap?.vCompanyEmail ?? ""),
                     SizedBox(height: 25.h,),
                     visitDataRow("DOB :","${day.toString()}/${month.toString()}/${year.toString()}"),
                     SizedBox(height: 25.h,),
@@ -261,7 +265,7 @@ class VisitorApproveScreenState extends BasePageState<VisitorApproveScreen,Visit
     children: [
 
     InkWell(onTap: (){
-      Navigator.push(context,ReceptionApproveScreen.route(widget.data));
+      Navigator.push(context,ReceptionApproveScreen.route(widget.reqEmployeeMap,widget.requestId));
     },
       child: Row(
       children: [
@@ -289,19 +293,17 @@ class VisitorApproveScreenState extends BasePageState<VisitorApproveScreen,Visit
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
 
-          Container(decoration:
-          BoxDecoration(color: Colors.red,borderRadius: BorderRadius.circular(8),)
-              ,child:Image.network(
-              widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vImage ?? "",
-              height: 90.h,
-              width: 140.w,
-              fit:  BoxFit.fill,
-            ),),
+          InkWell(onTap: (){
+            Navigator.push(context, PDFViewerScreen.route(widget.visitorData?.reqVisitorMap?.vIdDoc ?? ""));
+          },
+            child: Image.asset(AppImages.imgPDf,
+            height: 80,width: 60,),
+          ),
           SizedBox(width: 10.w,),
           Container(decoration:
           BoxDecoration(color: Colors.red,borderRadius: BorderRadius.circular(8),)
             ,child:Image.network(
-                widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vImage ?? "",
+                 widget.visitorData?.reqVisitorMap?.vImage ?? "",
                 height: 90.h,
                 width: 140.w,
                 fit:  BoxFit.fill,

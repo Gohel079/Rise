@@ -205,11 +205,16 @@ class _visitorRegistationState extends BasePageState<VisitorRegistationScreen,Vi
               itemBuilder: (context, index) {
                 print("DARA ${snapshot.data?.elementAt(index).tokenNumber}");
                 
-                return  InkWell(onTap: () {
+                return
+                  InkWell(onTap: () {
 
-                  Navigator.push(context, VisitorApproveScreen.route(snapshot.data?.elementAt(index)));
-                  // Navigator.push(context,ReceptionApproveScreen.route(snapshot.data?.elementAt(index)));
-                },child: VisitorRegistrationItem(snapshot.data?.elementAt(index)));
+                  Navigator.push(context, VisitorApproveScreen.route(
+                      selectVisitorList(snapshot.data?.elementAt(index)),
+                      snapshot.data?.elementAt(index).purposeOfMeeting ?? "",
+                      selectEmpList(snapshot.data?.elementAt(index)),
+                      snapshot.data?.elementAt(index).requestId.toString()));
+
+                  },child: VisitorRegistrationItem(data: selectVisitorList(snapshot.data?.elementAt(index))));
               },);
           }else {
             return const SizedBox();
@@ -223,6 +228,7 @@ class _visitorRegistationState extends BasePageState<VisitorRegistationScreen,Vi
   VisitorRegistrationBloc getBloc() {
    return bloc;
   }
+
 
   @override
   void onReady() {
@@ -279,5 +285,34 @@ class _visitorRegistationState extends BasePageState<VisitorRegistationScreen,Vi
         }
       },);
     }
+  }
+
+  List<GetVisitor.ReqRequestMap>? selctionVisior(GetVisitor.Datum? visitorData) {
+    List<GetVisitor.ReqRequestMap>? reqVistorMap;
+    List<GetVisitor.ReqRequestMap>? item = visitorData?.reqRequestMap?.where((element) => element.visitorId != null).toList();
+    return item;
+  }
+
+
+  GetVisitor.ReqRequestMap? selectVisitorList(GetVisitor.Datum? datum){
+    GetVisitor.ReqRequestMap?  result;
+    datum?.reqRequestMap?.forEach((element) {
+      if(element.visitorId != null){
+
+         result = element;
+      }
+    });
+    return result;
+  }
+
+  GetVisitor.ReqEmployeeMap? selectEmpList(GetVisitor.Datum? datum){
+    GetVisitor.ReqEmployeeMap?  result;
+    datum?.reqRequestMap?.forEach((element) {
+      if(element.empId != null){
+
+        result = element.reqEmployeeMap;
+      }
+    });
+    return result;
   }
 }
