@@ -103,7 +103,7 @@ class Datum {
   bool? isDeleted;
   String? createdBy;
   String? updatedBy;
-  dynamic deletedBy;
+  String? deletedBy;
   DateTime? createdAt;
   DateTime? updatedAt;
   dynamic deletedAt;
@@ -128,7 +128,7 @@ class Datum {
     bool? isDeleted,
     String? createdBy,
     String? updatedBy,
-    dynamic deletedBy,
+    String? deletedBy,
     DateTime? createdAt,
     DateTime? updatedAt,
     dynamic deletedAt,

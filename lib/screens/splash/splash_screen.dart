@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:rise_and_grow/screens/home/home_screen.dart';
 
 import '../../base/constants/app_colors.dart';
 import '../../base/constants/app_images.dart';
@@ -43,7 +42,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void navigateToOther() async {
     await Future.delayed(const Duration(seconds: 3), () {
-        Navigator.pushReplacement(context, HomeScreen.route());
-      });
+      Navigator.pushReplacement(context, LoginScreen.route());
+    });
   }
 }

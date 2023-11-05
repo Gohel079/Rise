@@ -1,18 +1,19 @@
 import 'package:rise_and_grow/base/bloc/base_bloc.dart';
-import 'package:rise_and_grow/remote/repository/auth_repository.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../../base/constants/app_widgets.dart';
 import '../../remote/model/get_created_meeting_list_respinse_model.dart' as GetCreatedMeeting;
+import '../../remote/repository/auth_repository.dart';
 
 class CreatedMeetingBloc extends BasePageBloc {
   late BehaviorSubject<List<GetCreatedMeeting.Data>> getCreatedMeetingList;
 
-  VisitorRegistrationBloc(){
-    getCreatedMeetingList = BehaviorSubject<List<GetCreatedMeeting.Data>>.seeded([]);
+  CreatedMeetingBloc() {
+    getCreatedMeetingList =
+    BehaviorSubject<List<GetCreatedMeeting.Data>>.seeded([]);
   }
 
-  void getCreatedMeetingsList(Function(GetCreatedMeeting.GetCreatedMeetingResponseModel) onSuccess) {
+  void getCreatedMeetingsListFunc(Map? data, Function(GetCreatedMeeting.GetCreatedMeetingResponseModel) onSuccess) {
     showLoadingDialog();
     apiGetCreatedMeetingList((response) {
       hideLoadingDialog();

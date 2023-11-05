@@ -38,7 +38,7 @@ class GetVisitorResponseModel {
     responseData: json["responseData"] is String ? json["responseData"] :json["responseData"] == null ? null : ResponseData.fromJson(json["responseData"]),
     responseType: json["response_type"],
     toast: json["toast"],
-    message: json["message"],
+    message: json["message"] == null ? "" : json["message"] ,
   );
 
   Map<String, dynamic> toJson() => {
@@ -98,80 +98,98 @@ class ResponseData {
 
 class Datum {
   int? requestId;
-  String? systemId;
   String? purposeOfMeeting;
   String? tokenNumber;
   Status? reqStatus;
   dynamic recRemark;
+  String? updatedBy;
+  DateTime? createdAt;
   List<ReqRequestMap>? reqRequestMap;
+  List<ReqRequestmeetDet>? reqRequestmeetDet;
 
   Datum({
     this.requestId,
-    this.systemId,
     this.purposeOfMeeting,
     this.tokenNumber,
     this.reqStatus,
     this.recRemark,
+    this.updatedBy,
+    this.createdAt,
     this.reqRequestMap,
+    this.reqRequestmeetDet,
   });
 
   Datum copyWith({
     int? requestId,
-    String? systemId,
     String? purposeOfMeeting,
     String? tokenNumber,
     Status? reqStatus,
     dynamic recRemark,
+    String? updatedBy,
+    DateTime? createdAt,
     List<ReqRequestMap>? reqRequestMap,
+    List<ReqRequestmeetDet>? reqRequestmeetDet,
   }) =>
       Datum(
         requestId: requestId ?? this.requestId,
-        systemId: systemId ?? this.systemId,
         purposeOfMeeting: purposeOfMeeting ?? this.purposeOfMeeting,
         tokenNumber: tokenNumber ?? this.tokenNumber,
         reqStatus: reqStatus ?? this.reqStatus,
         recRemark: recRemark ?? this.recRemark,
+        updatedBy: updatedBy ?? this.updatedBy,
+        createdAt: createdAt ?? this.createdAt,
         reqRequestMap: reqRequestMap ?? this.reqRequestMap,
+        reqRequestmeetDet: reqRequestmeetDet ?? this.reqRequestmeetDet,
       );
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
     requestId: json["requestID"],
-    systemId: json["SystemID "],
     purposeOfMeeting: json["purposeOfMeeting"],
     tokenNumber: json["TokenNumber"],
     reqStatus: statusValues.map[json["ReqStatus"]]!,
     recRemark: json["RecRemark"],
-    reqRequestMap: json["reqRequestMap"] == null ? [] : List<ReqRequestMap>.from(json["reqRequestMap"]!.map((x) => ReqRequestMap.fromJson(x))),
+    updatedBy: json["updatedBy"],
+    createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
+    reqRequestMap: json["reqRequestMap"] == [] ? [] : json["reqRequestMap"] == null ? [] : List<ReqRequestMap>.from(json["reqRequestMap"]!.map((x) => ReqRequestMap.fromJson(x))),
+    reqRequestmeetDet: json["reqRequestmeetDet"] == null ? [] : List<ReqRequestmeetDet>.from(json["reqRequestmeetDet"]!.map((x) => ReqRequestmeetDet.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
     "requestID": requestId,
-    "SystemID ": systemId,
     "purposeOfMeeting": purposeOfMeeting,
     "TokenNumber": tokenNumber,
     "ReqStatus": statusValues.reverse[reqStatus],
     "RecRemark": recRemark,
+    "updatedBy": updatedBy,
+    "createdAt": createdAt?.toIso8601String(),
     "reqRequestMap": reqRequestMap == null ? [] : List<dynamic>.from(reqRequestMap!.map((x) => x.toJson())),
+    "reqRequestmeetDet": reqRequestmeetDet == null ? [] : List<dynamic>.from(reqRequestmeetDet!.map((x) => x.toJson())),
   };
 }
 
 class ReqRequestMap {
   int? reqMapMeetId;
   int? requestId;
+  bool? isVisitorSelected;
+  dynamic evRemark;
+  bool? attendance;
+  dynamic empId;
   int? visitorId;
   Status? evStatus;
-  bool? attendance;
   bool? isDeleted;
   DateTime? createdAt;
   ReqVisitorMap? reqVisitorMap;
-  ReqEmployeeMap? reqEmployeeMap;
+  dynamic reqEmployeeMap;
 
   ReqRequestMap({
     this.reqMapMeetId,
     this.requestId,
+    this.isVisitorSelected,
+    this.evRemark,
+    this.attendance,
+    this.empId,
     this.visitorId,
     this.evStatus,
-    this.attendance,
     this.isDeleted,
     this.createdAt,
     this.reqVisitorMap,
@@ -181,20 +199,26 @@ class ReqRequestMap {
   ReqRequestMap copyWith({
     int? reqMapMeetId,
     int? requestId,
+    bool? isVisitorSelected,
+    dynamic evRemark,
+    bool? attendance,
+    dynamic empId,
     int? visitorId,
     Status? evStatus,
-    bool? attendance,
     bool? isDeleted,
     DateTime? createdAt,
     ReqVisitorMap? reqVisitorMap,
-    ReqEmployeeMap? reqEmployeeMap,
+    dynamic reqEmployeeMap,
   }) =>
       ReqRequestMap(
         reqMapMeetId: reqMapMeetId ?? this.reqMapMeetId,
         requestId: requestId ?? this.requestId,
+        isVisitorSelected: isVisitorSelected ?? this.isVisitorSelected,
+        evRemark: evRemark ?? this.evRemark,
+        attendance: attendance ?? this.attendance,
+        empId: empId ?? this.empId,
         visitorId: visitorId ?? this.visitorId,
         evStatus: evStatus ?? this.evStatus,
-        attendance: attendance ?? this.attendance,
         isDeleted: isDeleted ?? this.isDeleted,
         createdAt: createdAt ?? this.createdAt,
         reqVisitorMap: reqVisitorMap ?? this.reqVisitorMap,
@@ -204,25 +228,31 @@ class ReqRequestMap {
   factory ReqRequestMap.fromJson(Map<String, dynamic> json) => ReqRequestMap(
     reqMapMeetId: json["reqMapMeetID"],
     requestId: json["requestID"],
+    isVisitorSelected: json["isVisitorSelected"],
+    evRemark: json["evRemark"],
+    attendance: json["Attendance"],
+    empId: json["empID"],
     visitorId: json["visitorID"],
     evStatus: statusValues.map[json["evStatus"]]!,
-    attendance: json["Attendance"],
     isDeleted: json["isDeleted"],
     createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
     reqVisitorMap: json["reqVisitorMap"] == null ? null : ReqVisitorMap.fromJson(json["reqVisitorMap"]),
-    reqEmployeeMap: json["reqEmployeeMap"] == null ? null : ReqEmployeeMap.fromJson(json["reqEmployeeMap"]),
+    reqEmployeeMap: json["reqEmployeeMap"],
   );
 
   Map<String, dynamic> toJson() => {
     "reqMapMeetID": reqMapMeetId,
     "requestID": requestId,
+    "isVisitorSelected": isVisitorSelected,
+    "evRemark": evRemark,
+    "Attendance": attendance,
+    "empID": empId,
     "visitorID": visitorId,
     "evStatus": statusValues.reverse[evStatus],
-    "Attendance": attendance,
     "isDeleted": isDeleted,
     "createdAt": createdAt?.toIso8601String(),
     "reqVisitorMap": reqVisitorMap?.toJson(),
-    "reqEmployeeMap": reqEmployeeMap?.toJson(),
+    "reqEmployeeMap": reqEmployeeMap,
   };
 }
 
@@ -234,181 +264,14 @@ final statusValues = EnumValues({
   "Pending": Status.PENDING
 });
 
-class ReqEmployeeMap {
-  int? empId;
-  String? firstName;
-  String? lastName;
-  String? empCode;
-  String? birthDate;
-  String? joiningDate;
-  String? empProfileIMg;
-  String? empIdCard;
-  String? empAadharCard;
-  int? departmentId;
-  int? designationId;
-  String? email;
-  String? phone;
-  String? password;
-  int? companyId;
-  int? officeId;
-  int? roleId;
-  bool? isActive;
-  bool? isDeleted;
-  dynamic createdBy;
-  String? updatedBy;
-  dynamic deletedBy;
-  DateTime? createdAt;
-  DateTime? updatedAt;
-  dynamic deletedAt;
-
-  ReqEmployeeMap({
-    this.empId,
-    this.firstName,
-    this.lastName,
-    this.empCode,
-    this.birthDate,
-    this.joiningDate,
-    this.empProfileIMg,
-    this.empIdCard,
-    this.empAadharCard,
-    this.departmentId,
-    this.designationId,
-    this.email,
-    this.phone,
-    this.password,
-    this.companyId,
-    this.officeId,
-    this.roleId,
-    this.isActive,
-    this.isDeleted,
-    this.createdBy,
-    this.updatedBy,
-    this.deletedBy,
-    this.createdAt,
-    this.updatedAt,
-    this.deletedAt,
-  });
-
-  ReqEmployeeMap copyWith({
-    int? empId,
-    String? firstName,
-    String? lastName,
-    String? empCode,
-    String? birthDate,
-    String? joiningDate,
-    String? empProfileIMg,
-    String? empIdCard,
-    String? empAadharCard,
-    int? departmentId,
-    int? designationId,
-    String? email,
-    String? phone,
-    String? password,
-    int? companyId,
-    int? officeId,
-    int? roleId,
-    bool? isActive,
-    bool? isDeleted,
-    dynamic createdBy,
-    String? updatedBy,
-    dynamic deletedBy,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-    dynamic deletedAt,
-  }) =>
-      ReqEmployeeMap(
-        empId: empId ?? this.empId,
-        firstName: firstName ?? this.firstName,
-        lastName: lastName ?? this.lastName,
-        empCode: empCode ?? this.empCode,
-        birthDate: birthDate ?? this.birthDate,
-        joiningDate: joiningDate ?? this.joiningDate,
-        empProfileIMg: empProfileIMg ?? this.empProfileIMg,
-        empIdCard: empIdCard ?? this.empIdCard,
-        empAadharCard: empAadharCard ?? this.empAadharCard,
-        departmentId: departmentId ?? this.departmentId,
-        designationId: designationId ?? this.designationId,
-        email: email ?? this.email,
-        phone: phone ?? this.phone,
-        password: password ?? this.password,
-        companyId: companyId ?? this.companyId,
-        officeId: officeId ?? this.officeId,
-        roleId: roleId ?? this.roleId,
-        isActive: isActive ?? this.isActive,
-        isDeleted: isDeleted ?? this.isDeleted,
-        createdBy: createdBy ?? this.createdBy,
-        updatedBy: updatedBy ?? this.updatedBy,
-        deletedBy: deletedBy ?? this.deletedBy,
-        createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
-        deletedAt: deletedAt ?? this.deletedAt,
-      );
-
-  factory ReqEmployeeMap.fromJson(Map<String, dynamic> json) => ReqEmployeeMap(
-    empId: json["empID"],
-    firstName: json["firstName"],
-    lastName: json["lastName"],
-    empCode: json["empCode"],
-    birthDate: json["birthDate"],
-    joiningDate: json["joiningDate"],
-    empProfileIMg: json["empProfileIMg"],
-    empIdCard: json["empIDCard"],
-    empAadharCard: json["empAadharCard"],
-    departmentId: json["departmentID"],
-    designationId: json["designationID"],
-    email: json["email"],
-    phone: json["phone"],
-    password: json["password"],
-    companyId: json["companyID"],
-    officeId: json["officeID"],
-    roleId: json["roleID"],
-    isActive: json["isActive"],
-    isDeleted: json["isDeleted"],
-    createdBy: json["createdBy"],
-    updatedBy: json["updatedBy"],
-    deletedBy: json["deletedBy"],
-    createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
-    updatedAt: json["updatedAt"] == null ? null : DateTime.parse(json["updatedAt"]),
-    deletedAt: json["deletedAt"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "empID": empId,
-    "firstName": firstName,
-    "lastName": lastName,
-    "empCode": empCode,
-    "birthDate": birthDate,
-    "joiningDate": joiningDate,
-    "empProfileIMg": empProfileIMg,
-    "empIDCard": empIdCard,
-    "empAadharCard": empAadharCard,
-    "departmentID": departmentId,
-    "designationID": designationId,
-    "email": email,
-    "phone": phone,
-    "password": password,
-    "companyID": companyId,
-    "officeID": officeId,
-    "roleID": roleId,
-    "isActive": isActive,
-    "isDeleted": isDeleted,
-    "createdBy": createdBy,
-    "updatedBy": updatedBy,
-    "deletedBy": deletedBy,
-    "createdAt": createdAt?.toIso8601String(),
-    "updatedAt": updatedAt?.toIso8601String(),
-    "deletedAt": deletedAt,
-  };
-}
-
 class ReqVisitorMap {
   int? visitorId;
   String? vFirstName;
   String? vLastName;
   dynamic vPurposeOfVisit;
   DateTime? vDateOfBirth;
-  VImage? vImage;
-  VIdDoc? vIdDoc;
+  String? vImage;
+  String? vIdDoc;
   String? vCompanyName;
   String? vDesignation;
   String? vCompanyAddress;
@@ -446,8 +309,8 @@ class ReqVisitorMap {
     String? vLastName,
     dynamic vPurposeOfVisit,
     DateTime? vDateOfBirth,
-    VImage? vImage,
-    VIdDoc? vIdDoc,
+    String? vImage,
+    String? vIdDoc,
     String? vCompanyName,
     String? vDesignation,
     String? vCompanyAddress,
@@ -485,8 +348,8 @@ class ReqVisitorMap {
     vLastName: json["vLastName"],
     vPurposeOfVisit: json["vPurposeOfVisit"],
     vDateOfBirth: json["vDateOfBirth"] == null ? null : DateTime.parse(json["vDateOfBirth"]),
-    vImage: vImageValues.map[json["vImage"]]!,
-    vIdDoc: vIdDocValues.map[json["vIDDoc"]]!,
+    vImage: json["vImage"],
+    vIdDoc: json["vIDDoc"],
     vCompanyName: json["vCompanyName"],
     vDesignation: json["vDesignation"],
     vCompanyAddress: json["vCompanyAddress"],
@@ -520,18 +383,6 @@ class ReqVisitorMap {
   };
 }
 
-enum VCompanyName {
-  ROTO,
-  SFSFSF,
-  TEST
-}
-
-final vCompanyNameValues = EnumValues({
-  "ROTO": VCompanyName.ROTO,
-  "sfsfsf": VCompanyName.SFSFSF,
-  "test": VCompanyName.TEST
-});
-
 enum VIdDoc {
   SDS_SDSD_DASD
 }
@@ -547,6 +398,165 @@ enum VImage {
 final vImageValues = EnumValues({
   "url//fdfdslf.com": VImage.URL_FDFDSLF_COM
 });
+
+class ReqRequestmeetDet {
+  int? reqMetDetId;
+  int? companyId;
+  int? departmentId;
+  DateTime? autoTime;
+  int? officeId;
+  int? createdBy;
+  dynamic createdAt;
+  ComReqMeet? comReqMeet;
+  dynamic offReqMeet;
+  DeprtReqMeet? deprtReqMeet;
+
+  ReqRequestmeetDet({
+    this.reqMetDetId,
+    this.companyId,
+    this.departmentId,
+    this.autoTime,
+    this.officeId,
+    this.createdBy,
+    this.createdAt,
+    this.comReqMeet,
+    this.offReqMeet,
+    this.deprtReqMeet,
+  });
+
+  ReqRequestmeetDet copyWith({
+    int? reqMetDetId,
+    int? companyId,
+    int? departmentId,
+    DateTime? autoTime,
+    int? officeId,
+    int? createdBy,
+    dynamic createdAt,
+    ComReqMeet? comReqMeet,
+    dynamic offReqMeet,
+    DeprtReqMeet? deprtReqMeet,
+  }) =>
+      ReqRequestmeetDet(
+        reqMetDetId: reqMetDetId ?? this.reqMetDetId,
+        companyId: companyId ?? this.companyId,
+        departmentId: departmentId ?? this.departmentId,
+        autoTime: autoTime ?? this.autoTime,
+        officeId: officeId ?? this.officeId,
+        createdBy: createdBy ?? this.createdBy,
+        createdAt: createdAt ?? this.createdAt,
+        comReqMeet: comReqMeet ?? this.comReqMeet,
+        offReqMeet: offReqMeet ?? this.offReqMeet,
+        deprtReqMeet: deprtReqMeet ?? this.deprtReqMeet,
+      );
+
+  factory ReqRequestmeetDet.fromJson(Map<String, dynamic> json) => ReqRequestmeetDet(
+    reqMetDetId: json["ReqMetDetID"],
+    companyId: json["CompanyID"],
+    departmentId: json["DepartmentID"],
+    autoTime: json["AutoTime"] == null ? null : DateTime.parse(json["AutoTime"]),
+    officeId: json["officeID"],
+    createdBy: json["createdBy"],
+    createdAt: json["createdAt"],
+    comReqMeet: json["comReqMeet"] == null ? null : ComReqMeet.fromJson(json["comReqMeet"]),
+    offReqMeet: json["offReqMeet"],
+    deprtReqMeet: json["DeprtReqMeet"] == null ? null : DeprtReqMeet.fromJson(json["DeprtReqMeet"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "ReqMetDetID": reqMetDetId,
+    "CompanyID": companyId,
+    "DepartmentID": departmentId,
+    "AutoTime": autoTime?.toIso8601String(),
+    "officeID": officeId,
+    "createdBy": createdBy,
+    "createdAt": createdAt,
+    "comReqMeet": comReqMeet?.toJson(),
+    "offReqMeet": offReqMeet,
+    "DeprtReqMeet": deprtReqMeet?.toJson(),
+  };
+}
+
+class ComReqMeet {
+  int? companyId;
+  String? name;
+  String? contact;
+  String? email;
+  bool? isDeleted;
+
+  ComReqMeet({
+    this.companyId,
+    this.name,
+    this.contact,
+    this.email,
+    this.isDeleted,
+  });
+
+  ComReqMeet copyWith({
+    int? companyId,
+    String? name,
+    String? contact,
+    String? email,
+    bool? isDeleted,
+  }) =>
+      ComReqMeet(
+        companyId: companyId ?? this.companyId,
+        name: name ?? this.name,
+        contact: contact ?? this.contact,
+        email: email ?? this.email,
+        isDeleted: isDeleted ?? this.isDeleted,
+      );
+
+  factory ComReqMeet.fromJson(Map<String, dynamic> json) => ComReqMeet(
+    companyId: json["companyID"],
+    name: json["Name"],
+    contact: json["contact"],
+    email: json["email"],
+    isDeleted: json["isDeleted"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "companyID": companyId,
+    "Name": name,
+    "contact": contact,
+    "email": email,
+    "isDeleted": isDeleted,
+  };
+}
+
+class DeprtReqMeet {
+  int? departmentId;
+  String? department;
+  bool? isDeleted;
+
+  DeprtReqMeet({
+    this.departmentId,
+    this.department,
+    this.isDeleted,
+  });
+
+  DeprtReqMeet copyWith({
+    int? departmentId,
+    String? department,
+    bool? isDeleted,
+  }) =>
+      DeprtReqMeet(
+        departmentId: departmentId ?? this.departmentId,
+        department: department ?? this.department,
+        isDeleted: isDeleted ?? this.isDeleted,
+      );
+
+  factory DeprtReqMeet.fromJson(Map<String, dynamic> json) => DeprtReqMeet(
+    departmentId: json["departmentID"],
+    department: json["department"],
+    isDeleted: json["isDeleted"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "departmentID": departmentId,
+    "department": department,
+    "isDeleted": isDeleted,
+  };
+}
 
 class EnumValues<T> {
   Map<String, T> map;

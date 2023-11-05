@@ -102,11 +102,12 @@ class Datum {
   bool? isActive;
   bool? isDeleted;
   String? createdBy;
-  String? updatedBy;
-  String? deletedBy;
+  dynamic updatedBy;
+  dynamic deletedBy;
   DateTime? createdAt;
   DateTime? updatedAt;
-  DateTime? deletedAt;
+  dynamic deletedAt;
+  int? departmentId;
 
   Datum({
     this.designationId,
@@ -119,6 +120,7 @@ class Datum {
     this.createdAt,
     this.updatedAt,
     this.deletedAt,
+    this.departmentId,
   });
 
   Datum copyWith({
@@ -127,11 +129,12 @@ class Datum {
     bool? isActive,
     bool? isDeleted,
     String? createdBy,
-    String? updatedBy,
-    String? deletedBy,
+    dynamic updatedBy,
+    dynamic deletedBy,
     DateTime? createdAt,
     DateTime? updatedAt,
-    DateTime? deletedAt,
+    dynamic deletedAt,
+    int? departmentId,
   }) =>
       Datum(
         designationId: designationId ?? this.designationId,
@@ -144,6 +147,7 @@ class Datum {
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
         deletedAt: deletedAt ?? this.deletedAt,
+        departmentId: departmentId ?? this.departmentId,
       );
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
@@ -156,7 +160,8 @@ class Datum {
     deletedBy: json["deletedBy"],
     createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
     updatedAt: json["updatedAt"] == null ? null : DateTime.parse(json["updatedAt"]),
-    deletedAt: json["deletedAt"] == null ? null : DateTime.parse(json["deletedAt"]),
+    deletedAt: json["deletedAt"],
+    departmentId: json["departmentID"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -169,6 +174,7 @@ class Datum {
     "deletedBy": deletedBy,
     "createdAt": createdAt?.toIso8601String(),
     "updatedAt": updatedAt?.toIso8601String(),
-    "deletedAt": deletedAt?.toIso8601String(),
+    "deletedAt": deletedAt,
+    "departmentID": departmentId,
   };
 }

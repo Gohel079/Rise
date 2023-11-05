@@ -3,6 +3,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rise_and_grow/base/constants/app_colors.dart';
+import 'package:rise_and_grow/screens/home/home_screen.dart';
+import 'package:rise_and_grow/screens/login/login_screen.dart';
 import 'package:rise_and_grow/screens/splash/splash_screen.dart';
 
 import 'app_bloc.dart';
@@ -19,7 +21,7 @@ void main() {
 
 
   /// Set Environment
-   String environment = const String.fromEnvironment('ENVIRONMENT', defaultValue: Environment.DEV,);
+  String environment = const String.fromEnvironment('ENVIRONMENT', defaultValue: Environment.DEV,);
   Environment().initConfig(environment);
 
 
@@ -47,35 +49,35 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-   return  OTS(
-     child: EzLocalizationBuilder(
-       delegate: const EzLocalizationDelegate(
-           supportedLocales: [Locale('en')], locale: Locale("en")),
-       builder: (BuildContext context,
-           EzLocalizationDelegate ezLocalizationDelegate) {
-         return ScreenUtilInit(
-           designSize: const Size(390, 844),
-           builder: () => MaterialApp(
-             builder: (context, child) {
-               return MediaQuery(
-                   data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-                   child: child!);
-             },
-             debugShowCheckedModeBanner: false,
-             title: 'HITACHI',
-             theme: normalTheme(context),
-             home: const SplashScreen(),
-             navigatorKey: navigatorKey,
-             localizationsDelegates:
-             ezLocalizationDelegate.localizationDelegates,
-             supportedLocales: ezLocalizationDelegate.supportedLocales,
-             localeResolutionCallback:
-             ezLocalizationDelegate.localeResolutionCallback,
-           ),
-         );
-       },
-     ),
-   );
+    return  OTS(
+      child: EzLocalizationBuilder(
+        delegate: const EzLocalizationDelegate(
+            supportedLocales: [Locale('en')], locale: Locale("en")),
+        builder: (BuildContext context,
+            EzLocalizationDelegate ezLocalizationDelegate) {
+          return ScreenUtilInit(
+            designSize: const Size(390, 844),
+            builder: () => MaterialApp(
+              builder: (context, child) {
+                return MediaQuery(
+                    data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+                    child: child!);
+              },
+              debugShowCheckedModeBanner: false,
+              title: 'HITACHI',
+              theme: normalTheme(context),
+              home: const HomeScreen(),
+              navigatorKey: navigatorKey,
+              localizationsDelegates:
+              ezLocalizationDelegate.localizationDelegates,
+              supportedLocales: ezLocalizationDelegate.supportedLocales,
+              localeResolutionCallback:
+              ezLocalizationDelegate.localeResolutionCallback,
+            ),
+          );
+        },
+      ),
+    );
   }
 
 
@@ -86,5 +88,3 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
   }
 }
-
-

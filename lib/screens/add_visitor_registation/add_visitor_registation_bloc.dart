@@ -1,3 +1,5 @@
+
+import 'package:dio/dio.dart';
 import 'package:rise_and_grow/base/bloc/base_bloc.dart';
 import 'package:rise_and_grow/remote/model/add_visitor_register_response_model.dart';
 import 'package:rise_and_grow/remote/model/get_employee_list_response_model.dart' as getEmployeeData;
@@ -19,7 +21,7 @@ class AddVisitorRegistrationBloc extends BasePageBloc {
   }
 
 
-  void doVisitorRegistration(Map? data,Function(AddVisitorRegisterResponseModel) onSuccess) {
+  void doVisitorRegistration(FormData? data,Function(AddVisitorRegisterResponseModel) onSuccess) {
     showLoadingDialog();
     apiAddVisitorRegistration(data, (response) {
       hideLoadingDialog();

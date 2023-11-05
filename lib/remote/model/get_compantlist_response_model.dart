@@ -104,8 +104,8 @@ class Datum {
   bool? isActive;
   bool? isDeleted;
   String? createdBy;
-  dynamic updatedBy;
-  dynamic deletedBy;
+  String? updatedBy;
+  String? deletedBy;
   DateTime? createdAt;
   DateTime? updatedAt;
   dynamic deletedAt;
@@ -133,8 +133,8 @@ class Datum {
     bool? isActive,
     bool? isDeleted,
     String? createdBy,
-    dynamic updatedBy,
-    dynamic deletedBy,
+    String? updatedBy,
+    String? deletedBy,
     DateTime? createdAt,
     DateTime? updatedAt,
     dynamic deletedAt,

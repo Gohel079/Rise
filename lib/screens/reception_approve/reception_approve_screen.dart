@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:rise_and_grow/base/basePage.dart';
 import 'package:rise_and_grow/base/bloc/base_bloc.dart';
 import 'package:rise_and_grow/base/components/screen_utils/flutter_screenutil.dart';
+import 'package:rise_and_grow/remote/model/get_visitor_list_response_model.dart';
 import 'package:rise_and_grow/screens/reception_approve/reception_approve_screen_bloc.dart';
 import 'package:rise_and_grow/screens/register/register_screen_bloc.dart';
 import 'package:rxdart/rxdart.dart';
@@ -19,17 +20,18 @@ import '../../utils/app_valid.dart';
 import '../../utils/common_utils.dart';
 
 class ReceptionApproveScreen extends BasePage{
-  const ReceptionApproveScreen({super.key});
+  Datum? data;
+  ReceptionApproveScreen({this.data,super.key});
 
 
   @override
   BasePageState<BasePage<BasePageBloc?>, BasePageBloc> getState() {
-   return _receptionApproveScreenState();
+    return _receptionApproveScreenState();
   }
 
-  static Route<dynamic> route() {
+  static Route<dynamic> route(Datum? selectedData) {
     return CustomPageRoute(
-        builder: (context) => const ReceptionApproveScreen());
+        builder: (context) =>  ReceptionApproveScreen(data: selectedData,));
   }
 
 }
@@ -42,10 +44,12 @@ class _receptionApproveScreenState  extends BasePageState<ReceptionApproveScreen
   BehaviorSubject<List<dynamic>>? companyNameList;
   BehaviorSubject<List<dynamic>>? officeList;
   BehaviorSubject<List<dynamic>>? departmentList;
+  BehaviorSubject<List<dynamic>>? designationList;
 
   String companyNameDropdown = 'Select Company Name';
   String officeAddressDropdown = 'Select Office Address';
   String departMentDropdown = 'Select Department';
+  String designationDropdown = 'Select Designation';
 
   AutovalidateMode autoValidateMode = AutovalidateMode.onUserInteraction;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -68,11 +72,14 @@ class _receptionApproveScreenState  extends BasePageState<ReceptionApproveScreen
     companyNameList = BehaviorSubject<List<dynamic>>.seeded([]);
     officeList = BehaviorSubject<List<dynamic>>.seeded([]);
     departmentList = BehaviorSubject<List<dynamic>>.seeded([]);
+    designationList = BehaviorSubject<List<dynamic>>.seeded([]);
 
     DateTime currentTime = DateTime.now();
     String formattedTime =  '${currentTime.day}/${currentTime.month}/${currentTime.year} - ${currentTime.hour}:${currentTime.minute}:${currentTime.second}';
     _autoTimeController.text =formattedTime;
 
+
+    _employeeCodeController.text = (widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.empId?.toString()) ?? "";
   }
 
   @override
@@ -117,7 +124,7 @@ class _receptionApproveScreenState  extends BasePageState<ReceptionApproveScreen
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
 
-                 InkWell(onTap: (){
+                InkWell(onTap: (){
 
                 },
                   child: SvgPicture.asset(AppImages.icNotification,
@@ -131,7 +138,7 @@ class _receptionApproveScreenState  extends BasePageState<ReceptionApproveScreen
             padding: const EdgeInsets.all(22.0),
             child: Container(child: Column(children: [
 
-              Form(child: Column(children: [
+              Form(key: _formKey,child: Column(children: [
 
                 Container(width: double.infinity,decoration :
                 BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
@@ -163,7 +170,11 @@ class _receptionApproveScreenState  extends BasePageState<ReceptionApproveScreen
 
                 SizedBox(height: 20.h,),
 
-                designationTextField(),
+                // designationTextField(),
+                Container(width: double.infinity,decoration :
+                BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
+                    border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
+                    child: designationDropDown()),
 
                 SizedBox(height: 20.h,),
 
@@ -190,7 +201,7 @@ class _receptionApproveScreenState  extends BasePageState<ReceptionApproveScreen
 
   @override
   ReceptionApproveScreenBloc getBloc() {
-   return bloc;
+    return bloc;
   }
 
 
@@ -204,7 +215,7 @@ class _receptionApproveScreenState  extends BasePageState<ReceptionApproveScreen
               return DropdownButtonHideUnderline(
                 child: DropdownButtonFormField(
                   decoration: const InputDecoration(border: InputBorder.none),
-                  value: snapshot.data?[0],
+                  value: companyNameDropdown,
                   autovalidateMode: autoValidateMode,
                   isExpanded: true,
                   validator: validateCompanyName,
@@ -254,9 +265,13 @@ class _receptionApproveScreenState  extends BasePageState<ReceptionApproveScreen
                 child: DropdownButtonFormField(
                   value: officeAddressDropdown,
                   isExpanded: true,
+                  isDense: false,
                   autovalidateMode: autoValidateMode,
                   decoration: const InputDecoration(border: InputBorder.none),
                   validator: validateOfficeAddress,
+                  hint: Text("Select Office Address",
+                    style: styleMedium1.copyWith(color: textGrayColor,
+                        fontWeight: FontWeight.w600),),
                   icon: const Icon(Icons.keyboard_arrow_down,color: black,),
                   items: snapshot.data?.map((dynamic items) {
                     return DropdownMenuItem(
@@ -303,13 +318,16 @@ class _receptionApproveScreenState  extends BasePageState<ReceptionApproveScreen
             if(snapshot.hasData && snapshot.data!.length > 1) {
               return DropdownButtonHideUnderline(
                 child: DropdownButtonFormField(
-                  value: snapshot.data?[0],
+                  value: departMentDropdown,
                   decoration: const InputDecoration(border: InputBorder.none),
                   isExpanded: true,
                   autovalidateMode: autoValidateMode,
+                  // hint: Text("Select Department",
+                  //   style: styleMedium1.copyWith(color: textGrayColor,
+                  //       fontWeight: FontWeight.w600),),
                   validator: validateDepartment,
                   icon: const Icon(Icons.keyboard_arrow_down,color: black,),
-                  items: snapshot.data?.map((dynamic items) {
+                  items:snapshot.data?.map((dynamic items) {
                     return DropdownMenuItem(
                       value: items,
                       child: Text(items,
@@ -320,6 +338,8 @@ class _receptionApproveScreenState  extends BasePageState<ReceptionApproveScreen
                   onChanged: (dynamic? newValue) {
                     setState(() {
                       departMentDropdown = newValue!;
+                      designationDropdown = "Select Designation";
+                      callDesignationAPI(int.parse(findDepartIdByName()));
                     });
                   },
                 ),
@@ -329,6 +349,54 @@ class _receptionApproveScreenState  extends BasePageState<ReceptionApproveScreen
                 child: DropdownMenuItem(
                   value: "Select Department",
                   child: Text("Select Department",
+                    style: styleMedium1.copyWith(color: black,
+                        fontWeight: FontWeight.w600),),
+                ),);
+            }
+
+          }
+      ),
+    );
+  }
+
+  Widget designationDropDown(){
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 7),
+      child: StreamBuilder<List<dynamic>>(
+          stream: designationList?.stream,
+          builder: (context, snapshot) {
+            if(snapshot.hasData && snapshot.data!.length > 1){
+              return DropdownButtonHideUnderline(
+                child: DropdownButtonFormField(
+                  value: designationDropdown,
+                  isExpanded: true,
+                  // hint: Text("Select Designation",
+                  //   style: styleMedium1.copyWith(color: textGrayColor,
+                  //       fontWeight: FontWeight.w600),),
+                  decoration: const InputDecoration(border: InputBorder.none),
+                  validator: validateDesignationDropDown,
+                  autovalidateMode: autoValidateMode,
+                  icon: const Icon(Icons.keyboard_arrow_down,color: black,),
+                  items: snapshot.data?.map((dynamic items) {
+                    return DropdownMenuItem(
+                      value: items,
+                      child: Text(items,
+                        style: styleMedium1.copyWith(color: black,
+                            fontWeight: FontWeight.w600),),
+                    );
+                  }).toList(),
+                  onChanged: (dynamic newValue) {
+                    setState(() {
+                      designationDropdown = newValue!;
+                    });
+                  },
+                ),
+              );
+            }else {
+              return SizedBox(height: 40.h,
+                child: DropdownMenuItem(
+                  value: "Select Designation",
+                  child: Text("Select Designation",
                     style: styleMedium1.copyWith(color: black,
                         fontWeight: FontWeight.w600),),
                 ),);
@@ -351,7 +419,7 @@ class _receptionApproveScreenState  extends BasePageState<ReceptionApproveScreen
       autovalidateMode: autoValidateMode,
       keyboardType: TextInputType.text,
       textInputAction: TextInputAction.next,
-      validator: validateLastName,
+      validator: validateContactPersonName,
       decoration: const InputDecoration(
           labelText: "Contact Person Name",
           labelStyle: TextStyle(
@@ -466,6 +534,7 @@ class _receptionApproveScreenState  extends BasePageState<ReceptionApproveScreen
       style: styleMedium1.copyWith(color: black,fontWeight: FontWeight.w600),
       controller: _designationController,
       focusNode: _nodeDesignation,
+      validator: validateDesignation,
       autovalidateMode: autoValidateMode,
       keyboardType: TextInputType.text,
       textInputAction: TextInputAction.next,
@@ -524,6 +593,7 @@ class _receptionApproveScreenState  extends BasePageState<ReceptionApproveScreen
       style: styleMedium1.copyWith(color: black,fontWeight: FontWeight.w600),
       controller: _autoTimeController,
       focusNode: _nodeAutoTime,
+      validator: validateDateAndTime,
       autovalidateMode: autoValidateMode,
       keyboardType: TextInputType.text,
       textInputAction: TextInputAction.next,
@@ -584,6 +654,7 @@ class _receptionApproveScreenState  extends BasePageState<ReceptionApproveScreen
       focusNode: _nodeTokenNumber,
       autovalidateMode: autoValidateMode,
       keyboardType: TextInputType.text,
+      validator: validateTokenNumber,
       textInputAction: TextInputAction.next,
       decoration: const InputDecoration(
           labelText: "Token Number",
@@ -633,7 +704,37 @@ class _receptionApproveScreenState  extends BasePageState<ReceptionApproveScreen
 
   Widget submitButton() {
     return ButtonView(string('label_submit'),false, () async {
+      var state = _formKey.currentState!;
 
+
+      if(state.validate()){
+        hideKeyboard(context);
+
+
+        Map requestData = {
+          "tokenNumber":_tokenNumberController.text.trim().toString(),
+          "requestID":widget.data?.requestId,
+          "officeID":int.parse(findOfficeIdByName()),
+          "departmentID":int.parse(findDepartIdByName()),
+          "companyID": int.parse(findCompanyIdByName())
+        };
+
+        bloc.doSaveTokenByReceipt(requestData,(response) {
+
+          String status = response.responseType ?? success;
+
+          if(status.toLowerCase() == success) {
+
+            showMessageBar(response.message ?? "");
+          }
+          else if(status.toLowerCase() == failed){
+            showMessageBar('Failed :  ${response.message ?? ""}');
+          }
+          else {
+            showMessageBar('ERROR :${response.message ?? ""}');
+          }
+        },);
+      }
     });
   }
 
@@ -671,13 +772,16 @@ class _receptionApproveScreenState  extends BasePageState<ReceptionApproveScreen
 
   void callOfficeListAPI(int? companyCode){
 
-
-
-    Map requestDate = {
-      "companyID" : companyCode
+    print("companyCode -- $companyCode");
+    Map? requestDate = {
+      "limit" : 10,
+      "page" : 1,
+      "isActive" : 1,
+      "sort" : "asc",
+      "sortBy" : "officeID"
     };
 
-    getBloc().getOfficeList(companyCode.toString(),requestDate, (response) {
+    getBloc().getOfficeList(companyCode, (response) {
 
       String status = response.responseType ?? success;
 
@@ -709,8 +813,7 @@ class _receptionApproveScreenState  extends BasePageState<ReceptionApproveScreen
           officeTempList.forEach((element) {
             print("FINAL TEMP LIST ${element}");
           });
-          print("FINAL LIST FOR DROP LENGTH- ()()()()() ${officeList?.value
-              .length}");
+
           officeList?.value.forEach((element) {
             print("FINAL LIST FOR DROP ${element}");
           });
@@ -767,4 +870,68 @@ class _receptionApproveScreenState  extends BasePageState<ReceptionApproveScreen
   }
 
 
+  void callDesignationAPI(int? departmentId) {
+
+    Map<String,dynamic>  data = {
+      "departmentID" : departmentId,
+      "isActive" : 1,
+      // "page" : 1,
+      // "limit" : 50
+    };
+
+
+    getBloc().getDesignationList(data,(response) {
+      String status = response.responseType ?? success;
+
+      if(status.toLowerCase() == success){
+        if(!getBloc().designationList.isClosed) {
+          getBloc().designationList.add(response.responseData);
+
+          List<dynamic> tempList = [];
+          tempList.insert(0, "Select Designation");
+          designationList?.add([]);
+          getBloc().designationList.value.data?.forEach((element) {
+            tempList.add(element.designation);
+            print('DARA ${element.designation}');
+          });
+
+          designationList?.add(tempList);
+
+        }
+      }  else if(status.toLowerCase() == failed){
+        showMessageBar('Failed :  ${response.message ?? ""}');
+      }
+      else {
+        showMessageBar('ERROR :${response.message ?? ""}');
+      }
+    },);
+  }
+
+  String findDepartIdByName() {
+    String result = "";
+    if(!getBloc().departmentList.isClosed) {
+      getBloc().departmentList.value.data?.forEach((element) {
+        if (element.department == departMentDropdown) {
+          result = element.departmentId.toString();
+          print("Department ID $result");
+        }
+      });
+    }
+
+    return result;
+  }
+
+  String findOfficeIdByName() {
+    String result = "";
+    if(!getBloc().officeAddressList.isClosed) {
+      getBloc().officeAddressList.value.data?.forEach((element) {
+        if (element.address == officeAddressDropdown) {
+          result = element.officeId.toString();
+          print("Office ID $result");
+        }
+      });
+    }
+
+    return result;
+  }
 }

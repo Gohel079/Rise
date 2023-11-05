@@ -14,9 +14,9 @@ class VisitorRegistrationBloc extends BasePageBloc{
   }
 
 
-  void getVisitorRegList(Function(GetVisitor.GetVisitorResponseModel) onSuccess) {
+  void getVisitorRegList(Map? data,Function(GetVisitor.GetVisitorResponseModel) onSuccess) {
     showLoadingDialog();
-    apiGetVisitorList((response) {
+    apiGetVisitorList(data,(response) {
       hideLoadingDialog();
       onSuccess.call(response);
     }, (error) {
@@ -29,7 +29,7 @@ class VisitorRegistrationBloc extends BasePageBloc{
   @override
   void dispose() {
     getVisitorList.close();
-      super.dispose();
+    super.dispose();
   }
 
 

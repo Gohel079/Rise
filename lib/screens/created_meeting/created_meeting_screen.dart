@@ -5,15 +5,16 @@ import 'package:rise_and_grow/base/basePage.dart';
 import 'package:rise_and_grow/base/bloc/base_bloc.dart';
 import 'package:rise_and_grow/base/components/screen_utils/flutter_screenutil.dart';
 import 'package:rise_and_grow/base/constants/app_colors.dart';
-import 'package:rise_and_grow/screens/add_visitor_registation/add_visitor_registation_screen.dart';
-import 'package:rise_and_grow/screens/create_meeting_form/create_meeting_form_bloc.dart';
 import 'package:rise_and_grow/screens/created_meeting/created_meeting_bloc.dart';
-import 'package:rise_and_grow/screens/visitor_registation/visitor_registation_bloc.dart';
+import 'package:rise_and_grow/screens/created_meeting/created_meeting_item.dart';
+import '../../remote/model/get_created_meeting_list_respinse_model.dart' as GetCreatedMeeting;
 
 import '../../base/constants/app_images.dart';
 import '../../base/constants/app_styles.dart';
 import '../../base/widgets/custom_page_route.dart';
 import '../create_meeting_form/create_meeting_form_screen.dart';
+import 'package:rise_and_grow/base/constants/app_constant.dart';
+import '../../base/constants/app_widgets.dart';
 
 class CreatedMeetingScreen extends BasePage<CreatedMeetingBloc>{
   const CreatedMeetingScreen({super.key});
@@ -35,6 +36,10 @@ class _createdMeetingScreenState extends BasePageState<CreatedMeetingScreen,Crea
 
   CreatedMeetingBloc bloc = CreatedMeetingBloc();
   bool isSearching =false;
+
+  int limit = 10;
+  int indexOfData = 1;
+  int totalPages = 1;
 
   List<String> tabList = [
     "ALL",
@@ -187,167 +192,89 @@ class _createdMeetingScreenState extends BasePageState<CreatedMeetingScreen,Crea
 
   Widget createMeeting(){
     return Expanded(
-      child: ListView.builder(
-        itemCount: 20,
-        shrinkWrap: true,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: Card(
-              elevation: 0.5,
-              shape: RoundedRectangleBorder(borderRadius:
-              BorderRadius.circular(10)),
-              color: listCardBG ,
-              child:
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12,
-                    vertical: 17),
-                child: Row(children: [
+      // child: ListView.builder(
+      //   itemCount: 20,
+      //   shrinkWrap: true,
+      //   itemBuilder: (context, index) {
+      //     // return ;
+      //   },),
+      child: StreamBuilder<List<GetCreatedMeeting.Data>>(
+        stream: getBloc().getCreatedMeetingList.stream,
+        builder: (context, snapshot){
+          if(snapshot.hasData && snapshot.data?.isNotEmpty == true ) {
+            return ListView.builder(
+              itemCount: snapshot.data?.length,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                print("DARA ${snapshot.data?.elementAt(index).meetingTypeID}");
 
-                  SizedBox(width: 4.w),
-                  Expanded(flex:4,child:
-                  Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-
-                        Row(
-                          children: [
-
-                            SvgPicture.asset(
-                              AppImages.icToll  ,
-                              color: lightBlack,
-                            ),
-                            SizedBox(width: 5.w,),
-                            Text('RTPL Mobile app',
-                                style: styleMedium1.copyWith(
-                                  color: lightBlack,
-                                  fontWeight: FontWeight.w500,
-                                )),
-                          ],
-                        ),
-                        SizedBox(height: 12.h,),
-
-                        Text('Mr.Harsh Patel',
-                            style: styleMedium1.copyWith(
-                              color: black,
-                              fontWeight: FontWeight.w600,
-                            )),
-
-                        SizedBox(height: 14.h,),
-
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-
-
-                            SvgPicture.asset(
-                              AppImages.icCalenderOutline,
-                              color: lightBlack,
-                            ),
-                            SizedBox(width: 6.w,),
-                            Text('08/09/2023',
-                                style: styleSmall4.copyWith(
-                                  color: lightBlack,
-                                  fontWeight: FontWeight.w500,
-                                )),
-
-                            SizedBox(width: 7.w,),
-                            Text('|',
-                                style: styleSmall4.copyWith(
-                                  color: verticalDivier,
-                                  fontWeight: FontWeight.w600,
-                                )),
-                            SizedBox(width: 7.w,),
-                            SvgPicture.asset(
-                              AppImages.icClock,
-                              color: lightBlack,
-                            ),
-                            SizedBox(width: 3.w,),
-                            Text('06:15',
-                                style: styleSmall4.copyWith(
-                                  color: lightBlack,
-                                  fontWeight: FontWeight.w500,
-                                )),
-                          ],),
-
-                        SizedBox(height: 14.h,),
-
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-
-
-                            SvgPicture.asset(
-                              AppImages.icPerson,
-                              height: 20,
-                              color: green2,
-                            ),
-                            SizedBox(width: 2.w,),
-                            Text('Andrew status',
-                                style: styleSmall3.copyWith(
-                                  color: green2,
-                                  fontWeight: FontWeight.w500,
-                                )),
-
-                            SizedBox(width: 10.w,),
-                            SvgPicture.asset(
-                              AppImages.icPerson,
-                              height: 20,
-                              color: grayBlack,
-                            ),
-                            SizedBox(width: 3.w,),
-                            Text('Fox Geroge',
-                                style: styleSmall3.copyWith(
-                                  color: grayBlack,
-                                  fontWeight: FontWeight.w500,
-                                )),
-                          ],),
-
-                      ])),
-                  Expanded(flex:2,child:
-                  Container(width: 10,
-                    padding: const EdgeInsets.symmetric(horizontal: 7),
-                    // ,height: 0,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-
-
-                        Container(width : 50.w,
-                            height: 50.h,decoration:
-                        BoxDecoration(borderRadius: BorderRadius.circular(5),
-                            color: green3)
-                            ,child: Image.asset(AppImages.imgGreenTrue,
-                              height: 30.h,width: 30.w,)),
-
-
-                        SizedBox(height: 10.h,),
-
-                        Container(decoration:
-                        BoxDecoration(borderRadius: BorderRadius.circular(20),
-                            color: white,border: Border.all(color: green2,width: 1)),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 6),
-                            child: Text('Accepted',
-                                style: styleSmall3.copyWith(
-                                  color: green2,
-                                  fontWeight: FontWeight.w600,
-                                )),
-                          ),
-                        ),
-                      ],),))
-
-                ],),
-              ),),
-          );
-        },),
+                return  InkWell(
+                    onTap: () {
+                      // Navigator.push(context, VisitorApproveScreen.route(snapshot.data?.elementAt(index)));
+                      // Navigator.push(context,ReceptionApproveScreen.route(snapshot.data?.elementAt(index)));
+                    },
+                    child: CreatedMeetingItem(data: snapshot.data?.elementAt(index)));
+              },
+            );
+          }else {
+            return const SizedBox();
+          }
+        },
+      ),
     );
   }
 
   @override
   CreatedMeetingBloc getBloc() {
     return bloc;
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    callGetCreatedMeetingAPI();
+  }
+
+  void callGetCreatedMeetingAPI() {
+    if(indexOfData <= totalPages) {
+      Map<String, dynamic> param = {
+        "limit": limit,
+        "page": indexOfData,
+        "sort": "DESC",
+        "sortBy": "createdAt",
+        "search": "client-k"
+      };
+
+      bloc.getCreatedMeetingsListFunc(param,(response) {
+        String status = response.responseType ?? success;
+
+        if (status.toLowerCase() == success) {
+
+          totalPages  = response.responseData?.lastPage ?? 0;
+          print("Total Page ${totalPages}");
+          print("IndexOFData Page ${indexOfData}");
+
+          if (!getBloc().getCreatedMeetingList.isClosed) {
+            print("GetCreatedMeetingList ->> ${getBloc().getCreatedMeetingList.value.length}");
+
+            List<GetCreatedMeeting.Data> tempList = bloc.getCreatedMeetingList.value ?? [];
+            tempList.addAll(response.responseData?.data ?? []);
+
+
+            bloc.getCreatedMeetingList.add(tempList);
+          }
+          indexOfData++;
+          callGetCreatedMeetingAPI();
+
+        }
+        else if (status.toLowerCase() == failed) {
+          showMessageBar('Failed :  ${response.message ?? ""}');
+        }
+        else {
+          showMessageBar('ERROR :${response.message ?? ""}');
+        }
+      },
+      );
+    }
   }
 }
