@@ -21,7 +21,7 @@ void main() {
 
 
   /// Set Environment
-   String environment = const String.fromEnvironment('ENVIRONMENT', defaultValue: Environment.DEV,);
+  String environment = const String.fromEnvironment('ENVIRONMENT', defaultValue: Environment.DEV,);
   Environment().initConfig(environment);
 
 
@@ -49,35 +49,35 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-   return  OTS(
-     child: EzLocalizationBuilder(
-       delegate: const EzLocalizationDelegate(
-           supportedLocales: [Locale('en')], locale: Locale("en")),
-       builder: (BuildContext context,
-           EzLocalizationDelegate ezLocalizationDelegate) {
-         return ScreenUtilInit(
-           designSize: const Size(390, 844),
-           builder: () => MaterialApp(
-             builder: (context, child) {
-               return MediaQuery(
-                   data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-                   child: child!);
-             },
-             debugShowCheckedModeBanner: false,
-             title: 'HITACHI',
-             theme: normalTheme(context),
-             home: const HomeScreen(),
-             navigatorKey: navigatorKey,
-             localizationsDelegates:
-             ezLocalizationDelegate.localizationDelegates,
-             supportedLocales: ezLocalizationDelegate.supportedLocales,
-             localeResolutionCallback:
-             ezLocalizationDelegate.localeResolutionCallback,
-           ),
-         );
-       },
-     ),
-   );
+    return  OTS(
+      child: EzLocalizationBuilder(
+        delegate: const EzLocalizationDelegate(
+            supportedLocales: [Locale('en')], locale: Locale("en")),
+        builder: (BuildContext context,
+            EzLocalizationDelegate ezLocalizationDelegate) {
+          return ScreenUtilInit(
+            designSize: const Size(390, 844),
+            builder: () => MaterialApp(
+              builder: (context, child) {
+                return MediaQuery(
+                    data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+                    child: child!);
+              },
+              debugShowCheckedModeBanner: false,
+              title: 'HITACHI',
+              theme: normalTheme(context),
+              home: const HomeScreen(),
+              navigatorKey: navigatorKey,
+              localizationsDelegates:
+              ezLocalizationDelegate.localizationDelegates,
+              supportedLocales: ezLocalizationDelegate.supportedLocales,
+              localeResolutionCallback:
+              ezLocalizationDelegate.localeResolutionCallback,
+            ),
+          );
+        },
+      ),
+    );
   }
 
 
@@ -88,5 +88,3 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
   }
 }
-
-

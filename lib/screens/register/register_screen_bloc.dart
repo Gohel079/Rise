@@ -81,7 +81,7 @@ class RegisterScreenBloc extends BasePageBloc {
 
   void getOfficeList(int? companyId,Function(officeData.GetOfficeListResponseModel) onSuccess) {
     showLoadingDialog();
-      apiOfficeList(companyId, (response) {
+    apiOfficeList(companyId, (response) {
       hideLoadingDialog();
       onSuccess.call(response);
     }, (error) {

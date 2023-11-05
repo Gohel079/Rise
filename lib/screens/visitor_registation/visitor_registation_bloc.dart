@@ -21,7 +21,7 @@ class VisitorRegistrationBloc extends BasePageBloc{
       onSuccess.call(response);
     }, (error) {
       hideLoadingDialog();
-      // showMessageBar('ERROR ${error.message ?? ""}');
+      showMessageBar('ERROR ${error.message ?? ""}');
     });
   }
 
@@ -29,7 +29,7 @@ class VisitorRegistrationBloc extends BasePageBloc{
   @override
   void dispose() {
     getVisitorList.close();
-      super.dispose();
+    super.dispose();
   }
 
 

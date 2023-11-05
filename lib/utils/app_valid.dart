@@ -51,7 +51,7 @@ String? validateStrongPassword(String? value) {
     return "Password is required.";
   }
   if(!capitalLetterRegex.hasMatch(value))
-     return "Password needs to have at least one capital letter";
+    return "Password needs to have at least one capital letter";
 
   if (!specialCharacterRegex.hasMatch(value)) {
     return "Password needs to have at least one special character";

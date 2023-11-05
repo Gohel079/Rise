@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -683,13 +684,39 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
 
     if(state.validate()){
 
+      hideKeyboard(context);
+
+      String meetingPurpose = _meetingPurposeController.text.trim().toString();
+
+      print(_setDateAndTimeController.text.trim().toString());
+
+      FormData formData = FormData.fromMap({
+        "typeOfMeeting": typeOfMeeting,
+        "MeetingPurpose": meetingPurpose,
+        "meetingVenue": meetingVenue,
+        "meetingDate": "",
+        "meetingTime": "",
+        "meetingMode": meetingMode
+      });
 
       Map? requestData = {
 
       };
 
+      getBloc().createMeeting(formData, (response) {
+        String status = response.responseType ?? success;
 
-      showMessageBar("SUCCESS");
+          if(status.toLowerCase() == success){
+            showMessageBar("SUCCESS");
+          }
+          else if(status.toLowerCase() == failed) {
+            showMessageBar('Failed :  ${response.message ?? ""}');
+          }
+          else {
+            showMessageBar('ERROR :${response.message ?? ""}');
+          }
+      }, );
+
     }
   }
 

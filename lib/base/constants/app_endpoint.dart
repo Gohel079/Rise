@@ -12,12 +12,12 @@ class AppEndpoint {
   static const String getOffice = "company/office/getOfficelistByCompany";
   static const String getMeetingList = "meetingtype/get_meetingType_list";
   static const String getMeetingModeList = "meetingmode/get_meetingMode_list";
+  static const String createMeeting = "meeting/create_meeting";
+  static const String getCreatedMeeting = "meeting/get_meeting_list";
   static const String getRoleList = "role/getRoleList";
   static const String getEmployee = "employee/getEmployeeList";
   static const String visitorRegister = "visitor/visitor_request_meeting";
   static const String getVisitorRegister = "visitor/get_visitor_req_list";
   static const String saveTokenReceipt = "visitor/save_token_by_recpt";
-
-
 
 }

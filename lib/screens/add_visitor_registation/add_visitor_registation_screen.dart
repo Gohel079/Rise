@@ -291,7 +291,7 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
              SizedBox(height: 10.h,),
 
 
-              submitButton()
+             submitButton()
 
            ],),
          ),

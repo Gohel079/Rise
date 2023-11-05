@@ -76,10 +76,10 @@ class _RegisterScreenState
 
   bool agree = true;
 
-   BehaviorSubject<String>? companyPDFFileText;
-   BehaviorSubject<String>? aadhaarCardPDFText;
-   BehaviorSubject<String>? photoOrCameraFile;
-   ImagePicker? imagePicker  = ImagePicker();
+  BehaviorSubject<String>? companyPDFFileText;
+  BehaviorSubject<String>? aadhaarCardPDFText;
+  BehaviorSubject<String>? photoOrCameraFile;
+  ImagePicker? imagePicker  = ImagePicker();
 
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _secondNameController = TextEditingController();
@@ -130,9 +130,9 @@ class _RegisterScreenState
                   border: Border.all(color: lightGrayBorder,width: 1),
                   color: white),
                 child: SvgPicture.asset(
-                AppImages.icBackArrow,
+                  AppImages.icBackArrow,
                   height: 20,
-              ),),
+                ),),
             ),
           ],
         ),
@@ -153,67 +153,67 @@ class _RegisterScreenState
           child: Column(children: [
 
 
-          SizedBox(height: 30.h,),
+            SizedBox(height: 30.h,),
 
-          firstNameTextField(),
+            firstNameTextField(),
 
-          SizedBox(height: 20.h,),
+            SizedBox(height: 20.h,),
 
-          secondNameTextField(),
+            secondNameTextField(),
 
-          SizedBox(height: 20.h,),
+            SizedBox(height: 20.h,),
 
-          employeeCodeTextField(),
+            employeeCodeTextField(),
 
-          SizedBox(height: 20.h,),
+            SizedBox(height: 20.h,),
 
-          contactNumberTextField(),
+            contactNumberTextField(),
 
-          SizedBox(height: 20.h,),
+            SizedBox(height: 20.h,),
 
-          emailAddressTextField(),
+            emailAddressTextField(),
 
-          SizedBox(height: 20.h,),
+            SizedBox(height: 20.h,),
 
-          dateOfBirthField(),
-          // designationTextField(),
+            dateOfBirthField(),
+            // designationTextField(),
 
-          SizedBox(height: 20.h,),
+            SizedBox(height: 20.h,),
 
-          anniversaryDateField(),
+            anniversaryDateField(),
 
-          SizedBox(height: 20.h,),
+            SizedBox(height: 20.h,),
 
-          Container(width: double.infinity,decoration :
-          BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
-              border: Border.all(color: borderColor, ),
-              color: darkTextFieldFillColor ),
-              child: companyNameDropDown()),
+            Container(width: double.infinity,decoration :
+            BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
+                border: Border.all(color: borderColor, ),
+                color: darkTextFieldFillColor ),
+                child: companyNameDropDown()),
 
-          SizedBox(height: 20.h,),
+            SizedBox(height: 20.h,),
 
-          Container(width: double.infinity,decoration :
-          BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
-              border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
-              child: departMentDropDown()),
+            Container(width: double.infinity,decoration :
+            BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
+                border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
+                child: departMentDropDown()),
 
-          SizedBox(height: 20.h,),
+            SizedBox(height: 20.h,),
 
-          Container(width: double.infinity,decoration :
-          BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
-              border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
-              child: designationDropDown()),
+            Container(width: double.infinity,decoration :
+            BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
+                border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
+                child: designationDropDown()),
 
-          SizedBox(height: 20.h,),
-
-
-          Container(width: double.infinity,decoration :
-          BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
-              border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
-              child: officeAddressDropDown()),
+            SizedBox(height: 20.h,),
 
 
-          SizedBox(height:20.h),
+            Container(width: double.infinity,decoration :
+            BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
+                border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
+                child: officeAddressDropDown()),
+
+
+            SizedBox(height:20.h),
 
             Container(width: double.infinity,decoration :
             BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
@@ -225,21 +225,21 @@ class _RegisterScreenState
 
             aadhaarNumberTextField(),
 
-          SizedBox(height:20.h),
+            SizedBox(height:20.h),
 
-          passwordTextField(),
+            passwordTextField(),
 
-          SizedBox(height:30.h),
+            SizedBox(height:30.h),
 
-          confirmPasswordTextField(),
+            confirmPasswordTextField(),
 
-          SizedBox(height:40.h),
+            SizedBox(height:40.h),
 
-          uploadDocument(),
+            uploadDocument(),
 
-          SizedBox(height:20.h),
+            SizedBox(height:20.h),
 
-          termAndcondition(),
+            termAndcondition(),
 
           ],),
         ),
@@ -387,7 +387,7 @@ class _RegisterScreenState
       textInputAction: TextInputAction.next,
       validator: validateLastName,
       decoration: const InputDecoration(
-        labelText: "Last Name",
+          labelText: "Last Name",
           labelStyle: TextStyle(
             fontFamily: fontFamilyMontserrat,
             color: textGrayColor,
@@ -685,7 +685,7 @@ class _RegisterScreenState
       textInputAction: TextInputAction.next,
       validator: validateMobile,
       decoration: const InputDecoration(
-        counterText: "",
+          counterText: "",
           labelText: "Contact Number",
           labelStyle: TextStyle(
             fontFamily: fontFamilyMontserrat,
@@ -735,45 +735,45 @@ class _RegisterScreenState
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 7),
       child: StreamBuilder<List<dynamic>>(
-        stream: companyNameList?.stream,
-        builder: (context, snapshot) {
-          if(snapshot.hasData && snapshot.data!.length > 1){
-            return DropdownButtonHideUnderline(
-              child: DropdownButtonFormField(
-                decoration: const InputDecoration(border: InputBorder.none),
-                value: companyNameDropdown,
-                autovalidateMode: autoValidateMode,
-                isExpanded: true,
-                validator: validateCompanyName,
-                icon: const Icon(Icons.keyboard_arrow_down,color: black,),
-                items: snapshot.data?.map((dynamic items) {
-                  return DropdownMenuItem(
-                    value: items.toString(),
-                    child: Text(items,
-                      style: styleMedium1.copyWith(color: black,
-                          fontWeight: FontWeight.w600),),
-                  );
-                }).toList(),
-                onChanged: (dynamic newValue) {
-                  setState(() {
-                    companyNameDropdown = newValue!;
-                    officeAddressDropdown = "Select Office Address";
-                    callOfficeListAPI(int.parse(findCompanyIdByName()));
-                    print(companyNameDropdown);
-                  });
-                },
-              ),
-            );
-          }
-          return  SizedBox(height: 40.h,
-            child: DropdownMenuItem(
-              value: "Select Company Name",
-              child: Text("Select Company Name",
-                style: styleMedium1.copyWith(color: black,
-                    fontWeight: FontWeight.w600),),
-            ),);
+          stream: companyNameList?.stream,
+          builder: (context, snapshot) {
+            if(snapshot.hasData && snapshot.data!.length > 1){
+              return DropdownButtonHideUnderline(
+                child: DropdownButtonFormField(
+                  decoration: const InputDecoration(border: InputBorder.none),
+                  value: companyNameDropdown,
+                  autovalidateMode: autoValidateMode,
+                  isExpanded: true,
+                  validator: validateCompanyName,
+                  icon: const Icon(Icons.keyboard_arrow_down,color: black,),
+                  items: snapshot.data?.map((dynamic items) {
+                    return DropdownMenuItem(
+                      value: items.toString(),
+                      child: Text(items,
+                        style: styleMedium1.copyWith(color: black,
+                            fontWeight: FontWeight.w600),),
+                    );
+                  }).toList(),
+                  onChanged: (dynamic newValue) {
+                    setState(() {
+                      companyNameDropdown = newValue!;
+                      officeAddressDropdown = "Select Office Address";
+                      callOfficeListAPI(int.parse(findCompanyIdByName()));
+                      print(companyNameDropdown);
+                    });
+                  },
+                ),
+              );
+            }
+            return  SizedBox(height: 40.h,
+              child: DropdownMenuItem(
+                value: "Select Company Name",
+                child: Text("Select Company Name",
+                  style: styleMedium1.copyWith(color: black,
+                      fontWeight: FontWeight.w600),),
+              ),);
 
-        }
+          }
       ),
     );
   }
@@ -782,52 +782,52 @@ class _RegisterScreenState
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 7),
       child: StreamBuilder<List<dynamic>>(
-        stream: officeList?.stream,
-        builder: (context, snapshot) {
-          if(snapshot.hasData && snapshot.data!.length > 1){
-            print("SNAP ${snapshot.data?.length}");
-            snapshot.data?.forEach((element) { print(element); });
-            return DropdownButtonHideUnderline(
-              child: DropdownButtonFormField(
-                value: officeAddressDropdown,
-                isExpanded: true,
-                isDense: false,
-                autovalidateMode: autoValidateMode,
-                decoration: const InputDecoration(border: InputBorder.none),
-                validator: validateOfficeAddress,
-                icon: const Icon(Icons.keyboard_arrow_down,color: black,),
-                items: snapshot.data?.map((dynamic items) {
-                  return DropdownMenuItem(
-                    value: items ?? "",
-                    child: Text(items ?? "",
-                      style: styleMedium1.copyWith(color: black,
-                          fontWeight: FontWeight.w600),),
-                  );
-                }).toList(),
-                onChanged: (dynamic newValue) {
-                  setState(() {
-                    officeAddressDropdown = newValue!;
+          stream: officeList?.stream,
+          builder: (context, snapshot) {
+            if(snapshot.hasData && snapshot.data!.length > 1){
+              print("SNAP ${snapshot.data?.length}");
+              snapshot.data?.forEach((element) { print(element); });
+              return DropdownButtonHideUnderline(
+                child: DropdownButtonFormField(
+                  value: officeAddressDropdown,
+                  isExpanded: true,
+                  isDense: false,
+                  autovalidateMode: autoValidateMode,
+                  decoration: const InputDecoration(border: InputBorder.none),
+                  validator: validateOfficeAddress,
+                  icon: const Icon(Icons.keyboard_arrow_down,color: black,),
+                  items: snapshot.data?.map((dynamic items) {
+                    return DropdownMenuItem(
+                      value: items ?? "",
+                      child: Text(items ?? "",
+                        style: styleMedium1.copyWith(color: black,
+                            fontWeight: FontWeight.w600),),
+                    );
+                  }).toList(),
+                  onChanged: (dynamic newValue) {
+                    setState(() {
+                      officeAddressDropdown = newValue!;
 
-                  });
-                },
-              ),
-            );
-          }
-          else {
-            return InkWell(onTap: (){
-              // showMessageBar("Please Select First Company Name");
-            },
-              child: Container(height: 40.h,
-                child: DropdownMenuItem(
+                    });
+                  },
+                ),
+              );
+            }
+            else {
+              return InkWell(onTap: (){
+                // showMessageBar("Please Select First Company Name");
+              },
+                child: Container(height: 40.h,
+                  child: DropdownMenuItem(
                     value: "Select Office Address",
                     child: Text("Select Office Address",
                       style: styleMedium1.copyWith(color: black,
                           fontWeight: FontWeight.w600),),
                   ),),
-            );
-          }
+              );
+            }
 
-        }
+          }
       ),
     );
   }
@@ -885,48 +885,48 @@ class _RegisterScreenState
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 7),
       child: StreamBuilder<List<dynamic>>(
-        stream: departmentList?.stream,
-        builder: (context, snapshot) {
-          if(snapshot.hasData && snapshot.data!.length > 1) {
-            return DropdownButtonHideUnderline(
-              child: DropdownButtonFormField(
-                value: departMentDropdown,
-                decoration: const InputDecoration(border: InputBorder.none),
-                isExpanded: true,
-                autovalidateMode: autoValidateMode,
-                // hint: Text("Select Department",
-                //   style: styleMedium1.copyWith(color: textGrayColor,
-                //       fontWeight: FontWeight.w600),),
-                validator: validateDepartment,
-                icon: const Icon(Icons.keyboard_arrow_down,color: black,),
-                items:snapshot.data?.map((dynamic items) {
-                  return DropdownMenuItem(
-                    value: items,
-                    child: Text(items,
-                      style: styleMedium1.copyWith(color: black,
-                          fontWeight: FontWeight.w600),),
-                  );
-                }).toList(),
-                onChanged: (dynamic? newValue) {
-                  setState(() {
-                    departMentDropdown = newValue!;
-                    designationDropdown = "Select Designation";
-                    callDesignationAPI(int.parse(findDepartIdByName()));
-                  });
-                },
-              ),
-            );
-          }else {
-            return Container(height: 40.h,
-              child: DropdownMenuItem(
-                value: "Select Department",
-                child: Text("Select Department",
-                  style: styleMedium1.copyWith(color: black,
-                      fontWeight: FontWeight.w600),),
-              ),);
-          }
+          stream: departmentList?.stream,
+          builder: (context, snapshot) {
+            if(snapshot.hasData && snapshot.data!.length > 1) {
+              return DropdownButtonHideUnderline(
+                child: DropdownButtonFormField(
+                  value: departMentDropdown,
+                  decoration: const InputDecoration(border: InputBorder.none),
+                  isExpanded: true,
+                  autovalidateMode: autoValidateMode,
+                  // hint: Text("Select Department",
+                  //   style: styleMedium1.copyWith(color: textGrayColor,
+                  //       fontWeight: FontWeight.w600),),
+                  validator: validateDepartment,
+                  icon: const Icon(Icons.keyboard_arrow_down,color: black,),
+                  items:snapshot.data?.map((dynamic items) {
+                    return DropdownMenuItem(
+                      value: items,
+                      child: Text(items,
+                        style: styleMedium1.copyWith(color: black,
+                            fontWeight: FontWeight.w600),),
+                    );
+                  }).toList(),
+                  onChanged: (dynamic? newValue) {
+                    setState(() {
+                      departMentDropdown = newValue!;
+                      designationDropdown = "Select Designation";
+                      callDesignationAPI(int.parse(findDepartIdByName()));
+                    });
+                  },
+                ),
+              );
+            }else {
+              return Container(height: 40.h,
+                child: DropdownMenuItem(
+                  value: "Select Department",
+                  child: Text("Select Department",
+                    style: styleMedium1.copyWith(color: black,
+                        fontWeight: FontWeight.w600),),
+                ),);
+            }
 
-        }
+          }
       ),
     );
   }
@@ -935,46 +935,46 @@ class _RegisterScreenState
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 7),
       child: StreamBuilder<List<dynamic>>(
-        stream: designationList?.stream,
-        builder: (context, snapshot) {
-          if(snapshot.hasData && snapshot.data!.length > 1){
-            return DropdownButtonHideUnderline(
-              child: DropdownButtonFormField(
-                value: designationDropdown,
-                isExpanded: true,
-                // hint: Text("Select Designation",
-                //   style: styleMedium1.copyWith(color: textGrayColor,
-                //       fontWeight: FontWeight.w600),),
-                decoration: const InputDecoration(border: InputBorder.none),
-                validator: validateDesignationDropDown,
-                autovalidateMode: autoValidateMode,
-                icon: const Icon(Icons.keyboard_arrow_down,color: black,),
-                items: snapshot.data?.map((dynamic items) {
-                  return DropdownMenuItem(
-                    value: items,
-                    child: Text(items,
-                      style: styleMedium1.copyWith(color: black,
-                          fontWeight: FontWeight.w600),),
-                  );
-                }).toList(),
-                onChanged: (dynamic newValue) {
-                  setState(() {
-                    designationDropdown = newValue!;
-                  });
-                },
-              ),
-            );
-          }else {
-            return SizedBox(height: 40.h,
-              child: DropdownMenuItem(
-                value: "Select Designation",
-                child: Text("Select Designation",
-                  style: styleMedium1.copyWith(color: black,
-                      fontWeight: FontWeight.w600),),
-              ),);
-          }
+          stream: designationList?.stream,
+          builder: (context, snapshot) {
+            if(snapshot.hasData && snapshot.data!.length > 1){
+              return DropdownButtonHideUnderline(
+                child: DropdownButtonFormField(
+                  value: designationDropdown,
+                  isExpanded: true,
+                  // hint: Text("Select Designation",
+                  //   style: styleMedium1.copyWith(color: textGrayColor,
+                  //       fontWeight: FontWeight.w600),),
+                  decoration: const InputDecoration(border: InputBorder.none),
+                  validator: validateDesignationDropDown,
+                  autovalidateMode: autoValidateMode,
+                  icon: const Icon(Icons.keyboard_arrow_down,color: black,),
+                  items: snapshot.data?.map((dynamic items) {
+                    return DropdownMenuItem(
+                      value: items,
+                      child: Text(items,
+                        style: styleMedium1.copyWith(color: black,
+                            fontWeight: FontWeight.w600),),
+                    );
+                  }).toList(),
+                  onChanged: (dynamic newValue) {
+                    setState(() {
+                      designationDropdown = newValue!;
+                    });
+                  },
+                ),
+              );
+            }else {
+              return SizedBox(height: 40.h,
+                child: DropdownMenuItem(
+                  value: "Select Designation",
+                  child: Text("Select Designation",
+                    style: styleMedium1.copyWith(color: black,
+                        fontWeight: FontWeight.w600),),
+                ),);
+            }
 
-        }
+          }
       ),
     );
   }
@@ -1349,58 +1349,58 @@ class _RegisterScreenState
     return Row(children: [
 
       StreamBuilder<String?>(
-        stream: companyPDFFileText?.stream,
-        builder: (context, snapshot) {
-          return Expanded(
-            child: InkWell(onTap: (){
-              _pickCompanyPDFFile();
-            },
-              child: Container(height: 90.h,decoration :
-              BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
-                  border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
-                  child: selectCompanyPdfAfterWidget(snapshot.data)
-               ),
-            ),
-          );
-        }
+          stream: companyPDFFileText?.stream,
+          builder: (context, snapshot) {
+            return Expanded(
+              child: InkWell(onTap: (){
+                _pickCompanyPDFFile();
+              },
+                child: Container(height: 90.h,decoration :
+                BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
+                    border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
+                    child: selectCompanyPdfAfterWidget(snapshot.data)
+                ),
+              ),
+            );
+          }
       ),
 
       SizedBox(width: 10.w,),
 
       StreamBuilder<String?>(
-        stream: aadhaarCardPDFText?.stream,
-        builder: (context, snapshot) {
-          return Expanded(
-            child: InkWell(onTap: (){
-              _pickAadhaarCardPDFFile();
-            },
-              child: Container(height: 90.h,decoration :
-              BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
-                  border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
-                  child: selectedAadhaarCardAfterWidget(snapshot.data)
+          stream: aadhaarCardPDFText?.stream,
+          builder: (context, snapshot) {
+            return Expanded(
+              child: InkWell(onTap: (){
+                _pickAadhaarCardPDFFile();
+              },
+                child: Container(height: 90.h,decoration :
+                BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
+                    border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
+                    child: selectedAadhaarCardAfterWidget(snapshot.data)
+                ),
               ),
-            ),
-          );
-        }
+            );
+          }
       ),
 
       SizedBox(width: 10.w,),
 
       StreamBuilder<String?>(
-        stream: photoOrCameraFile?.stream,
-        builder: (context, snapshot) {
-          return Expanded(
-            child: InkWell(onTap: (){
-              showOptions();
-            },
-              child: Container(height: 90.h,decoration :
-              BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
-                  border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
-                  child: selectedPhotoWidget(snapshot.data)
+          stream: photoOrCameraFile?.stream,
+          builder: (context, snapshot) {
+            return Expanded(
+              child: InkWell(onTap: (){
+                showOptions();
+              },
+                child: Container(height: 90.h,decoration :
+                BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
+                    border: Border.all(color: borderColor, ),color: darkTextFieldFillColor ),
+                    child: selectedPhotoWidget(snapshot.data)
+                ),
               ),
-            ),
-          );
-        }
+            );
+          }
       ),
 
 
@@ -1414,10 +1414,10 @@ class _RegisterScreenState
           width: 20.w,
           height: 20.h,
           child: Checkbox(
-              side: MaterialStateBorderSide.resolveWith(
-                    (states) =>  const BorderSide(
-                    width: 1.0,color: secondaryColor),
-              ),
+            side: MaterialStateBorderSide.resolveWith(
+                  (states) =>  const BorderSide(
+                  width: 1.0,color: secondaryColor),
+            ),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3)),
             checkColor: white,
             activeColor: secondaryColor,
@@ -1430,8 +1430,8 @@ class _RegisterScreenState
             },
           ),
         ),
-         SizedBox(width: 15.w,),
-         Text('I Agree With User Terms And Condition',
+        SizedBox(width: 15.w,),
+        Text('I Agree With User Terms And Condition',
           style: styleSmall4.copyWith(
             color: black,
             fontWeight: FontWeight.w500,
@@ -1537,7 +1537,7 @@ class _RegisterScreenState
           },);
 
         }
-       else if(!agree){
+        else if(!agree){
           showMessageBar("Please Agree Terms And Condition");
         }
         else {
@@ -1626,7 +1626,7 @@ class _RegisterScreenState
   _pickCompanyPDFFile() async {
     companyFilePicker = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-      allowedExtensions: ['pdf']
+        allowedExtensions: ['pdf']
     );
 
     if(companyFilePicker != null &&
@@ -1686,16 +1686,16 @@ class _RegisterScreenState
           ),
 
           Positioned(
-            top: 10,
-            right: 25.0,
-            child: InkWell(onTap: (){
+              top: 10,
+              right: 25.0,
+              child: InkWell(onTap: (){
 
-              companyFilePicker == null;
-              companyPDFFileText?.value = "";
-            },
-              child: Image.asset(AppImages.imgClosePDf,
-                height: 15,width: 15,),
-            )
+                companyFilePicker == null;
+                companyPDFFileText?.value = "";
+              },
+                child: Image.asset(AppImages.imgClosePDf,
+                  height: 15,width: 15,),
+              )
           ),
         ],
       );
@@ -1773,7 +1773,7 @@ class _RegisterScreenState
     }
   }
 
- Future<Object> pickedAadhaarItemString() async {
+  Future<Object> pickedAadhaarItemString() async {
 
     if(aadhaarCardPDFText!.value.isNotEmpty)
     {
@@ -1781,7 +1781,7 @@ class _RegisterScreenState
       return await MultipartFile.fromFile(aadhaarCardPDFText?.value ?? "",
         filename: aadhaarCardPDFText?.value.split('/').last,) ?? "";
     }
-   return "";
+    return "";
 
   }
 
@@ -1832,9 +1832,9 @@ class _RegisterScreenState
           CupertinoActionSheetAction(
             child:  Text('Photo Gallery',
                 style: styleLarge1.copyWith(
-            color: secondaryColor,
-        fontWeight: FontWeight.w600,
-      )),
+                  color: secondaryColor,
+                  fontWeight: FontWeight.w600,
+                )),
             onPressed: () {
               // close the options modal
               Navigator.of(context).pop();
@@ -2121,5 +2121,3 @@ class _RegisterScreenState
     return result;
   }
 }
-
-
