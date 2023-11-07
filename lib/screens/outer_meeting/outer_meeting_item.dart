@@ -5,7 +5,9 @@ import 'package:rise_and_grow/base/components/screen_utils/flutter_screenutil.da
 import '../../base/constants/app_colors.dart';
 import '../../base/constants/app_images.dart';
 import '../../base/constants/app_styles.dart';
+import '../../base/widgets/button_view.dart';
 import '../../remote/model/create_meeting_response_model.dart';
+import '../../utils/common_utils.dart';
 import '../../utils/date_util.dart';
 
 class OuterMeetingItem extends StatefulWidget {
@@ -20,6 +22,7 @@ class OuterMeetingItem extends StatefulWidget {
 
 class _OuterMeetingItemState extends State<OuterMeetingItem> {
   String meetingTime = "";
+  bool isCardClicked = false;
   @override
   void initState() {
     super.initState();
@@ -106,7 +109,8 @@ class _OuterMeetingItemState extends State<OuterMeetingItem> {
                         color: lightBlack,
                       ),
                       SizedBox(width: 3.w,),
-                      Text(meetingTime,
+                      Text("06:15",
+                          // meetingTime,
                           style: styleSmall4.copyWith(
                             color: lightBlack,
                             fontWeight: FontWeight.w500,
@@ -190,17 +194,100 @@ class _OuterMeetingItemState extends State<OuterMeetingItem> {
 
                   SizedBox(height: 10.h,),
 
-                  Container(decoration:
-                  BoxDecoration(borderRadius: BorderRadius.circular(20),
-                      color: white,border: Border.all(color: green2,width: 1)),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 6),
-                      child: Text('Accepted',
-                          style: styleSmall3.copyWith(
-                            color: green2,
-                            fontWeight: FontWeight.w600,
-                          )),
+                  PopupMenuButton<String>(
+                      itemBuilder: (context) {
+                        return [
+                          PopupMenuItem<String>(
+                            value: 'Option 1',
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  width: 30,
+                                  height: 30,
+                                  child: SvgPicture.asset(
+                                    AppImages.icClock,
+                                    color: lightBlack,
+                                  ),
+                                ),
+                                SizedBox(width: 3.w,),
+                                Text(" Reschedule",
+                                  style: styleSmall4.copyWith(
+                                      color: grayBlack,
+                                      fontWeight: FontWeight.w500
+                                  ),)
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem<String>(
+                            value: 'Option 2',
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  width: 25,
+                                  height: 25,
+                                  child: SvgPicture.asset(
+                                    AppImages.icAddUser,
+                                    color: lightBlack,
+                                  ),
+                                ),
+                                SizedBox(width: 3.w,),
+                                Text(" Add Team Member",
+                                  style: styleSmall4.copyWith(
+                                      color: grayBlack,
+                                      fontWeight: FontWeight.w500
+                                  ),)
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem<String>(
+                            value: 'Option 3',
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  width: 25,
+                                  height: 25,
+                                  child: SvgPicture.asset(
+                                    AppImages.icDecline,
+                                    color: darkRed,
+                                  ),
+                                ),
+                                SizedBox(width: 3.w,),
+                                Text(" Cancel Meeting",
+                                  style: styleSmall4.copyWith(
+                                      color: darkRed,
+                                      fontWeight: FontWeight.w500
+                                  ),)
+                              ],
+                            ),
+                          ),
+                        ];
+                      },
+                    child: Container(decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(20),
+                        color: white,border: Border.all(color: green2,width: 1)),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 6),
+                        child: Text('Accepted',
+                            style: styleSmall3.copyWith(
+                              color: green2,
+                              fontWeight: FontWeight.w600,
+                            )),
+                      ),
                     ),
+                    onSelected: (value) {
+                        if(value == "Option 1"){
+                          rescheduleMeeting(context);
+                        }
+                        else if(value == "Option 2"){
+                          // addMemberToMeeting(context);
+                        }
+                        else{
+                          cancelMeeting(context);
+                        }
+                    },
                   ),
                 ],),))
 
@@ -208,4 +295,159 @@ class _OuterMeetingItemState extends State<OuterMeetingItem> {
         ),),
     );
   }
+
+  void rescheduleMeeting(BuildContext context) {
+    showAdaptiveDialog(
+        barrierDismissible: true,
+        barrierColor: Colors.black.withOpacity(0.8),
+        context: context,
+        builder: (context) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Center(
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20)
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: 10.h,
+                      ),
+                      SizedBox(
+                          width: 120,
+                          height: 120,
+                          child: Image.asset(AppImages.appLogo)
+                      ),
+                      SizedBox(
+                        height: 10.h,
+                      ),
+                      Text("Are you Sure to Reschedule meeting\nwith Mr. Rajdeep Gadhvi",
+                        textAlign: TextAlign.center,
+                        style: styleSmall4.copyWith(
+                            decoration: TextDecoration.none,
+                            color: lightBlack,
+                            fontWeight: FontWeight.w600),
+                      ),
+                      SizedBox(
+                        height: 20.h,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(vertical: 18,horizontal: 18),
+                              child: ButtonView("No",false, () {
+                                Navigator.pop(context);
+                              }, color: white, textColor: lightBlack, borderColor: secondaryColor,),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(vertical: 18,horizontal: 18),
+                              child: ButtonView("Yes",false, () {
+                                Navigator.pop(context);
+                              }),
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+    );
+  }
+
+  void cancelMeeting(BuildContext context) {
+    showAdaptiveDialog(
+      barrierDismissible: true,
+        barrierColor: Colors.black.withOpacity(0.8),
+        context: context,
+        builder: (context) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Center(
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20)
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: 10.h,
+                      ),
+                      SizedBox(
+                          width: 120,
+                          height: 120,
+                          child: Image.asset(AppImages.appLogo)
+                      ),
+                      SizedBox(
+                        height: 10.h,
+                      ),
+                      Text("Are you Sure to cancel Outer meeting\nwith Mr. Rajdeep Gadhvi",
+                        textAlign: TextAlign.center,
+                        style: styleSmall4.copyWith(
+                            decoration: TextDecoration.none,
+                            color: lightBlack,
+                            fontWeight: FontWeight.w600),
+                      ),
+                      SizedBox(
+                        height: 20.h,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(vertical: 18,horizontal: 18),
+                              child: ButtonView("No",false, () {
+                                Navigator.pop(context);
+                              }, color: white, textColor: lightBlack, borderColor: secondaryColor,),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(vertical: 18,horizontal: 18),
+                              child: ButtonView("Yes",false, () {
+                                Navigator.pop(context);
+                              }),
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+    );
+  }
+
 }

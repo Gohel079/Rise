@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:rise_and_grow/screens/created_meeting/created_meeting_screen.dart';
+import 'package:rise_and_grow/screens/home/home_screen.dart';
+import 'package:rise_and_grow/screens/outer_meeting/outer_meeting_screen.dart';
+import 'package:rise_and_grow/screens/outer_meeting_approve/outer_meeting_approve_screen.dart';
 
 import '../../base/constants/app_colors.dart';
 import '../../base/constants/app_images.dart';
@@ -42,7 +46,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void navigateToOther() async {
     await Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(context, LoginScreen.route());
+      Navigator.pushReplacement(context, OuterMeetingScreen.route());
     });
   }
 }

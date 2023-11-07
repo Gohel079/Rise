@@ -5,6 +5,7 @@ import 'package:rise_and_grow/base/basePage.dart';
 import 'package:rise_and_grow/base/components/screen_utils/flutter_screenutil.dart';
 import 'package:rise_and_grow/screens/outer_meeting/outer_meeting_bloc.dart';
 import 'package:rise_and_grow/screens/outer_meeting/outer_meeting_item.dart';
+import 'package:rise_and_grow/screens/outer_meeting_approve/outer_meeting_approve_screen.dart';
 import 'package:rise_and_grow/screens/outer_meeting_form/outer_meeting_form_screen.dart';
 
 import '../../base/bloc/base_bloc.dart';
