@@ -389,7 +389,8 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
               anniversaryDateList.add(element["aDate"].toString());
             });
 
-            documentList.add(aadhaarCardPDFText?.value.toString() ?? "");
+            documentList.add(await MultipartFile.fromFile(aadhaarCardPDFText?.value ?? "",
+              filename: aadhaarCardPDFText?.value.split('/').last,) ?? "");
             personDataList?.value.forEach((element) async {
               documentList.add(await MultipartFile.fromFile( element["document"].toString() ?? "",
                 filename:  element["document"].toString().split('/').last,) ?? "");
@@ -1046,7 +1047,7 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
           ),
           errorMaxLines: 2,
           isDense: true,
-          hintText: "Company Contact Number",
+          hintText: "Company Mail Address",
           floatingLabelBehavior: FloatingLabelBehavior.auto,
           errorStyle: TextStyle(
             fontFamily: fontFamilyMontserrat,

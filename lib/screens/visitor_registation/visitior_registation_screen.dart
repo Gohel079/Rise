@@ -87,6 +87,7 @@ class _visitorRegistationState extends BasePageState<VisitorRegistationScreen,Vi
             autofocus: isSearching ? true :false,
             textAlignVertical: TextAlignVertical.center,
             textInputAction: TextInputAction.search,
+            onChanged: onSearch,
             decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(4.0),
@@ -272,6 +273,7 @@ class _visitorRegistationState extends BasePageState<VisitorRegistationScreen,Vi
 
 
             bloc.getVisitorList.add(tempList);
+            bloc.originalVisitorList = tempList;
           }
           indexOfData++;
           callGetVisitorAPI();
@@ -297,7 +299,7 @@ class _visitorRegistationState extends BasePageState<VisitorRegistationScreen,Vi
   GetVisitor.ReqRequestMap? selectVisitorList(GetVisitor.Datum? datum){
     GetVisitor.ReqRequestMap?  result;
     datum?.reqRequestMap?.forEach((element) {
-      if(element.visitorId != null){
+      if(element.visitorId != null && element.reqVisitorMap?.isMeetingRequester == true){
 
          result = element;
       }
@@ -314,5 +316,9 @@ class _visitorRegistationState extends BasePageState<VisitorRegistationScreen,Vi
       }
     });
     return result;
+  }
+
+  void onSearch(String text){
+    getBloc().onSearch(text);
   }
 }

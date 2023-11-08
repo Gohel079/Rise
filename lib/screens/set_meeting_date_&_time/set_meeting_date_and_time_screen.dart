@@ -15,7 +15,8 @@ import '../../base/widgets/custom_page_route.dart';
 import '../../utils/common_utils.dart';
 
 class SetMeetingDateAndTimeScreen extends BasePage<SetMeetingDateAndTimeBloc>{
-  const SetMeetingDateAndTimeScreen({super.key});
+    Function? callBackForSelctedDateAndTime;
+   SetMeetingDateAndTimeScreen({this.callBackForSelctedDateAndTime,super.key});
 
 
 
@@ -26,7 +27,7 @@ class SetMeetingDateAndTimeScreen extends BasePage<SetMeetingDateAndTimeBloc>{
 
   static Route<dynamic> route() {
     return CustomPageRoute(
-        builder: (context) => const SetMeetingDateAndTimeScreen());
+        builder: (context) =>  SetMeetingDateAndTimeScreen());
   }
 
 
@@ -45,61 +46,41 @@ class SetMeetingDateAndTimeScreenState  extends BasePageState<SetMeetingDateAndT
   BehaviorSubject<bool>? eveningSelectView;
   BehaviorSubject<int>? gridSelectItem;
 
+  BehaviorSubject<String>? selectedDate;
+  String? selectedSlot;
+
+
   List<String> morningTimeSlotList = [
-    "08:00 to 08:15",
-    "08:15 to 08:30",
-    "08:30 to 08:45",
-    "08:45 to 09:00",
-    "09:00 to 09:15",
-    "09:15 to 09:30",
-    "09:30 to 09:45",
-    "09:45 to 10:00",
-    "10:00 to 10:15",
-    "10:15 to 10:30",
-    "10:30 to 10:45",
-    "10:45 to 11:00",
-    "11:00 to 11:15",
-    "11:15 to 11:30",
-    "11:30 to 11:45",
-    "11:45 to 12:00",
+    "08:00 to 08:30",
+    "08:30 to 09:00",
+    "09:00 to 09:30",
+    "09:30 to 10:00",
+    "10:00 to 10:30",
+    "10:30 to 11:00",
+    "11:00 to 11:30",
+    "11:30 to 12:00"
   ];
 
   List<String> noonTimeSlotList = [
-    "12:00 to 12:15",
-    "12:15 to 12:30",
-    "12:30 to 12:45",
-    "01:45 to 01:00",
-    "01:00 to 01:15",
-    "01:15 to 01:30",
-    "01:30 to 01:45",
-    "01:45 to 02:00",
-    "02:00 to 02:15",
-    "02:15 to 02:30",
-    "02:30 to 02:45",
-    "02:45 to 03:00",
-    "03:00 to 03:15",
-    "03:15 to 03:30",
-    "03:30 to 03:45",
-    "03:45 to 04:00",
+    "12:00 to 12:30",
+    "12:30 to 01:00",
+    "01:00 to 01:30",
+    "01:30 to 02:00",
+    "02:00 to 02:30",
+    "02:30 to 03:00",
+    "03:00 to 03:30",
+    "03:30 to 04:00"
   ];
 
   List<String> eveningTimeSlotList = [
-    "04:00 to 04:15",
-    "04:15 to 04:30",
-    "04:30 to 04:45",
-    "04:45 to 05:00",
-    "05:00 to 05:15",
-    "05:15 to 05:30",
-    "05:30 to 05:45",
-    "05:45 to 06:00",
-    "06:00 to 06:15",
-    "06:15 to 06:30",
-    "06:30 to 06:45",
-    "06:45 to 07:00",
-    "07:00 to 07:15",
-    "07:15 to 07:30",
-    "07:30 to 07:45",
-    "07:45 to 08:00",
+    "04:00 to 04:30",
+    "04:30 to 05:00",
+    "05:00 to 05:30",
+    "05:30 to 06:00",
+    "06:00 to 06:30",
+    "06:30 to 07:00",
+    "07:00 to 07:30",
+    "07:30 to 08:00"
   ];
 
   final List<String> one = [
@@ -118,6 +99,9 @@ class SetMeetingDateAndTimeScreenState  extends BasePageState<SetMeetingDateAndT
     noonSelectView = BehaviorSubject<bool>.seeded(false);
     eveningSelectView = BehaviorSubject<bool>.seeded(false);
     gridSelectItem = BehaviorSubject<int>.seeded(0);
+    selectedSlot = morningTimeSlotList.elementAt(0);
+
+    selectedDate = BehaviorSubject<String>.seeded("");
   }
 
   @override
@@ -283,7 +267,10 @@ class SetMeetingDateAndTimeScreenState  extends BasePageState<SetMeetingDateAndT
         setState(() {
           print(selectedDay);
           chosenDay = selectedDay;
-          selectFocusDate = focusedDay; // update `_focusedDay` here as well
+          selectFocusDate = focusedDay;// update `_focusedDay` here as well
+          String? date = "${selectedDay.day}-${selectedDay.month}-${selectedDay.year}";
+          selectedDate?.add(date);
+          print(selectedDate?.value);
         });
       },
       sixWeekMonthsEnforced: true,
@@ -444,6 +431,12 @@ class SetMeetingDateAndTimeScreenState  extends BasePageState<SetMeetingDateAndT
    Widget morningGridSingleItem(int index){
     return InkWell(onTap: (){
       gridSelectItem?.add(index);
+      print("00000000000");
+      print("Slot ${selectedSlot}");
+      // selectedSlot?.add("");
+      print("Index oF ${index}");
+      selectedSlot = morningTimeSlotList.elementAt(index);
+      print("Slo after ${selectedSlot}");
     },
       child: StreamBuilder<int>(
         stream: gridSelectItem?.stream,
@@ -486,6 +479,11 @@ class SetMeetingDateAndTimeScreenState  extends BasePageState<SetMeetingDateAndT
   Widget noonGridSingleItem(int index){
     return InkWell(onTap: (){
       gridSelectItem?.add(index);
+      print("Time :${gridSelectItem?.value}");
+      print("Slot ${selectedSlot}");
+      // selectedSlot?.add("");
+      print("Index oF ${index}");
+      selectedSlot = noonTimeSlotList.elementAt(index);
     },
       child: StreamBuilder<int>(
           stream: gridSelectItem?.stream,
@@ -527,6 +525,10 @@ class SetMeetingDateAndTimeScreenState  extends BasePageState<SetMeetingDateAndT
   Widget eveningGridSingleItem(int index){
     return InkWell(onTap: (){
       gridSelectItem?.add(index);
+      print("Slot ${selectedSlot}");
+      // selectedSlot?.add("");
+      print("Index oF ${index}");
+      selectedSlot = eveningTimeSlotList.elementAt(index);
     },
       child: StreamBuilder<int>(
           stream: gridSelectItem?.stream,
@@ -552,6 +554,13 @@ class SetMeetingDateAndTimeScreenState  extends BasePageState<SetMeetingDateAndT
 
   Widget submitButton() {
     return ButtonView(string('label_done'),true, () {
+
+      Map meetingDateMap = {
+        "Date" : selectedDate?.value,
+        "Time" : selectedSlot.toString()
+      };
+
+      Navigator.pop(context,meetingDateMap);
 
     });
   }

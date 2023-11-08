@@ -45,11 +45,16 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
   CreateMeetingFormBloc bloc = CreateMeetingFormBloc();
   bool isSearching =false;
 
+  BehaviorSubject<List<dynamic>>? companyNameList;
+  BehaviorSubject<List<dynamic>>? officeList;
 
   String typeOfMeeting = 'Type of Meeting';
   String meetingVenue = 'Meeting Venue';
   String meetingMode = 'Meeting Mode';
   String selectPlatform = 'Select Platform';
+
+  String companyNameDropdown = 'Select Company Name';
+  String officeAddressDropdown = 'Select Meeting Venue';
 
   var typeOfMeetingList = [
     'Type of Meeting',
@@ -106,6 +111,7 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
 
   BehaviorSubject<List<dynamic>>? meetingTypeList;
   BehaviorSubject<List<dynamic>>? meetingModeListForStream;
+
 
   @override
   Widget buildWidget(BuildContext context) {
@@ -216,7 +222,16 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
                 BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
                     border: Border.all(color: borderColor, ),
                     color: darkTextFieldFillColor ),
-                    child: meetingVenueDropDown()),
+                    child: companyNameDropDown()),
+
+                SizedBox(height:20.h),
+
+
+                Container(width: double.infinity,decoration :
+                BoxDecoration( borderRadius: const BorderRadius.all(Radius.circular(7)),
+                    border: Border.all(color: borderColor, ),
+                    color: darkTextFieldFillColor ),
+                    child: officeAddressDropDown()),
 
                 SizedBox(height: 20.h,),
 
@@ -370,6 +385,63 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
     );
   }
 
+  Widget officeAddressDropDown(){
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 7),
+      child: StreamBuilder<List<dynamic>>(
+          stream: officeList?.stream,
+          builder: (context, snapshot) {
+            if(snapshot.hasData && snapshot.data!.length > 1){
+              print("SNAP ${snapshot.data?.length}");
+              snapshot.data?.forEach((element) { print(element); });
+              return DropdownButtonHideUnderline(
+                child: DropdownButtonFormField(
+                  value: officeAddressDropdown,
+                  isExpanded: true,
+                  isDense: false,
+                  autovalidateMode: autoValidateMode,
+                  decoration: const InputDecoration(border: InputBorder.none),
+                  validator: validateOfficeAddress,
+                  hint: Text("Select Meeting Venue",
+                    style: styleMedium1.copyWith(color: textGrayColor,
+                        fontWeight: FontWeight.w600),),
+                  icon: const Icon(Icons.keyboard_arrow_down,color: black,),
+                  items: snapshot.data?.map((dynamic items) {
+                    return DropdownMenuItem(
+                      value: items ?? "",
+                      child: Text(items ?? "",
+                        style: styleMedium1.copyWith(color: black,
+                            fontWeight: FontWeight.w600),),
+                    );
+                  }).toList(),
+                  onChanged: (dynamic newValue) {
+                    setState(() {
+                      officeAddressDropdown = newValue!;
+
+                    });
+                  },
+                ),
+              );
+            }
+            else {
+              return InkWell(onTap: (){
+                showMessageBar("Please Select First Company Name");
+              },
+                child: Container(height: 40.h,
+                  child: DropdownMenuItem(
+                    value: "Select Office Address",
+                    child: Text("Select Office Address",
+                      style: styleMedium1.copyWith(color: black,
+                          fontWeight: FontWeight.w600),),
+                  ),),
+              );
+            }
+
+          }
+      ),
+    );
+  }
+
   Widget meetingVenueDropDown(){
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 7),
@@ -408,8 +480,16 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
       validator: validateMeetingDateAndTime,
       autovalidateMode: autoValidateMode,
       keyboardType: TextInputType.text,
-      onTap: ()  {
-        Navigator.push(context, SetMeetingDateAndTimeScreen.route());
+      onTap: ()  async {
+        final result =
+            await Navigator.push(context, SetMeetingDateAndTimeScreen.route());
+        // var data = Navigator.push(context, SetMeetingDateAndTimeScreen.route());
+        print("data ->>>>>> $result");
+        if(result != null){
+          String date = result["Date"];
+          String time =  result["Time"];
+          _setDateAndTimeController.text = "${date} &  ${time}";
+        }
       },
       textInputAction: TextInputAction.next,
       decoration:  InputDecoration(
@@ -730,6 +810,9 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
   @override
   void initState() {
     super.initState();
+    companyNameList = BehaviorSubject<List<dynamic>>.seeded([]);
+    officeList = BehaviorSubject<List<dynamic>>.seeded([]);
+
     meetingTypeList = BehaviorSubject<List<dynamic>>.seeded([]);
     meetingModeListForStream = BehaviorSubject<List<dynamic>>.seeded([]);
   }
@@ -737,6 +820,39 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
   @override
   onReady(){
     callGetMeetingListAPI();
+    callCompanyListAPI();
+
+  }
+
+  void callCompanyListAPI() {
+
+    getBloc().getCompanyList((response) {
+      String status = response.responseType ?? success;
+
+      if(status.toLowerCase() == success) {
+        if (!getBloc().companyList.isClosed) {
+          getBloc().companyList.add(response.responseData);
+
+          List<dynamic> tempList = [];
+          tempList.insert(0, "Select Company Name");
+          getBloc().companyList.value.data?.forEach((element) {
+            tempList.add(element.name);
+            print('DARA ${element.name}');
+          });
+
+
+          companyNameList?.add(tempList);
+          // print("List LENGTH ->> ${companyNameList?.value.length}");
+
+        }
+      }
+      else if(status.toLowerCase() == failed){
+        showMessageBar('Failed :  ${response.message ?? ""}');
+      }
+      else {
+        showMessageBar('ERROR :${response.message ?? ""}');
+      }
+    },);
 
   }
 
@@ -789,4 +905,126 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
       }
     });
   }
+
+  Widget companyNameDropDown(){
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 7),
+      child: StreamBuilder<List<dynamic>>(
+          stream: companyNameList?.stream,
+          builder: (context, snapshot) {
+            if(snapshot.hasData && snapshot.data!.length > 1){
+              return DropdownButtonHideUnderline(
+                child: DropdownButtonFormField(
+                  decoration: const InputDecoration(border: InputBorder.none),
+                  value: companyNameDropdown,
+                  autovalidateMode: autoValidateMode,
+                  isExpanded: true,
+                  validator: validateCompanyName,
+                  icon: const Icon(Icons.keyboard_arrow_down,color: black,),
+                  items: snapshot.data?.map((dynamic items) {
+                    return DropdownMenuItem(
+                      value: items.toString(),
+                      child: Text(items,
+                        style: styleMedium1.copyWith(color: black,
+                            fontWeight: FontWeight.w600),),
+                    );
+                  }).toList(),
+                  onChanged: (dynamic newValue) {
+                    setState(() {
+                      companyNameDropdown = newValue!;
+                      officeAddressDropdown = "Select Meeting Venue";
+                      callOfficeListAPI(int.parse(findCompanyIdByName()));
+                      print(companyNameDropdown);
+                    });
+                  },
+                ),
+              );
+            }
+            return  SizedBox(height: 40.h,
+              child: DropdownMenuItem(
+                value: "Select Company Name",
+                child: Text("Select Company Name",
+                  style: styleMedium1.copyWith(color: black,
+                      fontWeight: FontWeight.w600),),
+              ),);
+
+          }
+      ),
+    );
+  }
+
+  void callOfficeListAPI(int? companyCode){
+
+    print("companyCode -- $companyCode");
+    Map? requestDate = {
+      "limit" : 10,
+      "page" : 1,
+      "isActive" : 1,
+      "sort" : "asc",
+      "sortBy" : "officeID"
+    };
+
+    getBloc().getOfficeList(companyCode, (response) {
+
+      String status = response.responseType ?? success;
+
+      if(status.toLowerCase() ==  success){
+
+
+        if(!getBloc().officeAddressList.isClosed) {
+          getBloc().officeAddressList.add(response.responseData);
+
+
+          List<dynamic>? officeTempList = [];
+          officeList?.add([]);
+          if (getBloc().officeAddressList.value.data?.isNotEmpty ?? false) {
+            if (!officeTempList.contains("Select Meeting Venue")) {
+              officeTempList.insert(0, "Select Meeting Venue");
+            }
+          }
+
+
+          getBloc().officeAddressList.value.data?.forEach((element) {
+            officeTempList.add(element.address);
+            print('Office Address Address : ${element.address}');
+          });
+          officeList?.add(officeTempList ?? []);
+          print("List LENGTH ->> ${officeList?.value.length}");
+
+
+          ////
+          officeTempList.forEach((element) {
+            print("FINAL TEMP LIST ${element}");
+          });
+
+          officeList?.value.forEach((element) {
+            print("FINAL LIST FOR DROP ${element}");
+          });
+        }
+      }
+      else if(status.toLowerCase() == failed){
+        showMessageBar('Failed :  ${response.message ?? ""}');
+      }
+      else {
+        showMessageBar('ERROR :${response.message ?? ""}');
+      }
+
+    },);
+
+  }
+
+  String findCompanyIdByName() {
+    String result = "";
+    if(!getBloc().companyList.isClosed) {
+      getBloc().companyList.value.data?.forEach((element) {
+        if (element.name == companyNameDropdown) {
+          result = element.companyId.toString();
+        }
+
+      });
+    }
+
+    return result;
+  }
+
 }

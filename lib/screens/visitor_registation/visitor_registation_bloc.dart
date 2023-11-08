@@ -9,6 +9,9 @@ class VisitorRegistrationBloc extends BasePageBloc{
 
   late BehaviorSubject<List<GetVisitor.Datum>> getVisitorList;
 
+  List<GetVisitor.Datum>? originalVisitorList = [];
+
+
   VisitorRegistrationBloc(){
     getVisitorList = BehaviorSubject<List<GetVisitor.Datum>>.seeded([]);
   }
@@ -25,6 +28,33 @@ class VisitorRegistrationBloc extends BasePageBloc{
     });
   }
 
+
+  void onSearch(String text) {
+    List<GetVisitor.Datum>? searchedList = [];
+
+    if(text.isNotEmpty){
+
+      searchedList = originalVisitorList?.where((element) {
+        if (element.reqRequestMap != null) {
+          return element.reqRequestMap?.any((visitor) {
+            if (visitor.reqVisitorMap != null) {
+              return visitor.reqVisitorMap?.vFirstName?.toString().toLowerCase().contains(text.toLowerCase()) == true;
+            }
+            return false;
+          }) ?? false;
+        }
+        return false;
+      }).toList();
+    } else {
+      searchedList = originalVisitorList;
+    }
+
+    if (!getVisitorList.isClosed) {
+      getVisitorList.add(searchedList ?? []);
+    }
+
+
+  }
 
   @override
   void dispose() {

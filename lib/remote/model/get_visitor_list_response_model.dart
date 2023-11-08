@@ -678,6 +678,7 @@ class ReqVisitorMap {
   String? vCompanyContact;
   String? vCompanyEmail;
   DateTime? vAnniversaryDate;
+  bool? isMeetingRequester;
   dynamic vContactPersonName;
   DateTime? createdAt;
   dynamic deletedAt;
@@ -697,6 +698,7 @@ class ReqVisitorMap {
     this.vCompanyContact,
     this.vCompanyEmail,
     this.vAnniversaryDate,
+    this.isMeetingRequester,
     this.vContactPersonName,
     this.createdAt,
     this.deletedAt,
@@ -717,6 +719,7 @@ class ReqVisitorMap {
     String? vCompanyContact,
     String? vCompanyEmail,
     DateTime? vAnniversaryDate,
+    bool? isMeetingRequester,
     dynamic vContactPersonName,
     DateTime? createdAt,
     dynamic deletedAt,
@@ -736,6 +739,7 @@ class ReqVisitorMap {
         vCompanyContact: vCompanyContact ?? this.vCompanyContact,
         vCompanyEmail: vCompanyEmail ?? this.vCompanyEmail,
         vAnniversaryDate: vAnniversaryDate ?? this.vAnniversaryDate,
+        isMeetingRequester: isMeetingRequester ?? this.isMeetingRequester,
         vContactPersonName: vContactPersonName ?? this.vContactPersonName,
         createdAt: createdAt ?? this.createdAt,
         deletedAt: deletedAt ?? this.deletedAt,
@@ -756,6 +760,7 @@ class ReqVisitorMap {
     vCompanyContact: json["vCompanyContact"],
     vCompanyEmail: json["vCompanyEmail"],
     vAnniversaryDate: json["vAnniversaryDate"] == null ? null : DateTime.parse(json["vAnniversaryDate"]),
+    isMeetingRequester: json["isMeetingRequester"],
     vContactPersonName: json["vContactPersonName"],
     createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
     deletedAt: json["deletedAt"],
@@ -776,6 +781,7 @@ class ReqVisitorMap {
     "vCompanyContact": vCompanyContact,
     "vCompanyEmail": vCompanyEmail,
     "vAnniversaryDate": "${vAnniversaryDate!.year.toString().padLeft(4, '0')}-${vAnniversaryDate!.month.toString().padLeft(2, '0')}-${vAnniversaryDate!.day.toString().padLeft(2, '0')}",
+    "isMeetingRequester" : isMeetingRequester,
     "vContactPersonName": vContactPersonName,
     "createdAt": createdAt?.toIso8601String(),
     "deletedAt": deletedAt,
