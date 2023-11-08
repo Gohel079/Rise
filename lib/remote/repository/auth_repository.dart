@@ -9,6 +9,7 @@ import 'package:rise_and_grow/remote/model/get_employee_list_response_model.dart
 import 'package:rise_and_grow/remote/model/get_meeting_mode_response_model.dart';
 import 'package:rise_and_grow/remote/model/get_meeting_type_list_response_model.dart';
 import 'package:rise_and_grow/remote/model/get_officelist_response_model.dart';
+import 'package:rise_and_grow/remote/model/get_outer_meeting_list_response_model.dart';
 import 'package:rise_and_grow/remote/model/get_role_list_response_model.dart';
 import 'package:rise_and_grow/remote/model/get_visitor_list_response_model.dart';
 import 'package:rise_and_grow/remote/model/loginWithEmailResponse.dart';
@@ -300,6 +301,21 @@ void apiSaveTokenReceipt(Map? data , Function(SaveTokenReceiptResponse) onSucces
 void apiGetCreatedMeetingList(Function(GetCreatedMeetingResponseModel) onSuccess, Function(NetWorkException) onError) {
   get<String>(AppEndpoint.getCreatedMeeting, isAuth: false).then((value) {
     final response = getCreatedMeetingResponseModelFromJson(value!);
+    onSuccess(response);
+  }).catchError((error) {
+    if (error is NetWorkException) {
+      print("ERROR ${error.message}");
+      onError(error);
+    }else{
+      onError(NetWorkException(101010,error.toString()));
+    }
+  });
+}
+
+//Get OuterMeetingList API
+void apiGetOuterMeetingList(Function(GetOuterMeetingResponseModel) onSuccess, Function(NetWorkException) onError) {
+  get<String>(AppEndpoint.getOuterMeeting, isAuth: false).then((value) {
+    final response = getOuterMeetingResponseModelFromJson(value!);
     onSuccess(response);
   }).catchError((error) {
     if (error is NetWorkException) {

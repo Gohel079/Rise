@@ -12,6 +12,7 @@ import 'package:rise_and_grow/screens/home/tabbarView/appointment_screen/appoint
 import 'package:rise_and_grow/screens/home/tabbarView/meeting_screen/meeting.dart';
 import 'package:rise_and_grow/screens/home/tabbarView/site_visit_screen/site_visit_screen.dart';
 import 'package:rise_and_grow/screens/notification/notification_screen.dart';
+import 'package:rise_and_grow/screens/outer_meeting/outer_meeting_screen.dart';
 import 'package:rise_and_grow/screens/visitor_registation/visitior_registation_screen.dart';
 
 import '../../../../base/constants/app_images.dart';
@@ -283,31 +284,38 @@ class _homeTabState  extends BasePageState<HomeTab,HomeTabBloc>{
  }
 
  Widget outerMeetingBtn(){
-   return Column(
-     children: [
-       Container(decoration: BoxDecoration(
-         borderRadius: BorderRadius.circular(10),
-         color: outerBg,
-           boxShadow: const [
+   return InkWell(
+     onTap: () {
+       PersistentNavBarNavigator
+           .pushNewScreen(context, screen: const OuterMeetingScreen(),
+           withNavBar: false);
+     },
+     child: Column(
+       children: [
+         Container(decoration: BoxDecoration(
+             borderRadius: BorderRadius.circular(10),
+             color: outerBg,
+             boxShadow: const [
 
-             BoxShadow(blurRadius:2,color: Colors.grey)
-           ]
-       ),child: Padding(
-         padding: const EdgeInsets.all(17.0),
-         child: SvgPicture.asset(
-           AppImages.icPlus,
-           height: 30,
-         ),
-       ),),
+               BoxShadow(blurRadius:2,color: Colors.grey)
+             ]
+         ),child: Padding(
+           padding: const EdgeInsets.all(17.0),
+           child: SvgPicture.asset(
+             AppImages.icPlus,
+             height: 30,
+           ),
+         ),),
 
-       SizedBox(height: 7.h,),
-       Text(string("label_outer_meeting"),
-           textAlign: TextAlign.center,
-           style:styleSmall4.copyWith(
-               color: black,
-               fontWeight: FontWeight.w500))
+         SizedBox(height: 7.h,),
+         Text(string("label_outer_meeting"),
+             textAlign: TextAlign.center,
+             style:styleSmall4.copyWith(
+                 color: black,
+                 fontWeight: FontWeight.w500))
 
-     ],
+       ],
+     ),
    );
  }
 

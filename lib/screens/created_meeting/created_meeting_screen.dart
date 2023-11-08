@@ -192,12 +192,6 @@ class _createdMeetingScreenState extends BasePageState<CreatedMeetingScreen,Crea
 
   Widget createMeeting(){
     return Expanded(
-      // child: ListView.builder(
-      //   itemCount: 20,
-      //   shrinkWrap: true,
-      //   itemBuilder: (context, index) {
-      //     // return ;
-      //   },),
       child: StreamBuilder<List<GetCreatedMeeting.Data>>(
         stream: getBloc().getCreatedMeetingList.stream,
         builder: (context, snapshot){

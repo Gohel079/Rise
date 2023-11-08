@@ -8,10 +8,13 @@ import 'package:rise_and_grow/base/components/screen_utils/flutter_screenutil.da
 import 'package:rise_and_grow/screens/internal_team_selection/internal_team_selection_bloc.dart';
 import 'package:rise_and_grow/screens/start_meeting/start_meeting_screen.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:rise_and_grow/remote/model/get_employee_list_response_model.dart' as getEmployeeData;
 
 import '../../base/constants/app_colors.dart';
+import '../../base/constants/app_constant.dart';
 import '../../base/constants/app_images.dart';
 import '../../base/constants/app_styles.dart';
+import '../../base/constants/app_widgets.dart';
 import '../../base/widgets/button_view.dart';
 import '../../base/widgets/custom_page_route.dart';
 import '../../remote/model/internal_team_member_model.dart';
@@ -37,17 +40,22 @@ class InternalTeamSelectionState extends BasePageState<InternalTeamSelectionScre
   InternalTeamSelectionBloc bloc = InternalTeamSelectionBloc();
   bool isSearching =false;
 
-  BehaviorSubject<List<InternalTeamMemberModel>>? teamMemberList;
-  BehaviorSubject<InternalTeamMemberModel>? selectedTeamMember;
-  BehaviorSubject<List<InternalTeamMemberModel>>? selectedTeamMemberList;
+  BehaviorSubject<getEmployeeData.Datum>? selectedTeamMember;
+  BehaviorSubject<List<getEmployeeData.Datum>>? selectedTeamMemberList;
+
+  int limit = 10;
+  int indexOfData = 1;
+  int totalPages = 1;
+
+  BehaviorSubject<List<getEmployeeData.Datum>>? employeeList;
 
 
   @override
   void initState() {
     super.initState();
-    teamMemberList = BehaviorSubject<List<InternalTeamMemberModel>>.seeded([]);
-    selectedTeamMember = BehaviorSubject<InternalTeamMemberModel>.seeded(InternalTeamMemberModel("",""));
-    selectedTeamMemberList = BehaviorSubject<List<InternalTeamMemberModel>>.seeded([]);
+    selectedTeamMember = BehaviorSubject<getEmployeeData.Datum>.seeded(getEmployeeData.Datum());
+    selectedTeamMemberList = BehaviorSubject<List<getEmployeeData.Datum>>.seeded([]);
+    employeeList = BehaviorSubject<List<getEmployeeData.Datum>>.seeded([]);
 
 
     List<InternalTeamMemberModel>? list = [];
@@ -57,7 +65,7 @@ class InternalTeamSelectionState extends BasePageState<InternalTeamSelectionScre
     list.add(InternalTeamMemberModel("Raju","Sr.Dev"));
     list.add(InternalTeamMemberModel("Rahul","Flutter"));
 
-    teamMemberList?.add(list);
+    // teamMemberList?.add(list);
   }
 
   @override
@@ -156,7 +164,7 @@ class InternalTeamSelectionState extends BasePageState<InternalTeamSelectionScre
                      padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 17),
                      child:
 
-                     StreamBuilder<List<InternalTeamMemberModel>>(
+                     StreamBuilder<List<getEmployeeData.Datum>>(
                        stream: selectedTeamMemberList?.stream,
                        builder: (context, snapshot) {
                          if(snapshot.hasData && snapshot.data?.isNotEmpty == true){
@@ -203,8 +211,8 @@ class InternalTeamSelectionState extends BasePageState<InternalTeamSelectionScre
 
                          SizedBox(height: 20.h,),
 
-                         StreamBuilder<List<InternalTeamMemberModel>>(
-                           stream: teamMemberList?.stream,
+                         StreamBuilder<List<getEmployeeData.Datum>>(
+                           stream: employeeList?.stream,
                            builder: (context, snapshot) {
                              if(snapshot.hasData && snapshot.data?.isNotEmpty == true ){
 
@@ -238,6 +246,81 @@ class InternalTeamSelectionState extends BasePageState<InternalTeamSelectionScre
        ));
   }
 
+  @override
+  void onReady() {
+    super.onReady();
+    callEmployeeListAPI();
+  }
+
+  @override
+  void dispose() {
+    employeeList?.close();
+    super.dispose();
+  }
+
+  void callEmployeeListAPI() {
+
+    if(indexOfData <= totalPages){
+
+      Map<String,dynamic> param  = {
+        "limit" : limit,
+        "page" :indexOfData,
+        "sort" : "DESC",
+        "sortBy" : "createdAt",
+        "search" : "client-k"
+      };
+
+      bloc.doGetApiEmployeeList(param,(response) {
+        String status = response.responseType ?? success;
+
+        if(status.toLowerCase() == success)
+        {
+          totalPages  = response.responseData?.lastPage ?? 0;
+
+          print("Total Page ${totalPages}");
+
+          if(!bloc.employeeList.isClosed) {
+            List<getEmployeeData.Datum> tempList = bloc.employeeList.value ?? [];
+            tempList.addAll(response.responseData?.data ?? []);
+
+
+            bloc.employeeList.add(tempList);
+          }
+
+          indexOfData++;
+          callEmployeeListAPI();
+        }
+        else if(status.toLowerCase() == failed){
+          showMessageBar('Failed :  ${response.message ?? ""}');
+        }
+        else {
+          showMessageBar('ERROR :${response.message ?? ""}');
+        }
+      },);
+    }else{
+      addEmployeeData();
+    }
+  }
+
+  void addEmployeeData() {
+    List<getEmployeeData.Datum> tempList = [];
+
+    if(!bloc.employeeList.isClosed) {
+      for (var element in bloc.employeeList.value) {
+        Object str = "${element.firstName} ${element.lastName} - ${element
+            .designation?.designation ?? ""}";
+
+        if (!tempList.contains(str)) {
+          tempList.add(element);
+              // "${element.firstName} ${element.lastName} - ${element.designation?.designation ?? ""}");
+        }
+      }
+      if(!employeeList!.isClosed){
+        employeeList?.add(tempList);
+      }
+    }
+  }
+
 
   Widget submitButton() {
     return ButtonView(string('label_add'),false, () {
@@ -245,46 +328,55 @@ class InternalTeamSelectionState extends BasePageState<InternalTeamSelectionScre
     });
   }
 
-  Widget teamMemberSingleItem(InternalTeamMemberModel? data) {
+  Widget teamMemberSingleItem(getEmployeeData.Datum? data) {
     return InkWell(onTap: () {
-      selectedTeamMember?.add(data ?? InternalTeamMemberModel("",""));
+      selectedTeamMember?.add(data ?? getEmployeeData.Datum());
 
-      List<InternalTeamMemberModel> list = selectedTeamMemberList?.value ?? [];
-      list.add(selectedTeamMember?.value ?? InternalTeamMemberModel("", ""));
+      List<getEmployeeData.Datum> list = selectedTeamMemberList?.value ?? [];
+      list.add(selectedTeamMember?.value ?? getEmployeeData.Datum());
       selectedTeamMemberList?.add(list);
 
       print("Selected Item List ${selectedTeamMemberList?.value.length}");
     },
       child: ListTile(contentPadding: EdgeInsets.zero,
           horizontalTitleGap: 10,
-          // minVerticalPadding:1.0,
           leading:
-      Container(height: 40,width: 40,decoration: const BoxDecoration(color: redBrown,
-        shape: BoxShape.circle,),
-        child: Center(
-          child: Text('AS',
-              style: styleSmall3.copyWith(
+          data?.empProfileIMg != null ?
+              CircleAvatar(
+                backgroundImage: NetworkImage(data?.empProfileIMg ?? "")
+              ) :
+          Text("${data?.firstName![0].toUpperCase()}${data?.lastName![0].toUpperCase()}",
+            style: styleSmall3.copyWith(
                 color: white,
-                fontWeight: FontWeight.w600,
-              )),
-        ),),
-      title: Text(data?.teamMemberName ?? "",
+                fontWeight: FontWeight.w400
+            ),
+          ),
+      title: Text("${data?.firstName} ${data?.lastName}" ?? "",
+          overflow: TextOverflow.ellipsis,
           style: styleSmall4.copyWith(
             color: lightBlack,
             fontWeight: FontWeight.w500,
           )),
-          trailing: Text(data?.teamMemberDesignation ?? "",
-              style: styleSmall4.copyWith(
-                color: lightBlack,
-                fontWeight: FontWeight.w400,
-              ))),
+          // trailing: Text(data?.designation?.designation ?? "",
+          //     overflow: TextOverflow.ellipsis,
+          //     style: styleSmall4.copyWith(
+          //       color: lightBlack,
+          //       fontWeight: FontWeight.w400,
+          //     ))
+        subtitle: Text(data?.designation?.designation ?? "",
+            overflow: TextOverflow.ellipsis,
+            style: styleSmall4.copyWith(
+              color: lightBlack,
+              fontWeight: FontWeight.w400,
+            )),
+      ),
     );
 
 
   }
 
 
-  roundedSelectedMemberList(InternalTeamMemberModel? data, int index){
+  roundedSelectedMemberList(getEmployeeData.Datum? data, int index){
     return  Padding(
       padding: const EdgeInsets.symmetric(horizontal: 9),
       child: Column(mainAxisAlignment : MainAxisAlignment.center,
@@ -294,19 +386,24 @@ class InternalTeamSelectionState extends BasePageState<InternalTeamSelectionScre
             // alignment: Alignment.bottomRight,
               children :[
 
-
                 Container(
                   decoration: const BoxDecoration(
                     color: redBrown,
                     shape: BoxShape.circle,
                   ), height: 60, width: 60,
-                  child: Center(
-                    child: Text(data?.teamMemberName?.substring(0,2).toUpperCase() ?? "",
+                  child:
+                  data?.empProfileIMg != null ?
+                  CircleAvatar(
+                      backgroundImage: NetworkImage(data?.empProfileIMg ?? "")
+                  ) :
+                  Center(
+                    child: Text("${data?.firstName![0].toUpperCase()}${data?.lastName![0].toUpperCase()}",
                         style: styleSmall4.copyWith(
                           color: white,
                           fontWeight: FontWeight.w600,
                         )),
-                  ),),
+                  ),
+                  ),
 
                 /*Container(
                                height :60,width:60,
@@ -329,7 +426,7 @@ class InternalTeamSelectionState extends BasePageState<InternalTeamSelectionScre
                   left: 36,
                   top: 33,
                   child: InkWell(onTap: (){
-                    List<InternalTeamMemberModel> list = selectedTeamMemberList?.value ?? [];
+                    List<getEmployeeData.Datum> list = selectedTeamMemberList?.value ?? [];
                     list.removeAt(index);
                     selectedTeamMemberList?.add(list);
                   },
@@ -354,7 +451,7 @@ class InternalTeamSelectionState extends BasePageState<InternalTeamSelectionScre
 
 
           SizedBox(height: 10.h,),
-          Text(data?.teamMemberName ?? "",
+          Text(data?.firstName ?? "",
               style: styleSmall3.copyWith(
                 color: lightBlack,
                 fontWeight: FontWeight.w400,
