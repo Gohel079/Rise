@@ -148,7 +148,7 @@ class VisitorApproveScreenState extends BasePageState<VisitorApproveScreen,Visit
                   ),
                   SizedBox(height: 15.h,),
 
-                  Text(widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vFirstName ?? "",
+                  Text(widget.data?.reqRequestMap?.isEmpty ?? false ? "" : "${widget.data?.reqRequestMap?.first.reqVisitorMap?.vFirstName} ${widget.data?.reqRequestMap?.first.reqVisitorMap?.vLastName}" ?? "",
                       style: styleMedium2.copyWith(
                         color: black,
                         fontWeight: FontWeight.w600,
@@ -168,13 +168,15 @@ class VisitorApproveScreenState extends BasePageState<VisitorApproveScreen,Visit
 
                         visitDataRow("Purpose of\nVisit :",widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vPurposeOfVisit ?? ""),
                         SizedBox(height: 25.h,),
+                        visitDataRow("Contact\nPerson :",widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vContactPersonName ?? ""),
+                        SizedBox(height: 25.h,),
                         visitDataRow("Company\nName :",widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vCompanyName ?? ""),
                         SizedBox(height: 25.h,),
                         visitDataRow("Designation :",widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vDesignation ?? ""),
                         SizedBox(height: 25.h,),
-                        visitDataRow("Contact\nNumber :",widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vCompanyContact ?? ""),
-                        SizedBox(height: 25.h,),
                         visitDataRow("Company\nAddress :",widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vCompanyAddress ?? ""),
+                        SizedBox(height: 25.h,),
+                        visitDataRow("Company\nContact No :",widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vCompanyContact ?? ""),
                         SizedBox(height: 25.h,),
                         visitDataRow("Company\nMail Address :",widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vCompanyEmail ?? ""),
                         SizedBox(height: 25.h,),
