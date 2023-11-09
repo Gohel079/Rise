@@ -105,7 +105,7 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
   final FocusNode _nodeDateAndTime = FocusNode();
   final FocusNode _nodeInternalTeamSelect = FocusNode();
 
-  AutovalidateMode autoValidateMode = AutovalidateMode.disabled;
+  AutovalidateMode autoValidateMode = AutovalidateMode.onUserInteraction;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
 
@@ -631,6 +631,7 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
       focusNode: _nodeInternalTeamSelect,
       autovalidateMode: autoValidateMode,
       keyboardType: TextInputType.text,
+      validator: validateInternalTeamSelection,
 
       onTap: () async {
 

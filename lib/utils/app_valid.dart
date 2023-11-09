@@ -324,3 +324,10 @@ String? validateMeetingDateAndTime(String? value) {
   }
   return null;
 }
+
+String? validateInternalTeamSelection(String? value) {
+  if (value!.trim().isEmpty) {
+    return "Internal Team is required.";
+  }
+  return null;
+}

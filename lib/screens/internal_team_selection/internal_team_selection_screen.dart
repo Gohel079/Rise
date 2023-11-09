@@ -225,7 +225,7 @@ class InternalTeamSelectionState extends BasePageState<InternalTeamSelectionScre
 
                                  },);
                              }else {
-                               return Container(color: Colors.red,height: 30,);
+                               return Container(color: Colors.white,height: 30,);
                              }
 
                            }
@@ -397,11 +397,22 @@ class InternalTeamSelectionState extends BasePageState<InternalTeamSelectionScre
                       backgroundImage: NetworkImage(data?.empProfileIMg ?? "")
                   ) :
                   Center(
-                    child: Text("${data?.firstName![0].toUpperCase()}${data?.lastName![0].toUpperCase()}",
-                        style: styleSmall4.copyWith(
-                          color: white,
-                          fontWeight: FontWeight.w600,
-                        )),
+                    child: Flexible(
+                      child: Column(
+                        children: [
+                          Text("${data?.firstName![0].toUpperCase()}",
+                              style: styleSmall3.copyWith(
+                                color: white,
+                                fontWeight: FontWeight.w600,
+                              )),
+                          Text("${data?.lastName![0].toUpperCase()}",
+                              style: styleSmall4.copyWith(
+                                color: white,
+                                fontWeight: FontWeight.w600,
+                              )),
+                        ],
+                      ),
+                    ),
                   ),
                   ),
 

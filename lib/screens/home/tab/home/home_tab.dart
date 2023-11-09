@@ -340,7 +340,7 @@ class _homeTabState  extends BasePageState<HomeTab,HomeTabBloc>{
          ),child: Padding(
            padding: const EdgeInsets.all(17.0),
            child: SvgPicture.asset(
-             AppImages.icAddUser,
+             AppImages.icAddUserHome,
              height: 30,
            ),
          ),),

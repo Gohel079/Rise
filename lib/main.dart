@@ -66,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
               debugShowCheckedModeBanner: false,
               title: 'HITACHI',
               theme: normalTheme(context),
-              home: const SplashScreen(),
+              home: const HomeScreen(),
               navigatorKey: navigatorKey,
               localizationsDelegates:
               ezLocalizationDelegate.localizationDelegates,

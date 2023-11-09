@@ -59,6 +59,7 @@ class AppImages {
   static const String icPerson = 'assets/icons/ic_person.svg';
   static const String icUploadDoc = 'assets/icons/ic_upload_doc.svg';
   static const String icLogout = 'assets/icons/ic_logout.svg';
+  static const String icAddUserHome = 'assets/icons/ic_add_user_home.svg';
 
 
 }
