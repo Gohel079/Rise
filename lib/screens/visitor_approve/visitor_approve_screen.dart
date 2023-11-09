@@ -172,6 +172,8 @@ class VisitorApproveScreenState extends BasePageState<VisitorApproveScreen,Visit
 
                     visitDataRow("Purpose of\nVisit :",widget.purposeOfMeeting ?? ""),
                     SizedBox(height: 25.h,),
+                    visitDataRow("Contact\nPerson :",widget.data?.reqRequestMap?.isEmpty ?? false ? "" : widget.data?.reqRequestMap?.first.reqVisitorMap?.vContactPersonName ?? ""),
+                    SizedBox(height: 25.h,),
                     visitDataRow("Company\nName :",widget.visitorData?.reqVisitorMap?.vCompanyName ?? ""),
                     SizedBox(height: 25.h,),
                     visitDataRow("Designation :",widget.visitorData?.reqVisitorMap?.vDesignation ?? ""),

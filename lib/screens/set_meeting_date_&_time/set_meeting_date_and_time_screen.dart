@@ -90,7 +90,7 @@ class SetMeetingDateAndTimeScreenState  extends BasePageState<SetMeetingDateAndT
   ];
 
 
-  var _oneValue = '';
+  String _oneValue = '';
 
   @override
   void initState() {
@@ -102,6 +102,7 @@ class SetMeetingDateAndTimeScreenState  extends BasePageState<SetMeetingDateAndT
     selectedSlot = morningTimeSlotList.elementAt(0);
 
     selectedDate = BehaviorSubject<String>.seeded("");
+    _oneValue = one[0];
   }
 
   @override
@@ -142,34 +143,6 @@ class SetMeetingDateAndTimeScreenState  extends BasePageState<SetMeetingDateAndT
               child: Column(
                 children: [
 
-
-                  InkWell(onTap: (){
-                    showAddressChangeDialog();
-                  },
-                    child: Row(children: [
-
-                      Expanded(
-                        flex: 5,
-                        child: Text('For Ahmd Office - 1  Conf. Room - 1',
-                            style: styleSmall4.copyWith(
-                              color: lightBlack,
-                              fontWeight: FontWeight.w500,
-                            )),
-                      ),
-
-                      Expanded(
-                        flex: 1,
-                        child: Text('Change',
-                            style: styleSmall4.copyWith(
-                              color: secondaryColor,
-                              fontWeight: FontWeight.w700,
-                            )),
-                      )
-                    ],),
-                  ),
-
-                  SizedBox(height: 10.h,),
-
                   /* Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -201,9 +174,46 @@ class SetMeetingDateAndTimeScreenState  extends BasePageState<SetMeetingDateAndT
             ),
 
 
-            const Divider(color: borderColor,thickness: 2,)
+            const Divider(color: borderColor,thickness: 2,),
 
-            ,Padding(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 17),
+              child: InkWell(onTap: (){
+                showAddressChangeDialog();
+              },
+                child: Row(children: [
+
+                  Expanded(
+                    flex: 4,
+                    child: Text(_oneValue,
+                        style: styleSmall4.copyWith(
+                          color: secondaryColor,
+                          fontWeight: FontWeight.w700,
+                          decoration: TextDecoration.underline,
+                        ), ),
+                  ),
+
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: secondaryColor,
+                        borderRadius: BorderRadius.circular(6.0)
+                      ),
+                      padding: const EdgeInsets.all(4.0),
+                      child: Text('Change',
+                          style: styleSmall4.copyWith(
+                            color: white,
+                            fontWeight: FontWeight.w700,
+                          )),
+                    ),
+                  )
+                ],),
+              ),
+            ),
+
+            Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 17),
               child: Column(
                 children: [
@@ -581,52 +591,40 @@ class SetMeetingDateAndTimeScreenState  extends BasePageState<SetMeetingDateAndT
       ),
       content: Container(
         width: double.maxFinite,
-        // decoration: BoxDecoration(color:
-        // Colors.white, borderRadius: BorderRadius.circular(20)),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          // mainAxisAlignment: MainAxisAlignment.center,
-          // crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-
-
-            Material(
-              child: ListView.separated(
-                padding: EdgeInsets.zero,
-                  shrinkWrap: true,
-                  itemBuilder:
-                      (context, index) {
-                    return  Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5),
-                      child: RadioListTile<String>(
-                        value:  one[index],
-                        groupValue: _oneValue,
-                        onChanged: (value) {
-                          setState(() {
-                            _oneValue = value.toString();
-                          });
-                        },
-                        title: Text(one[index],
-                            style: styleMedium2.copyWith(
-                              color: lightBlack,
-                              fontWeight: FontWeight.w500,
-                            )),
-                        activeColor: secondaryColor,
-                        controlAffinity: ListTileControlAffinity.trailing,
-                      ),
-                    );
-                  }, itemCount: one.length, separatorBuilder:
-                  (BuildContext context, int index) {
-                  return const Divider(color: secondaryColor,
-                    thickness: 0.4,height: 0.5,);
-                  },),
-            ),
-
-          ],
+        child: ListView.separated(
+          itemCount: one.length,
+          shrinkWrap: true,
+          separatorBuilder: (BuildContext context, int index) {
+            return const Divider(color: secondaryColor,
+              thickness: 0.4,height: 0.5,);
+          },
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: ListTile(
+                title: Text(one[index],
+                    style: styleMedium2.copyWith(
+                      color: lightBlack,
+                      fontWeight: FontWeight.w500,
+                    )),
+                trailing: Radio(
+                  value: one[index],
+                  groupValue: _oneValue,
+                  onChanged: (value) {
+                    setState(() {
+                      _oneValue = value ?? "";
+                    });
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
   }
+
   @override
   SetMeetingDateAndTimeBloc getBloc() {
     return bloc;
