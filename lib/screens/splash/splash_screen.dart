@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:rise_and_grow/screens/created_meeting/created_meeting_screen.dart';
 import 'package:rise_and_grow/screens/home/home_screen.dart';
+import 'package:rise_and_grow/screens/home/home_screen1.dart';
 import 'package:rise_and_grow/screens/outer_meeting/outer_meeting_screen.dart';
 import 'package:rise_and_grow/screens/outer_meeting_approve/outer_meeting_approve_screen.dart';
 import 'package:rise_and_grow/screens/set_meeting_date_&_time/set_meeting_date_and_time_screen.dart';
@@ -47,7 +48,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void navigateToOther() async {
     await Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(context, SetMeetingDateAndTimeScreen.route());
+      Navigator.pushReplacement(context, HomeScreen1.route());
     });
   }
 }

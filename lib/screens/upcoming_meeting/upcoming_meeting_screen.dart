@@ -14,7 +14,8 @@ import '../../base/widgets/image_view.dart';
 import '../../utils/common_utils.dart';
 
 class UpcomingMeetingScreen  extends BasePage<UpcomingMeetingBloc> {
-  const UpcomingMeetingScreen({super.key});
+  // Widget bottomNavigationBar;
+  UpcomingMeetingScreen({super.key});
 
 
 
@@ -25,7 +26,7 @@ class UpcomingMeetingScreen  extends BasePage<UpcomingMeetingBloc> {
 
   static Route<dynamic> route() {
     return CustomPageRoute(
-        builder: (context) => const UpcomingMeetingScreen());
+        builder: (context) => UpcomingMeetingScreen());
   }
 }
 
@@ -111,6 +112,7 @@ class _upComingMeetingScreenState  extends BasePageState<UpcomingMeetingScreen,U
                !isSearching ? SizedBox(width: 10.w,) : SizedBox(),
              ],)
          ],),
+       // bottomNavigationBar: widget.bottomNavigationBar,
        body: Container(
          padding: const EdgeInsets.all(18),
            child: Column(
@@ -133,7 +135,6 @@ class _upComingMeetingScreenState  extends BasePageState<UpcomingMeetingScreen,U
   UpcomingMeetingBloc getBloc() {
    return bloc;
   }
-
 
   Widget meetingList(){
     return Expanded(

@@ -16,7 +16,8 @@ import '../../../upcoming_appointment/upcoming_appointment_screen.dart';
 import '../../../upcoming_meeting/upcoming_meeting_screen.dart';
 
 class MeetingView extends BasePage<MeetingBloc> {
-  const MeetingView({super.key});
+  // Widget bottomNavigationBar;
+  MeetingView({super.key});
 
 
   @override
@@ -27,7 +28,7 @@ class MeetingView extends BasePage<MeetingBloc> {
 
   static Route<dynamic> route() {
     return CustomPageRoute(
-        builder: (context) => const MeetingView());
+        builder: (context) => MeetingView());
   }
 
 
@@ -55,7 +56,8 @@ class _meetingViewState extends BasePageState<MeetingView,MeetingBloc> {
               )),
 
           InkWell(onTap: (){
-            Navigator.push(context, UpcomingMeetingScreen.route());
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => UpcomingMeetingScreen()));
           },
             child: Text(string("label_viewAll"),
                 style: styleSmall4.copyWith(

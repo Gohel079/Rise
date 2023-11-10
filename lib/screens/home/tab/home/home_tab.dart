@@ -23,7 +23,8 @@ import '../../../../utils/common_utils.dart';
 import 'home_tab_bloc.dart';
 
 class HomeTab extends BasePage<HomeTabBloc>{
-  const HomeTab({super.key});
+  // Widget bottomNavigationBar;
+  HomeTab({super.key});
 
 
   @override
@@ -33,7 +34,7 @@ class HomeTab extends BasePage<HomeTabBloc>{
 
   static Route<dynamic> route() {
     return CustomPageRoute(
-        builder: (context) => const HomeTab());
+        builder: (context) => HomeTab());
   }
 }
 
@@ -163,7 +164,7 @@ class _homeTabState  extends BasePageState<HomeTab,HomeTabBloc>{
 
   Widget viewSelection(){
     if(selectedIndex == 0) {
-      return const MeetingView();
+      return MeetingView();
     }
     if(selectedIndex == 1 ){
       return const AppointmentScreen();
