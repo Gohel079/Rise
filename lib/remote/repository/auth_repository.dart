@@ -12,9 +12,12 @@ import 'package:rise_and_grow/remote/model/get_officelist_response_model.dart';
 import 'package:rise_and_grow/remote/model/get_outer_meeting_list_response_model.dart';
 import 'package:rise_and_grow/remote/model/get_role_list_response_model.dart';
 import 'package:rise_and_grow/remote/model/get_visitor_list_response_model.dart';
+import 'package:rise_and_grow/remote/model/get_visitorlist_by_employee_id_response_model.dart';
 import 'package:rise_and_grow/remote/model/loginWithEmailResponse.dart';
 import 'package:rise_and_grow/remote/model/register_response_model.dart';
+import 'package:rise_and_grow/remote/model/saveAcceptRejectRequestEmpResponse.dart';
 import 'package:rise_and_grow/remote/model/save_token_receipt_response.dart';
+import 'package:rise_and_grow/remote/model/start_meeting_response_model.dart';
 
 import '../../base/constants/app_endpoint.dart';
 import '../../network/error/net_exception.dart';
@@ -172,8 +175,8 @@ void apiMeetingModeList(Function(GetMeetingModeResponseModel) onSuccess, Functio
 }
 
 //Create Meeting API
-void apiCreateMeeting(FormData? data, Function(CreateMeetingResponseModel) onSuccess, Function(NetWorkException) onError) {
-  post<String>(AppEndpoint.createMeeting, params: data, isAuth: false, options: Options(contentType: 'multipart/form-data') ).then((value) {
+void apiCreateMeeting(Map? data, Function(CreateMeetingResponseModel) onSuccess, Function(NetWorkException) onError) {
+  post<String>(AppEndpoint.createMeeting, params: data, isAuth: true ).then((value) {
     final response = createMeetingResponseModelFromJson(value!);
     onSuccess(response);
   }).catchError((error) {
@@ -325,4 +328,77 @@ void apiGetOuterMeetingList(Function(GetOuterMeetingResponseModel) onSuccess, Fu
       onError(NetWorkException(101010,error.toString()));
     }
   });
+}
+
+
+// /// Get VisitorList API
+// void apiGetVisitorListByEmployeeID(Map? data,Function(GetVisitorListByEmployeeResponseModel) onSuccess, Function(NetWorkException) onError) {
+//   get<String>(AppEndpoint.getVisitorListByEmployee ,params:  data,isAuth: false).then((value) {
+//
+//
+//     final response =  getVisitorListByEmployeeResponseModelFromJson(value!);
+//     onSuccess(response);
+//   }).catchError((error) {
+//     if (error is NetWorkException) {
+//       print("ERROR ${error.message}");
+//       onError(error);
+//     }else{
+//       onError(NetWorkException(101010,error.toString()));
+//     }
+//   });
+//
+// }
+
+/// Get VisitorList API
+void apiGetVisitorListByEmployeeID(int? data,Function(GetVisitorListByEmployeeResponseModel) onSuccess, Function(NetWorkException) onError) {
+  get<String>(AppEndpoint.getVisitorListByEmployee+"/${data}",isAuth: true ).then((value) {
+
+    final response =  getVisitorListByEmployeeResponseModelFromJson(value!);
+    onSuccess(response);
+  }).catchError((error) {
+    if (error is NetWorkException) {
+      print("ERROR ${error.message}");
+      onError(error);
+    }else{
+      onError(NetWorkException(101010,error.toString()));
+    }
+  });
+}
+
+
+/// Save Accepte Reject Request Employee API
+void apiSaveAccepteRejectRequestEmp(Map? data , Function(SaveAccepteRejectRequestEmp) onSuccess, Function(NetWorkException) onError) {
+  post<String>(AppEndpoint.postSaveAccepteRejectRequestEmp, params: data, isAuth: true).then((value) {
+
+
+    final response =  saveAccepteRejectRequestEmpFromJson(value!);
+    onSuccess(response);
+  }).catchError((error) {
+    if (error is NetWorkException) {
+      print("ERROR ${error.message}");
+      onError(error);
+    }else{
+      onError(NetWorkException(101010,error.toString()));
+    }
+  });
+
+}
+
+
+/// Save Accepte Reject Request Employee API
+void apiStartMeetingCall(Map? data , Function(StartMeetingResponseModel) onSuccess, Function(NetWorkException) onError) {
+  post<String>(AppEndpoint.startMeeting, params: data, isAuth: true).then((value) {
+
+
+    final response =  startMeetingResponseModelFromJson(value!);
+    onSuccess(response);
+  }).catchError((error) {
+    if (error is NetWorkException) {
+      print("ERROR ${error.message}");
+      onError(error);
+    }else{
+      onError(NetWorkException(101010,error.toString()));
+    }
+  });
+
 }

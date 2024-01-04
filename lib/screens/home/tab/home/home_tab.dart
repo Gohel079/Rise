@@ -8,18 +8,27 @@ import 'package:rise_and_grow/base/bloc/base_bloc.dart';
 import 'package:rise_and_grow/base/components/screen_utils/flutter_screenutil.dart';
 import 'package:rise_and_grow/base/constants/app_colors.dart';
 import 'package:rise_and_grow/screens/created_meeting/created_meeting_screen.dart';
+import 'package:rise_and_grow/screens/emp_visitor_registration_meeting/emp_visitor_meeting.dart';
 import 'package:rise_and_grow/screens/home/tabbarView/appointment_screen/appointment_screen.dart';
 import 'package:rise_and_grow/screens/home/tabbarView/meeting_screen/meeting.dart';
 import 'package:rise_and_grow/screens/home/tabbarView/site_visit_screen/site_visit_screen.dart';
 import 'package:rise_and_grow/screens/notification/notification_screen.dart';
 import 'package:rise_and_grow/screens/outer_meeting/outer_meeting_screen.dart';
 import 'package:rise_and_grow/screens/visitor_registation/visitior_registation_screen.dart';
+import 'package:rise_and_grow/screens/visitor_registation/visitor_registration_item.dart';
+import 'package:rise_and_grow/utils/shared_pref_utils.dart';
+import 'package:rxdart/rxdart.dart';
 
+import '../../../../base/constants/app_constant.dart';
 import '../../../../base/constants/app_images.dart';
 import '../../../../base/constants/app_styles.dart';
+import '../../../../base/constants/app_widgets.dart';
 import '../../../../base/widgets/custom_page_route.dart';
 import '../../../../base/widgets/image_view.dart';
+import '../../../../remote/model/get_visitor_list_response_model.dart' as GetVisitor;
 import '../../../../utils/common_utils.dart';
+import '../../../add_visitor_registation/add_visitor_registation_screen.dart';
+import '../../../visitor_approve/visitor_approve_screen.dart';
 import 'home_tab_bloc.dart';
 
 class HomeTab extends BasePage<HomeTabBloc>{
@@ -49,19 +58,39 @@ class _homeTabState  extends BasePageState<HomeTab,HomeTabBloc>{
 
  var selectedIndex = 0;
 
+ int indexOfData = 1;
+ int totalPages = 1;
+ int limit = 10;
 
 
-  @override
+ List<String> chipList = ["All","Pending","Accepted","Rejected"];
+ int? _value = 0;
+ var selectedStatusFilter;
+
+
+ late BehaviorSubject<List<GetVisitor.Datum>> getFinalVisitorList;
+
+
+
+ @override
+  void initState() {
+    super.initState();
+    getFinalVisitorList = BehaviorSubject<List<GetVisitor.Datum>>.seeded([]);
+    // getFinalVisitorList.add(bloc.getVisitorList.value);
+
+  }
+ @override
   Widget buildWidget(BuildContext context) {
+
    return Scaffold(
      appBar: AppBar(
        title: Row(children: [
 
-         const CircleAvatar(
+          CircleAvatar(
            backgroundColor: Colors.transparent,
            maxRadius: 25,
            minRadius: 24,
-           backgroundImage: AssetImage(AppImages.profileDP),
+           backgroundImage: NetworkImage(getProfileImage()),
          ),
          SizedBox(width: 10.w,),
          Column(
@@ -76,7 +105,7 @@ class _homeTabState  extends BasePageState<HomeTab,HomeTabBloc>{
                  )),
 
              SizedBox(height: 3.h,),
-             Text('Pradeep Patel',
+             Text("Mr/Mrs. ${getLastName().toString()}",
                  style: styleMedium2.copyWith(
                    color: white,
                    fontWeight: FontWeight.w700,
@@ -101,19 +130,19 @@ class _homeTabState  extends BasePageState<HomeTab,HomeTabBloc>{
                width: 24.w,
              ),
              SizedBox(width: 16.w,),
-             InkWell(onTap: (){
-
-               PersistentNavBarNavigator
-                   .pushNewScreen(context, screen: const NotificationScreen(),
-                   withNavBar: false);
-             },
-               child: SvgPicture.asset(AppImages.icNotification,
-                 height: 24.h,
-                 width: 24.w,),
-             ),
-             SizedBox(width: 10.w,),
            ],)
        ],),
+     floatingActionButton: getRole().toString() == "Receptionist"
+         ?
+     FloatingActionButton(backgroundColor: secondaryColor,
+       onPressed: (){
+
+         Navigator.push(context, AddVisitorRegistrationScreen.route());
+
+     },
+       child: const Icon(Icons.add,
+         color: Colors.white,),)
+         : const SizedBox(),
      body: Container(
        padding: const EdgeInsets.all(22.0),
          child: Column(
@@ -123,30 +152,34 @@ class _homeTabState  extends BasePageState<HomeTab,HomeTabBloc>{
 
          topTabButton(),
 
-         SizedBox(height: 30.h,),
+         getRole().toString() == "Receptionist" ? const SizedBox() : SizedBox(height: 30.h,),
 
-         Align(
+         /*getRole().toString() != "Receptionist" ? Align(
            alignment: Alignment.topLeft,
            child: Text('Upcoming',
                style: styleMedium2.copyWith(
                  color: black,
                  fontWeight: FontWeight.w700,
                )),
-         ),
-
-         SizedBox(height: 15.h,),
-
-
-         tabView(),
+         ) : const SizedBox(),
+*/
+         UiChangeAsPerRoleFor(),
 
          SizedBox(height: 15.h,),
 
          tabBarItemView()
-
-
        ],
      )),
    );
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    if(getRole().toString() == "Receptionist"){
+      callGetVisitorAPI();
+      getFinalVisitorList.add(bloc.getVisitorList.value);
+    }
   }
 
   @override
@@ -156,9 +189,70 @@ class _homeTabState  extends BasePageState<HomeTab,HomeTabBloc>{
 
   Widget tabBarItemView(){
     return Expanded(child:
+    getRole().toString() == "Receptionist" ?
+
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+
+       /* Wrap(
+          children: List.generate(
+            chipList.length,
+                (int index) {
+              return Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: ChoiceChip(
+                  padding: const EdgeInsets.all(2),
+                  label: Text(chipList[index].toString(),
+                      style: styleSmall4.copyWith(
+                    color: _value == index ?white : black,
+                    fontWeight: FontWeight.w600,
+                  )),
+                  selectedColor: secondaryColor,
+                  selected: _value == index,
+
+                  onSelected: (bool selected) {
+                    setState(() {
+                      _value = selected ? index : null;
+                      print("Chcip Selected  $_value $selected");
+
+                      tempList = [];
+                      tempList = bloc.getVisitorList.value.where((element) {
+                        return element.reqStatus?.contains("Pending") ?? true;
+                      },).toList();
+                      bloc.getVisitorList.add(tempList);
+
+                      print("Chicj tempList Size ${tempList.length}");
+                      print("Chicj Final Lisst Size ${bloc.getVisitorList.value.length}");
+                    });
+                  },
+                ),
+              );
+            },
+          ).toList(),
+        ),*/
+
+        // Wrap(
+        //   children: chipList.map((status) {
+        //    return ChoiceChip(label: Text(status),
+        //     selected: selectedStatusFilter == status,
+        //     onSelected: (value) {
+        //        filterItemByStatus(status);
+        //     },);
+        //   }).toList(),
+        // ),
+
+        Expanded(
+          child: Container(
+            child:  receptionListVisitorListUI() ),
+        ),
+      ],
+    )
+        :
     Container(
       color: Colors.white,
-      child: viewSelection(),));
+      child: viewSelection(),)
+    );
   }
 
   Widget viewSelection(){
@@ -176,7 +270,7 @@ class _homeTabState  extends BasePageState<HomeTab,HomeTabBloc>{
 
   Widget tabView(){
     return Container(height: 40.h,
-    color: Colors.white,
+    color: Colors.red,
     child: ListView.builder(
       scrollDirection: Axis.horizontal,
       itemCount: tabList.length,
@@ -208,24 +302,17 @@ class _homeTabState  extends BasePageState<HomeTab,HomeTabBloc>{
         ),),
     );
   }
-  Widget topTabButton(){
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
 
-      createMeetingBtn(),
-      bookAnAppointmentBtn(),
-     outerMeetingBtn(),
-     visitorRegBtn()
-    ],);
+  Widget topTabButton(){
+    return topTabButtonUIChangeAsPerRole();
   }
 
   Widget createMeetingBtn(){
     return InkWell(onTap: (){
 
-      PersistentNavBarNavigator
+      /*PersistentNavBarNavigator
           .pushNewScreen(context, screen: const CreatedMeetingScreen(),
-          withNavBar: false);
+          withNavBar: false);*/
     },
       child: Column(
         children: [
@@ -322,9 +409,17 @@ class _homeTabState  extends BasePageState<HomeTab,HomeTabBloc>{
  Widget visitorRegBtn(){
    return InkWell(
      onTap: (){
-       PersistentNavBarNavigator
-           .pushNewScreen(context, screen: const VisitorRegistationScreen(),
-           withNavBar: false);
+
+       if(getRole() == "Employee"){
+         PersistentNavBarNavigator
+             .pushNewScreen(context, screen: const EmpVisitorMeeting(),
+             withNavBar: false);
+       }else
+       {
+         PersistentNavBarNavigator
+             .pushNewScreen(context, screen: const VisitorRegistationScreen(),
+             withNavBar: false);
+       }
 
 
      },
@@ -447,4 +542,171 @@ class _homeTabState  extends BasePageState<HomeTab,HomeTabBloc>{
       ),
     );
  }
+
+ Widget topTabButtonUIChangeAsPerRole() {
+    return
+      getRole().toString() == "Receptionist" ?
+         /*Row(
+           mainAxisAlignment: MainAxisAlignment.start,
+           children: [
+             visitorRegBtn(),
+           ],
+         )*/
+          Container() :
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children:
+      [
+
+      createMeetingBtn(),
+      bookAnAppointmentBtn(),
+       outerMeetingBtn(),
+        visitorRegBtn(),
+   ],);
+  }
+
+Widget UiChangeAsPerRoleFor(){
+    return   getRole().toString() == "Receptionist" ?
+
+    Align(
+      alignment: Alignment.topLeft,
+      child: Text('Visitor List',
+          style: styleMedium2.copyWith(
+            color: secondaryColor,
+            fontWeight: FontWeight.w700,
+          )),
+    )  :
+    Column(
+      children: [
+        Align(
+          alignment: Alignment.topLeft,
+          child: Text('Upcoming',
+              style: styleMedium2.copyWith(
+                color: black,
+                fontWeight: FontWeight.w700,
+              )),
+        ),
+
+        SizedBox(height: 15.h,),
+
+        tabView()
+      ],
+    );
+
+}
+
+  Widget receptionListVisitorListUI() {
+    return StreamBuilder<List<GetVisitor.Datum>>(
+        stream: bloc.getVisitorList.stream,
+        builder: (context, snapshot) {
+          if(snapshot.hasData && snapshot.data?.isNotEmpty == true ) {
+            return ListView.builder(
+              itemCount: snapshot.data?.length,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                print("DARA ${snapshot.data?.elementAt(index).tokenNumber}");
+
+                return
+                  InkWell(onTap: () {
+
+                    Navigator.push(context, VisitorApproveScreen.route(
+                        selectVisitorList(snapshot.data?.elementAt(index)),
+                        snapshot.data?.elementAt(index).purposeOfMeeting ?? "",
+                        selectEmpList(snapshot.data?.elementAt(index)),
+                        snapshot.data?.elementAt(index).requestId.toString()));
+
+                  },
+                      child: VisitorRegistrationItem(data: selectVisitorList(snapshot.data?.elementAt(index))));
+              },);
+          }else {
+            return const SizedBox();
+          }
+        }
+    );
+  }
+
+ GetVisitor.ReqRequestMap? selectVisitorList(GetVisitor.Datum? datum){
+   GetVisitor.ReqRequestMap?  result;
+   datum?.reqRequestMap?.forEach((element) {
+     if(element.visitorId != null && element.reqVisitorMap?.isMeetingRequester == true){
+
+       result = element;
+     }
+   });
+   return result;
+ }
+
+ GetVisitor.ReqEmployeeMap? selectEmpList(GetVisitor.Datum? datum){
+   GetVisitor.ReqEmployeeMap?  result;
+   datum?.reqRequestMap?.forEach((element) {
+     if(element.empId != null){
+
+       result = element.reqEmployeeMap;
+     }
+   });
+   return result;
+ }
+
+ void callGetVisitorAPI() {
+
+   if(indexOfData <= totalPages) {
+     Map<String, dynamic> param = {
+       "limit": limit,
+       "page": indexOfData,
+       "sort": "DESC",
+       "sortBy": "createdAt",
+       "search": "client-k"
+     };
+
+     bloc.getVisitorRegList(param,(response) {
+       String status = response.responseType ?? success;
+
+       if (status.toLowerCase() == success) {
+
+         totalPages  = response.responseData?.lastPage ?? 0;
+         print("Total Page ${totalPages}");
+         print("IndexOFData Page ${indexOfData}");
+         // print("Total Page ${indexOfData}");
+
+         if (!getBloc().getVisitorList.isClosed) {
+           // getBloc().getVisitorList.add(response.responseData?.data ?? []);
+           print("GetVisitorList ->> ${getBloc().getVisitorList.value.length}");
+
+           List<GetVisitor.Datum> tempList = bloc.getVisitorList.value ?? [];
+           tempList.addAll(response.responseData?.data ?? []);
+
+
+           bloc.getVisitorList.add(tempList);
+           bloc.originalVisitorList = tempList;
+         }
+         indexOfData++;
+         callGetVisitorAPI();
+
+       }
+       else if (status.toLowerCase() == failed) {
+         showMessageBar('Failed :  ${response.message ?? ""}');
+       }
+       else {
+         showMessageBar('ERROR :${response.message ?? ""}');
+       }
+     },);
+   }
+ }
+
+  void filterItemByStatus(String status) {
+   setState(() {
+     selectedStatusFilter = status;
+     if(status == 'All'){
+       getFinalVisitorList.value =List.from(bloc.getVisitorList.value);
+     }else{
+       getFinalVisitorList.value = bloc.getVisitorList.value.where((element) {
+         print("Chips Selected List Status  ${element.reqStatus}");
+         return element.reqStatus?.contains("$status")??false;
+       },).toList();
+
+       print("Chips Selected List  ${getFinalVisitorList.value.length}");
+     }
+   });
+  }
+
 }

@@ -5,13 +5,21 @@ import 'package:flutter_svg/svg.dart';
 import 'package:rise_and_grow/base/components/screen_utils/flutter_screenutil.dart';
 import 'package:rise_and_grow/base/src_bloc.dart';
 import 'package:rise_and_grow/screens/internal_attendance/internal_attendance_bloc.dart';
+import 'package:rise_and_grow/screens/internal_attendance/single_item_internal_attendace_team_member.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../../base/constants/app_colors.dart';
+import '../../base/constants/app_constant.dart';
 import '../../base/constants/app_images.dart';
 import '../../base/constants/app_styles.dart';
+import '../../base/constants/app_widgets.dart';
+import '../../base/widgets/button_view.dart';
 import '../../base/widgets/custom_page_route.dart';
+import '../../remote/model/get_employee_list_response_model.dart'as getEmployeeData;
+import '../../utils/common_utils.dart';
+import '../internal_team_selection/internal_team_selection_bloc.dart';
 
-class InternalAttendanceScreen extends BasePage<OuterAttendanceBloc>{
+class InternalAttendanceScreen extends BasePage<InternalAttendanceBloc>{
   const InternalAttendanceScreen({super.key});
 
 
@@ -28,11 +36,21 @@ class InternalAttendanceScreen extends BasePage<OuterAttendanceBloc>{
 
 }
 
-class InternalAttendanceState  extends BasePageState<InternalAttendanceScreen,OuterAttendanceBloc>{
+class InternalAttendanceState  extends BasePageState<InternalAttendanceScreen,InternalAttendanceBloc>{
 
-  OuterAttendanceBloc bloc = OuterAttendanceBloc();
+  InternalAttendanceBloc bloc = InternalAttendanceBloc();
   bool isSearching =false;
   bool checkValue = false;
+
+  int limit = 10;
+  int indexOfData = 1;
+  int totalPages = 1;
+
+  BehaviorSubject<List<getEmployeeData.Datum>>? employeeList;
+
+
+  List<getEmployeeData.Datum>? selectedInternalAttendance;
+
 
   @override
   Widget buildWidget(BuildContext context) {
@@ -128,21 +146,82 @@ class InternalAttendanceState  extends BasePageState<InternalAttendanceScreen,Ou
 
           SizedBox(height: 10.h,),
 
-          Expanded(
-            child: ListView.builder(
-              itemCount: 10,
-              physics: const BouncingScrollPhysics(),
-              itemBuilder: (context, index) {
-                return internalTeamMemberSingleItem();
-            },),
-          )
+            Expanded(
+              child: StreamBuilder<List<getEmployeeData.Datum>>(
+                  stream: employeeList?.stream,
+                  builder: (context, snapshot) {
+                    if(snapshot.hasData && snapshot.data?.isNotEmpty == true ){
+
+                      return ListView.builder(
+                        itemCount: snapshot.data?.length,
+                        itemBuilder: (context, index) {
+                          // return Container(height: 10,color: Colors.black);
+                          return SingleItemInternalAttendanceTeamMember(datum: snapshot.data?.elementAt(index),
+                            onCheckboxChanged: (value) {
+                            if(value){
+                              print("Attendecea $value");
+                              selectedInternalAttendance?.add(snapshot.data?.elementAt(index) ?? getEmployeeData.Datum());
+                            } else {
+                              selectedInternalAttendance?.remove(snapshot.data?.elementAt(index) ?? getEmployeeData.Datum());
+                            }
+
+                          },);
+
+                        },);
+                    }else {
+                      return Container(color: Colors.white,height: 30,);
+                    }
+
+                  }
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+              child: submitButton(),
+            ),
         ],),
       ),
     );
   }
 
+
+  Widget submitButton() {
+    return ButtonView(string('label_add'),false, () {
+
+
+      Map listOfEmpId = {
+        "list": findSelectedEmplyoeeIdByName()
+      };
+      Navigator.pop(context,listOfEmpId);
+    });
+  }
+
+  List<int> findSelectedEmplyoeeIdByName(){
+    List<int> selectedEmpId = [];
+
+    selectedInternalAttendance?.forEach((element) {
+      selectedEmpId.add(element.empId ?? 0);
+    });
+    return selectedEmpId;
+  }
+
   @override
-  OuterAttendanceBloc getBloc() {
+  void initState() {
+    super.initState();
+    employeeList = BehaviorSubject<List<getEmployeeData.Datum>>.seeded([]);
+
+    selectedInternalAttendance = [];
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    callEmployeeListAPI();
+  }
+  
+  @override
+  InternalAttendanceBloc getBloc() {
     return bloc;
   }
 
@@ -234,5 +313,69 @@ class InternalAttendanceState  extends BasePageState<InternalAttendanceScreen,Ou
           color: black,
           fontWeight: FontWeight.w400,
         )),);
+  }
+
+  void callEmployeeListAPI() {
+
+    if(indexOfData <= totalPages){
+
+      Map<String,dynamic> param  = {
+        "limit" : limit,
+        "page" :indexOfData,
+        "sort" : "DESC",
+        "sortBy" : "createdAt",
+        "search" : "client-k"
+      };
+
+      bloc.doGetApiEmployeeList(param,(response) {
+        String status = response.responseType ?? success;
+
+        if(status.toLowerCase() == success)
+        {
+          totalPages  = response.responseData?.lastPage ?? 0;
+
+          print("Total Page ${totalPages}");
+
+          if(!bloc.employeeList.isClosed) {
+            List<getEmployeeData.Datum> tempList = bloc.employeeList.value ?? [];
+            tempList.addAll(response.responseData?.data ?? []);
+
+
+            bloc.employeeList.add(tempList);
+            print(" ${bloc.employeeList.value.length}");
+          }
+
+          indexOfData++;
+          callEmployeeListAPI();
+        }
+        else if(status.toLowerCase() == failed){
+          showMessageBar('Failed :  ${response.message ?? ""}');
+        }
+        else {
+          showMessageBar('ERROR :${response.message ?? ""}');
+        }
+      },);
+    }else{
+      addEmployeeData();
+    }
+  }
+
+  void addEmployeeData() {
+    List<getEmployeeData.Datum> tempList = [];
+
+    if(!bloc.employeeList.isClosed) {
+      for (var element in bloc.employeeList.value) {
+        Object str = "${element.firstName} ${element.lastName} - ${element
+            .designation?.designation ?? ""}";
+
+        // if (!tempList.contains(str)) {
+          tempList.add(element);
+          // "${element.firstName} ${element.lastName} - ${element.designation?.designation ?? ""}");
+        // }
+      }
+      if(!employeeList!.isClosed){
+        employeeList?.add(tempList);
+      }
+    }
   }
 }

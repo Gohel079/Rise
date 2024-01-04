@@ -81,7 +81,7 @@ class _SiteVisitScreenState extends BasePageState<SiteVisitScreen,SiteVisitBloc>
   Widget siteVisitList(){
     return Expanded(
       child: ListView.builder(
-        itemCount: 3,
+        itemCount: 0,
         shrinkWrap: true,
         itemBuilder: (context, index) {
           return Padding(

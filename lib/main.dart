@@ -6,6 +6,7 @@ import 'package:rise_and_grow/base/constants/app_colors.dart';
 import 'package:rise_and_grow/screens/home/home_screen.dart';
 import 'package:rise_and_grow/screens/login/login_screen.dart';
 import 'package:rise_and_grow/screens/splash/splash_screen.dart';
+import 'package:rise_and_grow/utils/sp_util.dart';
 
 import 'app_bloc.dart';
 import 'base/bloc/base_bloc_provider.dart';
@@ -15,7 +16,7 @@ import 'base/constants/app_themes.dart';
 import 'base/constants/app_widgets.dart';
 import 'env/environment.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   GestureBinding.instance.resamplingEnabled = true;
 
@@ -31,7 +32,7 @@ void main() {
       statusBarColor: secondaryColor,
       statusBarIconBrightness: Brightness.dark,
       statusBarBrightness: Brightness.light));
-
+  await SpUtil.getInstance();
 
 
   runApp(BlocProvider<AppBloc>(initBloc: AppBloc(), child: const MyHomePage()));
@@ -66,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
               debugShowCheckedModeBanner: false,
               title: 'HITACHI',
               theme: normalTheme(context),
-              home: const HomeScreen(),
+              home: const SplashScreen(),
               navigatorKey: navigatorKey,
               localizationsDelegates:
               ezLocalizationDelegate.localizationDelegates,

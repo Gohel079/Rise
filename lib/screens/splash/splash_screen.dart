@@ -9,6 +9,7 @@ import 'package:rise_and_grow/screens/set_meeting_date_&_time/set_meeting_date_a
 import '../../base/constants/app_colors.dart';
 import '../../base/constants/app_images.dart';
 import '../../base/constants/app_styles.dart';
+import '../../utils/shared_pref_utils.dart';
 import '../login/login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -47,7 +48,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void navigateToOther() async {
     await Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(context, SetMeetingDateAndTimeScreen.route());
+      if(isLogin()){
+        Navigator.pushReplacement(context, HomeScreen.route());
+      }
+      else{
+        Navigator.pushReplacement(context, LoginScreen.route());
+      }
     });
   }
 }

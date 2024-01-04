@@ -81,7 +81,7 @@ class _meetingViewState extends BasePageState<MeetingView,MeetingBloc> {
   Widget meetingList(){
     return Expanded(
       child: ListView.builder(
-          itemCount: 3,
+          itemCount: 0,
         shrinkWrap: true,
         itemBuilder: (context, index) {
           return Padding(

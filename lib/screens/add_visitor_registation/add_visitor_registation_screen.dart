@@ -179,29 +179,6 @@ class _addVisitorRegistationState extends BasePageState<AddVisitorRegistrationSc
              crossAxisAlignment: CrossAxisAlignment.center,
              children: [
 
-               !isSearching ?
-               InkWell(onTap: (){
-                 setState(() {
-                   isSearching = !isSearching;
-                 });
-               },
-                 child: SvgPicture.asset(
-                   AppImages.icSearch,
-                   color: white,
-                   height: 24.h,
-                   width: 24.w,
-                 ),
-               ) : SizedBox(),
-               !isSearching ? SizedBox(width: 16.w,) : SizedBox(),
-               !isSearching ? InkWell(onTap: (){
-
-                 // Navigator.push(context,ReceptionApproveScreen.route());
-               },
-                 child: SvgPicture.asset(AppImages.icNotification,
-                   height: 24.h,
-                   width: 24.w,),
-               ) : const SizedBox(),
-               !isSearching ? SizedBox(width: 10.w,) : SizedBox(),
              ],)
          ],),
      body:  SingleChildScrollView(

@@ -20,5 +20,8 @@ class AppEndpoint {
   static const String getVisitorRegister = "visitor/get_visitor_req_list";
   static const String saveTokenReceipt = "visitor/save_token_by_recpt";
   static const String getOuterMeeting = "";
+  static const String getVisitorListByEmployee = "visitor/employee_req_vistior_meeting";
+  static const String postSaveAccepteRejectRequestEmp = "visitor/save_accept_reject_request_byEmp";
+  static const String startMeeting = "meeting/start-meeting";
 
 }

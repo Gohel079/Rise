@@ -7,7 +7,9 @@ import 'package:rise_and_grow/base/basePage.dart';
 import 'package:rise_and_grow/base/bloc/base_bloc.dart';
 import 'package:rise_and_grow/base/components/screen_utils/flutter_screenutil.dart';
 import 'package:rise_and_grow/screens/home/tab/profile/profile_tab_bloc.dart';
+import 'package:rise_and_grow/screens/login/login_screen.dart';
 import 'package:rise_and_grow/screens/notification/notification_screen.dart';
+import 'package:rise_and_grow/utils/shared_pref_utils.dart';
 
 import '../../../../base/constants/app_colors.dart';
 import '../../../../base/constants/app_images.dart';
@@ -51,7 +53,7 @@ class _profileTabState  extends BasePageState<ProfileTab,ProfileTabBloc>
        backgroundColor: secondaryColor,
        actions:   [
 
-         Row(
+        /* Row(
            mainAxisAlignment: MainAxisAlignment.center,
            crossAxisAlignment: CrossAxisAlignment.center,
            children: [
@@ -63,18 +65,8 @@ class _profileTabState  extends BasePageState<ProfileTab,ProfileTabBloc>
                width: 24.w,
              ),
              SizedBox(width: 16.w,),
-             InkWell(
-               onTap: (){
-                 PersistentNavBarNavigator
-                     .pushNewScreen(context, screen: const NotificationScreen(),
-                     withNavBar: false);
-               },
-               child: SvgPicture.asset(AppImages.icNotification,
-                   height: 24.h,
-               width: 24.w,),
-             ),
-             SizedBox(width: 10.w,),
-           ],)
+
+           ],)*/
        ],),
      body: Container(
        color: Colors.white,
@@ -83,19 +75,19 @@ class _profileTabState  extends BasePageState<ProfileTab,ProfileTabBloc>
            
             SizedBox(height: 20.h,),
 
-            const CircleAvatar(backgroundImage:
-            AssetImage(AppImages.imgPerson1),radius: 50,),
+             CircleAvatar(backgroundImage:
+            NetworkImage(getProfileImage().toString()),radius: 50,),
 
             SizedBox(height: 10.h,),
 
-            Text('Mr. Bhautik Patel',
+            Text(getEmployeeName().toString(),
                 style: styleMedium3.copyWith(
                   color: lightBlack,
                   fontWeight: FontWeight.w600,
                 )),
 
 
-            SizedBox(height: 20.h,),
+          /*  SizedBox(height: 20.h,),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: ListTile(
@@ -139,7 +131,37 @@ class _profileTabState  extends BasePageState<ProfileTab,ProfileTabBloc>
                 ),
               ),
             ),
-            Divider(height: 1,color: divider,),
+            Divider(height: 1,color: divider,),*/
+
+           InkWell(onTap: (){
+             setLogin(false);
+             // Navigator.of(context).pushAndRemoveUntil(
+             //   CupertinoPageRoute(
+             //     builder: (BuildContext context) {
+             //       return LoginScreen();
+             //     },
+             //   ),
+             //       (_) => false,
+             // );
+
+             // Navigator.pop(context);
+             showLogoutAlertDialog(context);
+             // PersistentNavBarNavigator.pushNewScreen(context, screen: LoginScreen(),withNavBar: false);
+           },
+             child: Padding(
+               padding: const EdgeInsets.symmetric(horizontal: 8.0),
+               child: ListTile(
+                 title: Text('Log Out',
+                     style: styleMedium2.copyWith(
+                       color: lightBlack,
+                       fontWeight: FontWeight.w500,
+                     )),
+                 trailing:  SvgPicture.asset(
+                   AppImages.icRight,
+                 ),
+               ),
+             ),
+           ),
 
 
          ],
@@ -150,6 +172,52 @@ class _profileTabState  extends BasePageState<ProfileTab,ProfileTabBloc>
   @override
   ProfileTabBloc getBloc() {
   return bloc;
+  }
+
+  // Function to show the alert dialog
+  void showLogoutAlertDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title:  Text('Logout',
+              style: styleMedium2.copyWith(
+            color: lightBlack,
+            fontWeight: FontWeight.w600,
+          )),
+          content:  Text('Are you sure you want to log out?',
+              style: styleMedium1.copyWith(
+            color: lightBlack,
+            fontWeight: FontWeight.w500,
+          )),
+          actions: [
+            TextButton(
+              onPressed: () {
+
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel',
+                  style: styleMedium2.copyWith(
+                color: lightBlack,
+                fontWeight: FontWeight.w500,
+              )),
+            ),
+            TextButton(
+              onPressed: () {
+
+                Navigator.of(context).pop(); // Close the alert dialog
+                PersistentNavBarNavigator.pushNewScreen(context, screen: LoginScreen(),withNavBar: false);
+              },
+              child: Text('Yes',
+                  style: styleMedium2.copyWith(
+                color: lightBlack,
+                fontWeight: FontWeight.w500,
+              )),
+            ),
+          ],
+        );
+      },
+    );
   }
 
 }

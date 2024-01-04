@@ -93,6 +93,6 @@ class NetManager extends DioManager {
 
   @override
   void logout() {
-    onLogout();
+    // onLogout();
   }
 }

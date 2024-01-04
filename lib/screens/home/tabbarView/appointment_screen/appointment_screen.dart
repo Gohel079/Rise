@@ -80,7 +80,7 @@ class _AppointmentScreenState extends BasePageState<AppointmentScreen,Appointmen
   Widget appointmentList(){
     return Expanded(
       child: ListView.builder(
-        itemCount: 3,
+        itemCount: 0,
         shrinkWrap: true,
         itemBuilder: (context, index) {
           return Padding(

@@ -11,6 +11,7 @@ import 'package:rise_and_grow/screens/home/home_screen_bloc.dart';
 import 'package:rise_and_grow/screens/home/tab/home/home_tab.dart';
 import 'package:rise_and_grow/screens/home/tab/profile/profile_tab.dart';
 import 'package:rise_and_grow/screens/home/tab/settings/settings_tab.dart';
+import 'package:rise_and_grow/screens/notification/notification_screen.dart';
 
 import '../../base/constants/app_constant.dart';
 import '../../base/constants/app_images.dart';
@@ -225,7 +226,7 @@ class _HomeScreenState extends BasePageState<HomeScreen,HomeScreenBloc> {
     return [
       ProfileTab(),
       HomeTab(),
-      SettingsTab(),
+      NotificationScreen(),
     ];
   }
 
@@ -253,9 +254,9 @@ class _HomeScreenState extends BasePageState<HomeScreen,HomeScreenBloc> {
       PersistentBottomNavBarItem(
         textStyle:  styleSmall4.copyWith(
           fontWeight: FontWeight.w600),
-        icon: const Icon(Icons.settings),
-        inactiveIcon: const Icon(Icons.settings_outlined),
-        title: ("Settings"),
+        icon: const Icon(Icons.notification_add),
+        inactiveIcon: const Icon(Icons.notification_add_outlined),
+        title: ("Notification"),
 
         activeColorPrimary: secondaryColor,
         inactiveColorPrimary:darkGrayTextColor,

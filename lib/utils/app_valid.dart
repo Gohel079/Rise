@@ -331,3 +331,10 @@ String? validateInternalTeamSelection(String? value) {
   }
   return null;
 }
+
+String? validateReasonForDecline(String? value) {
+  if (value!.trim().isEmpty) {
+    return "Reason  is required.";
+  }
+  return null;
+}

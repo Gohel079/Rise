@@ -10,6 +10,7 @@ import '../../base/constants/app_colors.dart';
 import '../../base/constants/app_images.dart';
 import '../../base/constants/app_styles.dart';
 import '../../base/widgets/custom_page_route.dart';
+import 'outer_attendance_bloc.dart';
 
 class OuterAttendanceScreen extends BasePage<OuterAttendanceBloc>{
   const OuterAttendanceScreen({super.key});

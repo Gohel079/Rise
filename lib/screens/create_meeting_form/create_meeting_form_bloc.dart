@@ -57,7 +57,7 @@ class CreateMeetingFormBloc extends BasePageBloc {
     });
   }
 
-  void createMeeting(FormData? data, Function(CreateMeetingResponseModel) onSuccess){
+  void createMeeting(Map? data, Function(CreateMeetingResponseModel) onSuccess){
     showLoadingDialog();
     apiCreateMeeting(data, (response) {
       hideLoadingDialog();

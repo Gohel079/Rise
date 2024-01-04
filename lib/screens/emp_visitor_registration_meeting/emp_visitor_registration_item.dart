@@ -1,24 +1,23 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:rise_and_grow/base/components/screen_utils/flutter_screenutil.dart';
-import 'package:rise_and_grow/remote/model/get_visitor_list_response_model.dart';
 
 import '../../base/constants/app_colors.dart';
 import '../../base/constants/app_images.dart';
 import '../../base/constants/app_styles.dart';
+import '../../remote/model/get_visitorlist_by_employee_id_response_model.dart';
 
-class VisitorRegistrationItem extends StatefulWidget {
+class EmpVisitorRegistrationItem extends StatefulWidget {
 
   ReqRequestMap? data;
-  VisitorRegistrationItem({this.data,super.key});
+  EmpVisitorRegistrationItem({this.data,super.key});
 
   @override
-  State<VisitorRegistrationItem> createState() => _VisitorRegistrationItemState();
+  State<EmpVisitorRegistrationItem> createState() => _EmpVisitorRegistrationItemState();
 }
 
-class _VisitorRegistrationItemState extends State<VisitorRegistrationItem> {
+class _EmpVisitorRegistrationItemState extends State<EmpVisitorRegistrationItem> {
   @override
   Widget build(BuildContext context) {
     return  Padding(
@@ -138,21 +137,8 @@ class _VisitorRegistrationItemState extends State<VisitorRegistrationItem> {
 
                   Container(width : 75.w,height: 85.h,decoration:
                   BoxDecoration(borderRadius: BorderRadius.circular(2))
-                      ,child:CachedNetworkImage(
-                        imageBuilder: (context, imageProvider) => Container(
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: imageProvider,
-                                fit: BoxFit.cover,
-                                colorFilter:
-                                const ColorFilter.mode(Colors.white, BlendMode.colorBurn)),
-                          ),
-                        ),
-                        placeholder: (context, url) {
-                          return CircularProgressIndicator();
-                        } ,
-                        errorWidget: (BuildContext context, String url, dynamic error) => const Icon(Icons.error),
-                     fit: BoxFit.fill, imageUrl: widget.data?.reqVisitorMap?.vImage ?? "",)
+                      ,child: Image.network(widget.data?.reqVisitorMap?.vImage ?? "",
+                     fit: BoxFit.fill,)
                       // Image.asset(AppImages.imgPerson1,fit: BoxFit.fill,)
                   ),
 
@@ -161,12 +147,12 @@ class _VisitorRegistrationItemState extends State<VisitorRegistrationItem> {
 
                   Container(decoration:
                   BoxDecoration(borderRadius: BorderRadius.circular(20),
-                      color: white,border: Border.all(color: changeColorAccordingStatus(widget.data?.evStatus ?? ""),width: 1)),
+                      color: white,border: Border.all(color: widget.data?.evStatus.toString() == "Pending" ? darkRed :green2,width: 1)),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 6),
-                      child: Text(widget.data?.evStatus ?? "",
+                      child: Text("Pending" ?? "",
                           style: styleSmall3.copyWith(
-                            color: changeColorAccordingStatus(widget.data?.evStatus ?? ""),
+                            color: widget.data?.evStatus.toString() == "Pending" ? darkRed :green2,
                             fontWeight: FontWeight.w600,
                           )),
                     ),
@@ -176,17 +162,5 @@ class _VisitorRegistrationItemState extends State<VisitorRegistrationItem> {
           ],),
         ),),
     );
-  }
-
-
-  Color changeColorAccordingStatus(String? eStatus){
-     if(eStatus == "Pending"){
-     return yellow;
-    }else if(eStatus == "Accepted"){
-       return green2;
-     }else if(eStatus == "Rejected"){
-       return darkRed;
-     }
-     return darkGray;
   }
 }

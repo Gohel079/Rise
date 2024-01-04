@@ -10,6 +10,7 @@ import 'package:rise_and_grow/base/src_components.dart';
 import 'package:rise_and_grow/screens/forgot_password/forgor_password_screen.dart';
 import 'package:rise_and_grow/screens/home/home_screen.dart';
 import 'package:rise_and_grow/screens/register/register_screen.dart';
+import 'package:rise_and_grow/utils/shared_pref_utils.dart';
 
 import '../../base/constants/app_constant.dart';
 import '../../base/constants/app_images.dart';
@@ -307,6 +308,19 @@ class _LoginScreenState   extends BasePageState<LoginScreen,LoginScreenBloc>{
 
          if(status.toLowerCase() == success){
            if(response.message ==  "Login successfully.") {
+             var role =response.data?.data?.role?.role;
+             var empId =response.data?.data?.empId;
+             var fullName = "${response.data?.data?.firstName} ${response.data?.data?.lastName}";
+             print("Role :${role}");
+             setLogin(true);
+             setRole(role ?? "");
+             setLastName(response.data?.data?.lastName ?? "");
+             setBearerToken("Bearer ${response.data?.accessToken}" ?? "");
+             setEmployeeName(fullName);
+             setEmployeeId(empId.toString() ?? "");
+             setEmail(response.data?.data?.email ?? "");
+             setMobileNumber(response.data?.data?.phone ?? "");
+             setProfileImage(response.data?.data?.empProfileIMg.toString() ?? "");
              Navigator.pushReplacement(context, HomeScreen.route());
            }
 

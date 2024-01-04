@@ -11,12 +11,16 @@ import 'package:rise_and_grow/screens/start_meeting/start_meeting_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../../base/constants/app_colors.dart';
+import '../../base/constants/app_constant.dart';
 import '../../base/constants/app_images.dart';
 import '../../base/constants/app_styles.dart';
+import '../../base/constants/app_widgets.dart';
 import '../../base/widgets/custom_page_route.dart';
+import '../../remote/model/add_visitor_register_response_model.dart' as getEmployeeData;
 
 class StartMeetingScreen extends BasePage<StartMeetingBloc>{
-  const StartMeetingScreen({super.key});
+  String? requestId;
+   StartMeetingScreen(this.requestId,{super.key});
 
 
   @override
@@ -24,9 +28,9 @@ class StartMeetingScreen extends BasePage<StartMeetingBloc>{
    return StartMeetingScreenState();
   }
 
-  static Route<dynamic> route() {
+  static Route<dynamic> route(String? requestID) {
     return CustomPageRoute(
-        builder: (context) => const StartMeetingScreen());
+        builder: (context) =>  StartMeetingScreen(requestID));
   }
 
 }
@@ -59,6 +63,8 @@ class StartMeetingScreenState  extends BasePageState<StartMeetingScreen,StartMee
   final FocusNode _nodeUploadDocumentData = FocusNode();
   AutovalidateMode autoValidateMode = AutovalidateMode.disabled;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  List<int>? selectedInternalAttendance;
 
   @override
   Widget buildWidget(BuildContext context) {
@@ -560,31 +566,36 @@ class StartMeetingScreenState  extends BasePageState<StartMeetingScreen,StartMee
 
   Widget rescheduleBtn(){
     return  Expanded(
-      child: Container(
-        height: 56.h,
-        decoration:
-        BoxDecoration(color: darkGreen,borderRadius:
-        BorderRadius.circular(6),),child:
-      Row(mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+      child: InkWell(onTap: (){
 
-          Row(
-            children: [
-              Text('Reschedule',
-                  style: styleMedium2.copyWith(
-                    color: white,
-                    fontWeight: FontWeight.w700,
-                  )),
+        apiCallStartMeeting();
+      },
+        child: Container(
+          height: 56.h,
+          decoration:
+          BoxDecoration(color: darkGreen,borderRadius:
+          BorderRadius.circular(6),),child:
+        Row(mainAxisAlignment: MainAxisAlignment.center,
+          children: [
 
-              SizedBox(width: 7.w,),
-              SvgPicture.asset(AppImages.icLogout,
-                height: 22.h,width: 22.w
-                ,color: white,)
-            ],
-          ),
+            Row(
+              children: [
+                Text('Reschedule',
+                    style: styleMedium2.copyWith(
+                      color: white,
+                      fontWeight: FontWeight.w700,
+                    )),
+
+                SizedBox(width: 7.w,),
+                SvgPicture.asset(AppImages.icLogout,
+                  height: 22.h,width: 22.w
+                  ,color: white,)
+              ],
+            ),
 
 
-        ],),),
+          ],),),
+      ),
     );
   }
 
@@ -595,8 +606,19 @@ class StartMeetingScreenState  extends BasePageState<StartMeetingScreen,StartMee
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
 
-        InkWell(onTap: (){
-          Navigator.push(context, InternalAttendanceScreen.route());
+        InkWell(onTap: () async {
+         final result = await  Navigator.push(context, InternalAttendanceScreen.route());
+
+         // List<int>? tempList;
+         if(result != null){
+
+
+           // tempList.add(result["list"]);
+          selectedInternalAttendance = result["list"];
+
+          print("Selected Attendace ${selectedInternalAttendance?.length}");
+
+         }
         },
           child:
           Container(height: 80.h,
@@ -659,6 +681,30 @@ class StartMeetingScreenState  extends BasePageState<StartMeetingScreen,StartMee
         )
       ],),
     );
+  }
+
+  void apiCallStartMeeting() {
+
+      Map<String, dynamic> param = {
+        "meetingID": 2,
+        "requestID": widget.requestId,
+        "visitors": [2],
+        "empIds": selectedInternalAttendance
+      };
+
+      bloc.startMeetingApicall(param,(response) {
+        String status = response.responseType ?? success;
+
+        if (status.toLowerCase() == success) {
+
+          }
+        else if (status.toLowerCase() == failed) {
+          showMessageBar('Failed :  ${response.message ?? ""}');
+        }
+        else {
+          showMessageBar('ERROR :${response.message ?? ""}');
+        }
+      },);
   }
 
 }

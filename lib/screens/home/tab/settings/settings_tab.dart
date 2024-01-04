@@ -59,9 +59,9 @@ class _settingsTabState  extends BasePageState<SettingsTab,SettingsTabBloc>{
               SizedBox(width: 16.w,),
               InkWell(
                 onTap: (){
-                  PersistentNavBarNavigator
+                 /* PersistentNavBarNavigator
                       .pushNewScreen(context, screen: const NotificationScreen(),
-                      withNavBar: false);
+                      withNavBar: false);*/
                 },
                 child: SvgPicture.asset(AppImages.icNotification,
                   height: 24.h,

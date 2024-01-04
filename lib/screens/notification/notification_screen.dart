@@ -39,15 +39,7 @@ class _NotificationScreenState extends BasePageState<NotificationScreen,Notifica
         appBar: AppBar(
           leadingWidth: 19,
           titleSpacing: 30.w,
-
           title: !isSearching ? Row(children: [
-
-            InkWell(onTap: (){
-              Navigator.pop(context);
-            }, child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SvgPicture.asset(AppImages.icPrev,height: 15.h),
-            )),
 
             SizedBox(width: 10.w,),
             Padding(
@@ -108,9 +100,6 @@ class _NotificationScreenState extends BasePageState<NotificationScreen,Notifica
                   ),
                 ) : SizedBox(),
                 !isSearching ? SizedBox(width: 16.w,) : SizedBox(),
-                !isSearching ? SvgPicture.asset(AppImages.icNotification,
-                  height: 24.h,
-                  width: 24.w,) : SizedBox(),
                 !isSearching ? SizedBox(width: 10.w,) : SizedBox(),
               ],)
           ],),

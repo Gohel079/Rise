@@ -11,6 +11,7 @@ import 'package:rise_and_grow/screens/add_visitor_registation/add_visitor_regist
 import 'package:rise_and_grow/screens/created_meeting/created_meeting_bloc.dart';
 import 'package:rise_and_grow/screens/internal_team_selection/internal_team_selection_screen.dart';
 import 'package:rise_and_grow/screens/set_meeting_date_&_time/set_meeting_date_and_time_screen.dart';
+import 'package:rise_and_grow/screens/start_meeting/start_meeting_screen.dart';
 import 'package:rise_and_grow/screens/visitor_registation/visitor_registation_bloc.dart';
 import 'package:rise_and_grow/utils/app_valid.dart';
 import 'package:rxdart/rxdart.dart';
@@ -25,7 +26,8 @@ import '../../utils/date_util.dart';
 import 'create_meeting_form_bloc.dart';
 
 class CreateMeetingFormScreen extends BasePage<CreateMeetingFormBloc>{
-  const CreateMeetingFormScreen({super.key});
+  String? requestID;
+   CreateMeetingFormScreen({this.requestID,super.key});
 
 
   @override
@@ -33,9 +35,9 @@ class CreateMeetingFormScreen extends BasePage<CreateMeetingFormBloc>{
     return _creatMeetingFormScreenState();
   }
 
-  static Route<dynamic> route() {
+  static Route<dynamic> route(String? requestid) {
     return CustomPageRoute(
-        builder: (context) => const CreateMeetingFormScreen());
+        builder: (context) =>  CreateMeetingFormScreen(requestID: requestid ?? "",));
   }
 
 }
@@ -111,6 +113,12 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
 
   BehaviorSubject<List<dynamic>>? meetingTypeList;
   BehaviorSubject<List<dynamic>>? meetingModeListForStream;
+
+  String selectedDate = "";
+  String selectedTime   = "";
+
+  BehaviorSubject<List<String>>? selectedEmpName;
+  BehaviorSubject<List<int>>? selectedEmpId;
 
 
   @override
@@ -266,9 +274,9 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
 
                 internalTeamSelection(),
 
-                SizedBox(height: 20.h,),
+                // SizedBox(height: 20.h,),
 
-                externalTeamSelection(),
+                // externalTeamSelection(),
 
                 SizedBox(height: 40.h,),
               ],
@@ -486,9 +494,9 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
         // var data = Navigator.push(context, SetMeetingDateAndTimeScreen.route());
         print("data ->>>>>> $result");
         if(result != null){
-          String date = result["Date"];
-          String time =  result["Time"];
-          _setDateAndTimeController.text = "${date} &  ${time}";
+          selectedDate = result["Date"];
+          selectedTime =  result["Time"];
+          _setDateAndTimeController.text = "${selectedDate} &  ${selectedTime}";
         }
       },
       textInputAction: TextInputAction.next,
@@ -635,7 +643,21 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
 
       onTap: () async {
 
-        Navigator.push(context, InternalTeamSelectionScreen.route());
+        final result = await Navigator.push(context, InternalTeamSelectionScreen.route());
+
+        // var data = Navigator.push(context, SetMeetingDateAndTimeScreen.route());
+        print("data ->>>>>> $result");
+        if(result != null){
+          selectedEmpName?.add(result["Name"]);
+          selectedEmpId?.add(result["Id"]);
+
+          String empName = "";
+          selectedEmpName?.value.forEach((element) {
+            empName = empName + element + ",";
+          });
+          _internalTeamSelect.text = empName.trim();
+        }
+
 
       },
       textInputAction: TextInputAction.next,
@@ -763,6 +785,7 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
 
     var state = _formKey.currentState!;
 
+    // Navigator.push(context, StartMeetingScreen.route(widget.requestID));
     if(state.validate()){
 
       hideKeyboard(context);
@@ -771,24 +794,34 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
 
       print(_setDateAndTimeController.text.trim().toString());
 
-      FormData formData = FormData.fromMap({
+     /* FormData formData = FormData.fromMap({
         "typeOfMeeting": typeOfMeeting,
         "MeetingPurpose": meetingPurpose,
         "meetingVenue": meetingVenue,
         "meetingDate": "",
         "meetingTime": "",
         "meetingMode": meetingMode
-      });
+      });*/
 
       Map? requestData = {
-
+        "requestID" : int.parse(widget.requestID ?? ""),
+        "officeID" : int.parse(findOfficeAddressByName()),
+        "MeetingTypeID" : int.parse(findMeetingTypeByName()),
+        "MeetingModeID" : int.parse(findMeetingModeByName()),
+        "MeetingRoom" : "A2",
+        "empIDs" : selectedEmpId?.value,
+        "MeetingPurpose": _meetingPurposeController.text.toString().trim(),
+        "MeetingDate" : selectedDate,
+        "MeetingTime" : selectedTime,
+        "isActive" :"false"
       };
 
-      getBloc().createMeeting(formData, (response) {
+      getBloc().createMeeting(requestData, (response) {
         String status = response.responseType ?? success;
 
           if(status.toLowerCase() == success){
             showMessageBar("SUCCESS");
+            Navigator.push(context, StartMeetingScreen.route(widget.requestID));
           }
           else if(status.toLowerCase() == failed) {
             showMessageBar('Failed :  ${response.message ?? ""}');
@@ -816,6 +849,9 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
 
     meetingTypeList = BehaviorSubject<List<dynamic>>.seeded([]);
     meetingModeListForStream = BehaviorSubject<List<dynamic>>.seeded([]);
+
+    selectedEmpName = BehaviorSubject<List<String>>.seeded([]);
+    selectedEmpId = BehaviorSubject<List<int>>.seeded([]);
   }
 
   @override
@@ -1028,4 +1064,44 @@ class _creatMeetingFormScreenState extends BasePageState<CreateMeetingFormScreen
     return result;
   }
 
+  String findOfficeAddressByName() {
+    String result = "";
+    if(!getBloc().officeAddressList.isClosed) {
+      getBloc().officeAddressList.value.data?.forEach((element) {
+        if (element.address == officeAddressDropdown) {
+          result = element.officeId.toString();
+        }
+      });
+    }
+    return result;
+  }
+
+
+  String findMeetingTypeByName() {
+    String result = "";
+    if(!getBloc().meetingList.isClosed) {
+      getBloc().meetingList.value.data?.forEach((element) {
+        if (element.meetingType == typeOfMeeting) {
+          result = element.meetingTypeId.toString();
+        }
+      });
+    }
+    return result;
+  }
+
+
+  String findMeetingModeByName() {
+    String result = "";
+    if(!getBloc().meetingModeList.isClosed) {
+      getBloc().meetingModeList.value.data?.forEach((element) {
+        if (element.meetingMode == meetingMode) {
+          result = element.meetingModeId.toString();
+        }
+      });
+    }
+    return result;
+  }
+
 }
+
+//Shri ganesh

@@ -5,9 +5,10 @@ import 'package:rxdart/rxdart.dart';
 
 import '../../base/constants/app_widgets.dart';
 
-class VisitorRegistrationBloc extends BasePageBloc{
+class VisitorRegistrationBloc extends BasePageBloc {
 
   late BehaviorSubject<List<GetVisitor.Datum>> getVisitorList;
+
 
   List<GetVisitor.Datum>? originalVisitorList = [];
 

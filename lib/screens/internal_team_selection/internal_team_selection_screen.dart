@@ -324,7 +324,17 @@ class InternalTeamSelectionState extends BasePageState<InternalTeamSelectionScre
 
   Widget submitButton() {
     return ButtonView(string('label_add'),false, () {
-      Navigator.push(context, StartMeetingScreen.route());
+
+      findSelectedEmplyoeeIdByName();
+      print(findSelectedEmplyoeeIdByName());
+
+      Map selectedMember = {
+        "Name" : findSelectedEmplyoeeNameByName(),
+        "Id" : findSelectedEmplyoeeIdByName()
+      };
+
+      Navigator.pop(context,selectedMember);
+      // Navigator.push(context, StartMeetingScreen.route());
     });
   }
 
@@ -335,6 +345,10 @@ class InternalTeamSelectionState extends BasePageState<InternalTeamSelectionScre
       List<getEmployeeData.Datum> list = selectedTeamMemberList?.value ?? [];
       list.add(selectedTeamMember?.value ?? getEmployeeData.Datum());
       selectedTeamMemberList?.add(list);
+
+      List<getEmployeeData.Datum> tempList = employeeList?.value ?? [];
+      tempList.remove(data);
+      employeeList?.add(tempList);
 
       print("Selected Item List ${selectedTeamMemberList?.value.length}");
     },
@@ -440,6 +454,11 @@ class InternalTeamSelectionState extends BasePageState<InternalTeamSelectionScre
                     List<getEmployeeData.Datum> list = selectedTeamMemberList?.value ?? [];
                     list.removeAt(index);
                     selectedTeamMemberList?.add(list);
+
+                    List<getEmployeeData.Datum> tempList = employeeList?.value ?? [];
+                    tempList.add(data!);
+
+                    employeeList?.add(tempList);
                   },
                     child: Container(
                       height: 27,
@@ -477,4 +496,21 @@ class InternalTeamSelectionState extends BasePageState<InternalTeamSelectionScre
   return bloc;
   }
 
+ List<int> findSelectedEmplyoeeIdByName(){
+    List<int> selectedEmpId = [];
+
+    selectedTeamMemberList?.value.forEach((element) {
+      selectedEmpId.add(element.empId ?? 0);
+    });
+    return selectedEmpId;
+  }
+
+  List<String> findSelectedEmplyoeeNameByName(){
+    List<String> selectedEmpName = [];
+
+    selectedTeamMemberList?.value.forEach((element) {
+      selectedEmpName.add(element.firstName ?? "");
+    });
+    return selectedEmpName;
+  }
 }

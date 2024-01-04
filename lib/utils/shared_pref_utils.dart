@@ -18,6 +18,11 @@ const String keyMobileNumber = "MobileNumber";
 const String keyBothAccount = "bothAccount";
 const String keyVersionCode = "versionCode";
 const String userEmail = "email";
+const String loginRole = "role";
+const String empID = "empId";
+const String empName = "empName";
+const String empProfileImage = "empProfileImage";
+const String lastName = "lastName";
 
 void onLogout() {
   setLogin(false);
@@ -41,6 +46,15 @@ void setLogin(bool isLogin) {
 
 bool isLogin() {
   return SpUtil.getBool(keyLogin, defValue: false);
+}
+
+///Profile Image
+void setProfileImage(String imageURL){
+  SpUtil.putString(empProfileImage, imageURL);
+}
+
+String getProfileImage() {
+  return SpUtil.getString(empProfileImage, defValue: "");
 }
 
 /// Privacy Accepted or Not
@@ -140,4 +154,41 @@ void setEmail(String email){
 
 String getEmail(){
   return SpUtil.getString(userEmail, defValue: "");
+}
+
+//Role Save
+void setRole(String role){
+  SpUtil.putString(loginRole, role);
+}
+
+String getRole(){
+  return SpUtil.getString(loginRole, defValue: "");
+}
+
+//Set Last Name
+void setLastName(String lName){
+  SpUtil.putString(lastName, lName);
+}
+
+String getLastName(){
+  return SpUtil.getString(lastName, defValue: "");
+}
+
+
+//Employee ID
+void setEmployeeId(String id){
+  SpUtil.putString(empID, id);
+}
+
+String getEmployeeId(){
+  return SpUtil.getString(empID, defValue: "");
+}
+
+//Employee ID
+void setEmployeeName(String name){
+  SpUtil.putString(empName ,name);
+}
+
+String getEmployeeName(){
+  return SpUtil.getString(empName, defValue: "");
 }

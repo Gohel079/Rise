@@ -101,7 +101,7 @@ class SetMeetingDateAndTimeScreenState  extends BasePageState<SetMeetingDateAndT
     gridSelectItem = BehaviorSubject<int>.seeded(0);
     selectedSlot = morningTimeSlotList.elementAt(0);
 
-    selectedDate = BehaviorSubject<String>.seeded("");
+    selectedDate = BehaviorSubject<String>.seeded("${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year}" ?? "");
     _oneValue = one[0];
   }
 
